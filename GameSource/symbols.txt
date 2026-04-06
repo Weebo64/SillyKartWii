@@ -2015,6 +2015,8 @@ ptr_playerBase = 0x809C18F8
 fun_playSound = 0x8071497C
 ptr_menuPageOrSomething = 0x809C2850
 
+RespawnImpl__Q27Objects11ItemDropperFv = 0x8076ed70
+
 # frameskip
 beginFrame = 0x8020fe24
 Update__20GameScreenEffectsMgrFv = 0x8054f1b0
