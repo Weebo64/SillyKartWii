@@ -18,7 +18,8 @@ Engine Changes:
 -Blazico: Fixed speedometer thousandths digit calculation
 -Saucy: Fixed the vanilla track order when playing worldwides
 -Toadette Hack Fan: Significantly improved NTSC-K support
--Toadette Hack Fan: Added local multiplayer settings button
+-Erythtini: Fixed ObjFlow and GeoHitTables not loading from track szs ./Common/ folder, as it was in LE-CODE (files on .szs root will take priority)
+-Saucy: Fixed an issue where crates do not spawn in the correct place due to overlapping track position
 
 ·Updated to 2.0.1
 Remaining bugs (if you get them, PLEASE report how it happened):

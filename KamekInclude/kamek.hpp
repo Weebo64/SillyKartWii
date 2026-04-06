@@ -239,10 +239,9 @@ public:
     static void Exec() { DoFuncsHook::Exec(raceFrameHooks); }
 };
 
-/*
 class SectionLoadHook {
 private:
-    typedef void (Func)();
+    typedef void(Func)();
     Func* func;
     SectionLoadHook* mNext;
 
@@ -256,11 +255,10 @@ public:
     }
 
     static void Exec() {
-        for(SectionLoadHook* p = sHooks; p; p = p->mNext)
+        for (SectionLoadHook* p = sHooks; p; p = p->mNext)
             p->func();
     }
 };
-*/
 
 //REL has NOT loaded yet, so do NOT do anything with REL addr, it will not work
 class BootHook {
