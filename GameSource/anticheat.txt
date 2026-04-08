@@ -1,0 +1,2 @@
+# Anticheat symbols file
+# This file is used by Kamek linker
