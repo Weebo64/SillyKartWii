@@ -14,6 +14,7 @@
 #include <include/c_wchar.h>
 #include <include/c_string.h>
 #include "hooks.hpp"
+#include "runtimeWrite.hpp"
 
 #include <MarioKartWii/Math/Matrix.hpp>
 #include <MarioKartWii/Math/Vector.hpp>
