@@ -61,9 +61,11 @@ kmCall(0x807eb154, MiiHeads);
 kmWrite32(0x807eb15c, 0x60000000);
 kmWrite32(0x807eb160, 0x88de01b4);
 
-//Battle Glitch removed - names always visible at normal distance
-static void SetNameDistance() {
+//credit to XeR for finding the float address
+static void BattleGlitchEnable() {
+    const u8 val = Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE, SETTINGRACE_RADIO_BATTLE);
     float maxDistance = 7500.0f;
+    if (val == RACESETTING_BATTLE_GLITCH_ENABLED) maxDistance = 75000.0f;
     System* system = System::sInstance;
     if (system->IsContext(PULSAR_MODE_OTT)) {
         const Input::RealControllerHolder* controllerHolder = SectionMgr::sInstance->pad.padInfos[0].controllerHolder;
@@ -87,7 +89,7 @@ static void SetNameDistance() {
     }
     RaceBalloons::maxDistanceNames = maxDistance;
 }
-RaceFrameHook NameDistance(SetNameDistance);
+RaceFrameHook BattleGlitch(BattleGlitchEnable);
 
 kmWrite32(0x8085C914, 0x38000000); //times at the end of races in VS
 static void DisplayTimesInsteadOfNames(CtrlRaceResult& result, u8 id) {
