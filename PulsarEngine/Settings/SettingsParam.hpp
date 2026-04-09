@@ -14,8 +14,8 @@ public:
     static const int userPageCount = 0;
     static const int pageCount = pulsarPageCount + userPageCount;
 
-    static const int maxRadioCount = 6; //per page, due to space
-    static const int maxScrollerCount = 5; //per page, due to space
+    static const int maxRadioCount = 8; //per page
+    static const int maxScrollerCount = 8; //per page
 
     //Pulsar and User
     static u8 radioCount[pageCount];
@@ -41,24 +41,25 @@ enum UserType {
 
 }//namespace Settings
 
-//SETTINGS ENUM, for the page, DO NOT FORGET THE +6 for scrollers (see menu settings for example)
+//SETTINGS ENUM, for the page, DO NOT FORGET THE +8 for scrollers
 //Use these 3 for "u32 setting" in GetSettingValue, the return will be the value of the other enums
 enum MenuSettings {
     SETTINGMENU_RADIO_FASTMENUS = 0,
     SETTINGMENU_RADIO_LAYOUT = 1,
     SETTINGMENU_RADIO_MUSIC = 2,
     SETTINGMENU_RADIO_FPS = 3,
-    SETTINGMENU_SCROLL_BOOT = 0 + 6
+    SETTINGMENU_SCROLL_BOOT = 0 + 8
 };
 
 enum RaceSettings {
-    SETTINGRACE_RADIO_MII,
-    SETTINGRACE_RADIO_SPEEDUP,
-    SETTINGRACE_RADIO_BATTLE,
-    SETTINGRACE_RADIO_BLUES,
-    SETTINGRACE_RADIO_SOM,
+    SETTINGRACE_RADIO_MII = 0,
+    SETTINGRACE_RADIO_SPEEDUP = 1,
+    SETTINGRACE_RADIO_BATTLE = 2,
+    SETTINGRACE_RADIO_BLUES = 3,
+    SETTINGRACE_RADIO_INPUTVIEWER = 4,
+    SETTINGRACE_RADIO_SOM = 5,
 
-    SETTINGRACE_SCROLL_SOM = 0 + 6
+    SETTINGRACE_SCROLL_SOM = 0 + 8
 };
 
 enum HostSettings {
@@ -66,7 +67,7 @@ enum HostSettings {
     SETTINGHOST_RADIO_CC = 1,
     SETTINGHOST_ALLOW_MIIHEADS = 2,
 
-    SETTINGHOST_SCROLL_GP_RACES = 0 + 6
+    SETTINGHOST_SCROLL_GP_RACES = 0 + 8
 };
 
 enum OTTSettings {
@@ -80,8 +81,8 @@ enum OTTSettings {
 enum KOSettings {
     SETTINGKO_ENABLED = 0,
     SETTINGKO_FINAL = 1,
-    SETTINGKO_KOPERRACE = 0 + 6,
-    SETTINGKO_RACESPERKO = 1 + 6,
+    SETTINGKO_KOPERRACE = 0 + 8,
+    SETTINGKO_RACESPERKO = 1 + 8,
 };
 
 //MENU SETTINGS
@@ -146,6 +147,11 @@ enum RaceSettingSOMDigits {
     HOSTSETTING_SOM_DIGITS_1,
     HOSTSETTING_SOM_DIGITS_2,
     HOSTSETTING_SOM_DIGITS_3,
+};
+
+enum RaceSettingInputViewer {
+    RACESETTING_INPUTVIEWER_DISABLED = 0x0,
+    RACESETTING_INPUTVIEWER_ENABLED = 0x1
 };
 
 //HOST SETTINGS
