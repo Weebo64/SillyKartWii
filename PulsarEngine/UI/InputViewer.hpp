@@ -4,7 +4,6 @@
 #include <UI/CtrlRaceBase/CustomCtrlRaceBase.hpp>
 
 // Ported from MKW-SP by Pablo Stebler
-// https://github.com/mkw-sp/mkw-sp
 
 namespace Pulsar {
 namespace UI {
