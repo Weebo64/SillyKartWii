@@ -14,10 +14,9 @@ public:
     static const int userPageCount = 0;
     static const int pageCount = pulsarPageCount + userPageCount;
 
-    static const int maxRadioCount = 8; //per page
-    static const int maxScrollerCount = 8; //per page
+    static const int maxRadioCount = 8;
+    static const int maxScrollerCount = 8;
 
-    //Pulsar and User
     static u8 radioCount[pageCount];
     static u8 scrollerCount[pageCount];
     static u8 buttonsPerPagePerRow[pageCount][maxRadioCount];
@@ -25,7 +24,6 @@ public:
 
 };
 
-//Contains all the settings. 
 enum Type {
     SETTINGSTYPE_MENU,
     SETTINGSTYPE_RACE,
@@ -34,15 +32,12 @@ enum Type {
     SETTINGSTYPE_KO,
 };
 
-//If you want to add settings to your packs, they go in this enum, and GetUserSettingValue should be used to obtain the value of a given setting
 enum UserType {
 
 };
 
 }//namespace Settings
 
-//SETTINGS ENUM, for the page, DO NOT FORGET THE +8 for scrollers
-//Use these 3 for "u32 setting" in GetSettingValue, the return will be the value of the other enums
 enum MenuSettings {
     SETTINGMENU_RADIO_FASTMENUS = 0,
     SETTINGMENU_RADIO_LAYOUT = 1,
