@@ -10,7 +10,7 @@ namespace Settings {
 
 class Params {
 public:
-    static const int pulsarPageCount = 5;
+    static const int pulsarPageCount = 6;
     static const int userPageCount = 0;
     static const int pageCount = pulsarPageCount + userPageCount;
 
@@ -30,6 +30,7 @@ enum Type {
     SETTINGSTYPE_HOST,
     SETTINGSTYPE_OTT,
     SETTINGSTYPE_KO,
+    SETTINGSTYPE_RACE2,
 };
 
 enum UserType {
@@ -223,7 +224,9 @@ enum KOSettingRacesPerKO {
     KOSETTING_RACESPERKO_3,
     KOSETTING_RACESPERKO_4
 };
-//KOSETTINGS
+
+enum Race2Settings {
+};
 
 }//namespace Pulsar
 
