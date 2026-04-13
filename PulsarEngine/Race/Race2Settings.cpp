@@ -1,13 +1,22 @@
 #include <kamek.hpp>
 #include <PulsarSystem.hpp>
 #include <Settings/Settings.hpp>
+#include <MarioKartWii/Input/ControllerHolder.hpp>
+#include <MarioKartWii/Kart/KartStatus.hpp>
+#include <MarioKartWii/Kart/KartMovement.hpp>
+#include <MarioKartWii/Effect/PlayerEffects.hpp>
+#include <MarioKartWii/RKNet/RKNetController.hpp>
 
 namespace Pulsar {
 namespace Race {
 
+extern "C" void sInstance__8Racedata(void*);
+
 // Trick Chaining [RoGamer97]
 // Triple Bananas Rotate [IKW]
 // Turn in Air [IKW]
+// Brake Drifting [IKW]
+// No Vehicles [JoshuaMK] - Host Only
 
 kmRuntimeUse(0x808a5380);
 kmRuntimeUse(0x8057A9F8);
@@ -17,6 +26,17 @@ kmRuntimeUse(0x80575bd4);
 kmRuntimeUse(0x8057a634);
 kmRuntimeUse(0x80575b54);
 kmRuntimeUse(0x80575b94);
+kmRuntimeUse(0x80558F90);
+
+static float brakeDriftingDeceleration = -3.0f;
+u8 brakeDriftingEnabled = 0;
+
+bool IsInFriendRoom() {
+    const RKNet::Controller* controller = RKNet::Controller::sInstance;
+    if(controller == nullptr) return false;
+    const RKNet::RoomType roomType = controller->roomType;
+    return (roomType == RKNet::ROOMTYPE_FROOM_HOST || roomType == RKNet::ROOMTYPE_FROOM_NONHOST);
+}
 
 asmFunc TrickChaining1() {
     ASM(
@@ -70,11 +90,11 @@ void ApplyRace2Settings() {
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x808a5380)) = 0x03;
     }
 
-    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x41820014;
-    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4082017C;
-    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_TURN_IN_AIR) == RACE2SETTING_TURN_IN_AIR_ENABLED) {
-        *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x48000014;
-        *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4800017C;
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x48000014;
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4800017C;
+    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_TURN_IN_AIR) == RACE2SETTING_TURN_IN_AIR_DISABLED) {
+        *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x41820014;
+        *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4082017C;
     }
 
     *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b60)) = 0x70000001;
@@ -88,6 +108,17 @@ void ApplyRace2Settings() {
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057a634)) = 0x80A4001C;
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b54)) = 0x88A3003A;
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b94)) = 0x80A4001C;
+    }
+    
+    brakeDriftingEnabled = 0x00;
+    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_BRAKE_DRIFTING) == RACE2SETTING_BRAKE_DRIFTING_ENABLED) {
+        brakeDriftingEnabled = 0x01;
+    }
+    
+    // No Vehicles (Host Only - Friend Rooms)
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x80558F90)) = 0x408200CC;
+    if(IsInFriendRoom() && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_NO_VEHICLES) == HOSTSETTING_NO_VEHICLES_ENABLED) {
+        *reinterpret_cast<u32*>(kmRuntimeAddr(0x80558F90)) = 0x60000000;
     }
 }
 
