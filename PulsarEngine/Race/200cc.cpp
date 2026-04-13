@@ -11,6 +11,8 @@
 namespace Pulsar {
 namespace Race {
 
+extern u8 brakeDriftingEnabled;
+
 static void CannonExitSpeed() {
     const float ratio = System::sInstance->IsContext(PULSAR_200) ? cannonExit : 1.0f;
     register Kart::Movement* kartMovement;
@@ -20,7 +22,7 @@ static void CannonExitSpeed() {
 kmCall(0x805850c8, CannonExitSpeed);
 
 void EnableBrakeDrifting(Input::ControllerHolder& controllerHolder) {
-    if(System::sInstance->IsContext(PULSAR_200)) {
+    if(System::sInstance->IsContext(PULSAR_200) || brakeDriftingEnabled == 0x01) {
         const ControllerType controllerType = controllerHolder.curController->GetType();
         const u16 inputs = controllerHolder.inputStates[0].buttonRaw;
         u16 inputsMask = 0x700;
@@ -60,7 +62,7 @@ kmCall(0x80521828, FixGhostBrakeDrifting);
 
 
 bool IsBrakeDrifting(const Kart::Status& status) {
-    if(System::sInstance->IsContext(PULSAR_200)) {
+    if(System::sInstance->IsContext(PULSAR_200) || brakeDriftingEnabled == 0x01) {
         u32 bitfield0 = status.bitfield0;
         const Input::ControllerHolder& controllerHolder = status.link->GetControllerHolder();
         if((bitfield0 & 0x40000) != 0 && (bitfield0 & 0x1F) == 0xF && (bitfield0 & 0x80100000) == 0
