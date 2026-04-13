@@ -231,6 +231,15 @@ kmWrite32(0x80549974, 0x38600001);
 //Skip ESRB page
 kmRegionWrite32(0x80604094, 0x4800001c, 'E');
 
+//some NTSC-K Files by IKW Team
+kmRegionWrite32(0x8087E1F9, 0x2E737A73, 'K');
+kmRegionWrite16(0x8087E1FD, 0x00000000, 'K');
+kmRegionWrite16(0x8087E8B6, 0x00000000, 'K');
+kmRegionWrite32(0x8088247D, 0x6B616E6A, 'K');
+kmRegionWrite32(0x80882481, 0x695F666F, 'K');
+kmRegionWrite16(0x80882485, 0x00006E74, 'K');
+kmRegionWrite32(0x80007e28, 0x4800000c, 'K');
+
 const char System::pulsarString[] = "/Pulsar";
 const char System::CommonAssets[] = "/CommonAssets.szs";
 const char System::breff[] = "/Effect/Pulsar.breff";
