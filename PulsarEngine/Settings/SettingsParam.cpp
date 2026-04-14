@@ -8,9 +8,9 @@ namespace Pulsar {
 namespace Settings {
 
 u8 Params::radioCount[Params::pageCount] ={
-    5, 5, 3, 5, 2, 4
+    5, 5, 3, 5, 2, 4, 0
 };
-u8 Params::scrollerCount[Params::pageCount] ={ 1, 1, 1, 0, 2, 0 };
+u8 Params::scrollerCount[Params::pageCount] ={ 1, 1, 1, 0, 2, 0, 0 };
 
 u8 Params::buttonsPerPagePerRow[Params::pageCount][Params::maxRadioCount] =
 {
@@ -20,6 +20,7 @@ u8 Params::buttonsPerPagePerRow[Params::pageCount][Params::maxRadioCount] =
     { 3, 3, 2, 2, 2, 0, 0, 0 },
     { 2, 2, 0, 0, 0, 0, 0, 0 },
     { 2, 2, 2, 2, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 
 u8 Params::optionsPerPagePerScroller[Params::pageCount][Params::maxScrollerCount] =
@@ -29,6 +30,7 @@ u8 Params::optionsPerPagePerScroller[Params::pageCount][Params::maxScrollerCount
     { 7, 0, 0, 0, 0, 0, 0, 0},
     { 0, 0, 0, 0, 0, 0, 0, 0},
     { 4, 4, 0, 0, 0, 0, 0, 0},
+    { 0, 0, 0, 0, 0, 0, 0, 0},
     { 0, 0, 0, 0, 0, 0, 0, 0},
 };
 

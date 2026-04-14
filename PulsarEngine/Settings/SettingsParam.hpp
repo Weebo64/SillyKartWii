@@ -10,7 +10,7 @@ namespace Settings {
 
 class Params {
 public:
-    static const int pulsarPageCount = 6;
+    static const int pulsarPageCount = 7;
     static const int userPageCount = 0;
     static const int pageCount = pulsarPageCount + userPageCount;
 
@@ -31,6 +31,7 @@ enum Type {
     SETTINGSTYPE_OTT,
     SETTINGSTYPE_KO,
     SETTINGSTYPE_RACE2,
+    SETTINGSTYPE_MISC,
 };
 
 enum UserType {
@@ -178,7 +179,7 @@ enum HostSettingGPRACES {
     HOSTSETTING_GP_RACES_32,
     HOSTSETTING_GP_RACES_64,
     HOSTSETTING_GP_RACES_2,
-    //space for a 7th setting is available
+    
 };
 
 enum HostSettingPointDistro {
@@ -242,6 +243,10 @@ enum Race2Settings {
     SETTINGRACE2_RADIO_TURN_IN_AIR = 1,
     SETTINGRACE2_RADIO_TRICK_CHAINING = 2,
     SETTINGRACE2_RADIO_BRAKE_DRIFTING = 3,
+};
+
+enum MiscSettings {
+    // Empty for now. i will add stuff later
 };
 
 //RACE2 SETTINGS
