@@ -3,6 +3,7 @@
 #include <Settings/Settings.hpp>
 #include <MarioKartWii/Race/RaceInfo/RaceInfo.hpp>
 
+// Credits: Hinz, Bodacious
 // Ported from MKW-SP by Pablo Stebler
 // https://github.com/mkw-sp/mkw-sp
 
@@ -147,7 +148,7 @@ void CtrlRaceInputViewer::Load(const char* variant, u8 id) {
     if (controllerHolder != nullptr && controllerHolder->curController != nullptr) {
         const ControllerType type = controllerHolder->curController->GetType();
         if (type == NUNCHUCK || type == WHEEL) {
-            loader.Load(UI::raceFolder, "PULInputViewerNunchuck", variant, groups);
+            loader.Load(UI::raceFolder, "PULInputViewerChuk", variant, groups);
         } 
         else {
             loader.Load(UI::raceFolder, "PULInputViewer", variant, groups);

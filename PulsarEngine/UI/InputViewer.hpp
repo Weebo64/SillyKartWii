@@ -3,6 +3,7 @@
 #include <kamek.hpp>
 #include <UI/CtrlRaceBase/CustomCtrlRaceBase.hpp>
 
+// Credits: Hinz, Bodacious
 // Ported from MKW-SP by Pablo Stebler
 
 namespace Pulsar {
