@@ -17,6 +17,8 @@ extern "C" void sInstance__8Racedata(void*);
 // Turn in Air [IKW]
 // Brake Drifting [IKW]
 // No Vehicles [JoshuaMK] - Host Only
+// Allow Looking Backwards Anytime [Ro, Gaberboo]
+// No Lightning Flash [Ro]
 
 kmRuntimeUse(0x808a5380);
 kmRuntimeUse(0x8057A9F8);
@@ -27,6 +29,9 @@ kmRuntimeUse(0x8057a634);
 kmRuntimeUse(0x80575b54);
 kmRuntimeUse(0x80575b94);
 kmRuntimeUse(0x80558F90);
+kmRuntimeUse(0x8054F1B0);
+kmRuntimeUse(0x805A228C);
+kmRuntimeUse(0x805A225C);
 
 static float brakeDriftingDeceleration = -3.0f;
 u8 brakeDriftingEnabled = 0;
@@ -90,11 +95,13 @@ void ApplyRace2Settings() {
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x808a5380)) = 0x03;
     }
 
-    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x48000014;
-    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4800017C;
-    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_TURN_IN_AIR) == RACE2SETTING_TURN_IN_AIR_DISABLED) {
-        *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x41820014;
-        *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4082017C;
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x41820014;
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4082017C;
+    if(System::sInstance->IsContext(PULSAR_200)) {
+        if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_TURN_IN_AIR) == RACE2SETTING_TURN_IN_AIR_ENABLED) {
+            *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x48000014;
+            *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4800017C;
+        }
     }
 
     *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b60)) = 0x70000001;
@@ -120,6 +127,16 @@ void ApplyRace2Settings() {
     if(IsInFriendRoom() && Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_NO_VEHICLES) == HOSTSETTING_NO_VEHICLES_ENABLED) {
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x80558F90)) = 0x60000000;
     }
+    
+    // No Lightning Flash
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8054F1B0)) = 0x9421FFD0;
+    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_RADIO_NO_LIGHTNING_FLASH) == MISCSETTING_NO_LIGHTNING_FLASH_ENABLED) {
+        *reinterpret_cast<u32*>(kmRuntimeAddr(0x8054F1B0)) = 0x4E800020;
+    }
+    
+    // Allow Looking Backwards During Countdown and Respawn
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x805A228C)) = 0x60000000; // Respawn
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x805A225C)) = 0x38800001; // Countdown
 }
 
 static RaceLoadHook ApplyRace2SettingsHook(ApplyRace2Settings);
