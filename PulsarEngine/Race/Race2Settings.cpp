@@ -19,6 +19,7 @@ extern "C" void sInstance__8Racedata(void*);
 // No Vehicles [JoshuaMK] - Host Only
 // Allow Looking Backwards Anytime [Ro, Gaberboo]
 // No Lightning Flash [Ro]
+// Mii Nametag Color [Conradi]
 
 kmRuntimeUse(0x808a5380);
 kmRuntimeUse(0x8057A9F8);
@@ -32,6 +33,7 @@ kmRuntimeUse(0x80558F90);
 kmRuntimeUse(0x8054F1B0);
 kmRuntimeUse(0x805A228C);
 kmRuntimeUse(0x805A225C);
+kmRuntimeUse(0x807F042C);
 
 static float brakeDriftingDeceleration = -3.0f;
 u8 brakeDriftingEnabled = 0;
@@ -89,6 +91,23 @@ asmFunc TrickChaining2() {
     )
 }
 
+extern "C" void sInstance__8Racedata(void*);
+asmFunc MiiNametagColor() {
+    ASM(
+        nofralloc;
+        lis r12, sInstance__8Racedata@ha;
+        lwz r12, sInstance__8Racedata@l(r12);
+        mulli r11, r30, 0xF0;
+        addi r11, r11, 0x28;
+        add r12, r12, r11;
+        lwz r11, 0x74(r12);
+        stw r11, 0x14(r1);
+        stw r11, 0x2C(r1);
+        lwz r28, 0x2C(r1);
+        blr;
+    )
+}
+
 void ApplyRace2Settings() {
     *reinterpret_cast<u32*>(kmRuntimeAddr(0x808a5380)) = 0x02;
     if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_TRIPLE_BANANAS) == RACE2SETTING_TRIPLE_BANANAS_ROTATE) {
@@ -128,15 +147,18 @@ void ApplyRace2Settings() {
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x80558F90)) = 0x60000000;
     }
     
-    // No Lightning Flash
     *reinterpret_cast<u32*>(kmRuntimeAddr(0x8054F1B0)) = 0x9421FFD0;
     if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_RADIO_NO_LIGHTNING_FLASH) == MISCSETTING_NO_LIGHTNING_FLASH_ENABLED) {
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x8054F1B0)) = 0x4E800020;
     }
     
-    // Allow Looking Backwards During Countdown and Respawn
     *reinterpret_cast<u32*>(kmRuntimeAddr(0x805A228C)) = 0x60000000; // Respawn
     *reinterpret_cast<u32*>(kmRuntimeAddr(0x805A225C)) = 0x38800001; // Countdown
+    
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x807F042C)) = 0x8381002C;
+    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_RADIO_MII_NAMETAG) == MISCSETTING_MII_NAMETAG_MII_COLOR) {
+        kmRuntimeCallA(0x807F042C, MiiNametagColor);
+    }
 }
 
 static RaceLoadHook ApplyRace2SettingsHook(ApplyRace2Settings);
