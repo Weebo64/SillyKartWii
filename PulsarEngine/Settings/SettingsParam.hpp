@@ -246,7 +246,9 @@ enum Race2Settings {
 };
 
 enum MiscSettings {
-    // Empty for now. i will add stuff later
+    SETTINGMISC_RADIO_NO_LIGHTNING_FLASH = 0,
+    SETTINGMISC_RADIO_MII_NAMETAG = 1,
+    SETTINGMISC_SCROLL_HUDCOLOR = 0 + 8
 };
 
 //RACE2 SETTINGS
@@ -268,6 +270,31 @@ enum Race2SettingTrickChaining {
 enum Race2SettingBrakeDrifting {
     RACE2SETTING_BRAKE_DRIFTING_DISABLED = 0x0,
     RACE2SETTING_BRAKE_DRIFTING_ENABLED = 0x1
+};
+
+enum MiscSettingNoLightningFlash {
+    MISCSETTING_NO_LIGHTNING_FLASH_DISABLED = 0x0,
+    MISCSETTING_NO_LIGHTNING_FLASH_ENABLED = 0x1
+};
+
+enum MiscSettingMiiNametag {
+    MISCSETTING_MII_NAMETAG_REGULAR = 0x0,
+    MISCSETTING_MII_NAMETAG_MII_COLOR = 0x1
+};
+
+enum MiscSettingHUDColor {
+    HUDCOLOR_WHITE = 0x0,
+    HUDCOLOR_BLACK = 0x1,
+    HUDCOLOR_RED = 0x2,
+    HUDCOLOR_ORANGE = 0x3,
+    HUDCOLOR_YELLOW = 0x4,
+    HUDCOLOR_GREEN = 0x5,
+    HUDCOLOR_BLUE = 0x6,
+    HUDCOLOR_PURPLE = 0x7,
+    HUDCOLOR_PINK = 0x8,
+    HUDCOLOR_MAGENTA = 0x9,
+    HUDCOLOR_CYAN = 0xA,
+    HUDCOLOR_TEAL = 0xB
 };
 
 }//namespace Pulsar
