@@ -24,7 +24,7 @@ extern "C" void sInstance__8Racedata(void*);
 kmRuntimeUse(0x808a5380);
 kmRuntimeUse(0x8057A9F8);
 kmRuntimeUse(0x8057C9C8);
-kmRuntimeUse(0x80575b60);
+kmRuntimeUse(0x80575b64);
 kmRuntimeUse(0x80575bd4);
 kmRuntimeUse(0x8057a634);
 kmRuntimeUse(0x80575b54);
@@ -61,32 +61,32 @@ asmFunc TrickChaining2() {
         lwz r11, 0x4(r3);
         lwz r11, 0x8(r11);
         andi. r0, r11, 0x8040;
-        beq loc_end;
+        beq loc_0x60;
         lbz r12, 0xDB(r31);
-        addi r12, r12, 1;
-        cmpwi r12, 30;
-        bgt skip1;
+        addi r12, r12, 0x1;
+        cmpwi r12, 0x1E;
+        bge loc_0x28;
         stb r12, 0xDB(r31);
-    skip1:
+    loc_0x28:
         mr r5, r6;
-        cmpwi r12, 20;
-        bgt skip2;
+        cmpwi r12, 0x14;
+        bge loc_0x38;
         li r5, 0;
-    skip2:
+    loc_0x38:
         cmpwi r5, 0;
-        beq loc_end;
-        li r12, 1;
+        beq loc_0x68;
+        li r12, 0x1;
         stw r12, 0x74(r4);
         lwz r12, 0x4(r3);
         lwz r12, 0x8(r12);
         andi. r12, r12, 0x400;
-        bne skip3;
-        li r12, 5;
+        bne loc_0x60;
+        li r12, 0x5;
         stw r12, 0x1C(r4);
-    skip3:
+    loc_0x60:
         li r12, 0;
         stb r12, 0xDB(r31);
-    loc_end:
+    loc_0x68:
         blr;
     )
 }
@@ -114,24 +114,15 @@ void ApplyRace2Settings() {
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x808a5380)) = 0x03;
     }
 
-    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x41820014;
-    *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4082017C;
-    if(System::sInstance->IsContext(PULSAR_200)) {
-        if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_TURN_IN_AIR) == RACE2SETTING_TURN_IN_AIR_ENABLED) {
-            *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057A9F8)) = 0x48000014;
-            *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057C9C8)) = 0x4800017C;
-        }
-    }
-
-    *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b60)) = 0x70000001;
+    *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b64)) = 0x60000000;
     *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575bd4)) = 0x4800000C;
     *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057a634)) = 0x60000000;
     kmRuntimeCallA(0x80575b54, TrickChaining1);
     kmRuntimeCallA(0x80575b94, TrickChaining2);
     if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_TRICK_CHAINING) == RACE2SETTING_TRICK_CHAINING_DISABLED) {
-        *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b60)) = 0x88A3003A;
-        *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575bd4)) = 0x80A4001C;
-        *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057a634)) = 0x80A4001C;
+        *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b64)) = 0x40820028;
+        *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575bd4)) = 0x40820038;
+        *reinterpret_cast<u32*>(kmRuntimeAddr(0x8057a634)) = 0x40820058;
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b54)) = 0x88A3003A;
         *reinterpret_cast<u32*>(kmRuntimeAddr(0x80575b94)) = 0x80A4001C;
     }
@@ -161,7 +152,19 @@ void ApplyRace2Settings() {
     }
 }
 
+void ApplyTurnInAir() {
+    kmRuntimeWrite32A(0x8057A9F8, 0x41820014);
+    kmRuntimeWrite32A(0x8057C9C8, 0x4082017C);
+    if(System::sInstance->IsContext(PULSAR_200)) {
+        if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_TURN_IN_AIR) == RACE2SETTING_TURN_IN_AIR_ENABLED) {
+            kmRuntimeWrite32A(0x8057A9F8, 0x48000014);
+            kmRuntimeWrite32A(0x8057C9C8, 0x4800017C);
+        }
+    }
+}
+
 static RaceLoadHook ApplyRace2SettingsHook(ApplyRace2Settings);
+static PageLoadHook ApplyTurnInAirHook(ApplyTurnInAir);
 
 }//namespace Race
 }//namespace Pulsar
