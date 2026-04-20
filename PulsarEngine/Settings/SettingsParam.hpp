@@ -294,7 +294,9 @@ enum MiscSettingHUDColor {
     HUDCOLOR_PINK = 0x8,
     HUDCOLOR_MAGENTA = 0x9,
     HUDCOLOR_CYAN = 0xA,
-    HUDCOLOR_TEAL = 0xB
+    HUDCOLOR_TEAL = 0xB,
+    HUDCOLOR_GOLD = 0xC,
+    HUDCOLOR_FUNNY = 0xD
 };
 
 }//namespace Pulsar
