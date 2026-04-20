@@ -18,6 +18,12 @@ u32 FPSPatchHook = 0;
 u32 PredictionHook = 0;
 u32 ItemRainOnlineFixHook = 0;
 
+// HUD Color variables (initialized to white with full alpha)
+u8 U8_RED1 = 0xFF;
+u8 U8_GREEN1 = 0xFF;
+u8 U8_BLUE1 = 0xFF;
+u8 U8_ALPHA1 = 0xFF;
+
 u8 U8_SILLY_MODE = 0;
 u16 U16_SILLY_EFFECTS = 0;
 u16 U16_SILLY_SOUNDS = 0;
