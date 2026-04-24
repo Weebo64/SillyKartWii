@@ -1,5 +1,6 @@
 #include <kamek.hpp>
 #include <CustomCharacters/CustomCharacters.hpp>
+#include <Settings/Settings.hpp>
 
 namespace Pulsar {
 namespace CustomCharacters {
@@ -7,6 +8,7 @@ namespace CustomCharacters {
 // Character Loader Patches [by Toadette Hack Fan]
 
 void CharacterLayers() {
+  // Set all default character models
   U16_MARIO_MODEL = 'mr';
   U16_BABY_PEACH_MODEL = 'bp';
   U16_WALUIGI_MODEL = 'wl';
@@ -31,9 +33,17 @@ void CharacterLayers() {
   U16_DRY_BOWSER_MODEL = 'bk';
   U16_FUNKY_KONG_MODEL = 'fk';
   
-  // Replace Rosalina with WeebOwO
-  U16_ROSALINA_MODEL = 'rs';
+  // Check "Play as WeebOwO" setting
+  const u8 playAsWeebowo = Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_RADIO_PLAY_AS_WEEBOWO);
   
+  if(playAsWeebowo == MISCSETTING_PLAY_AS_WEEBOWO_ENABLED) {
+    U16_ROSALINA_MODEL = 'wb';
+  }
+  else {
+    U16_ROSALINA_MODEL = 'rs';
+  }
+  
+  // Set all default icon prefixes
   U8_MARIO_ICON = 'c';
   U8_BABY_PEACH_ICON = 'c';
   U8_WALUIGI_ICON = 'c';
