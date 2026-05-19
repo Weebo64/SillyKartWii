@@ -254,7 +254,6 @@ enum Race2Settings {
 enum MiscSettings {
     SETTINGMISC_RADIO_NO_LIGHTNING_FLASH = 0,
     SETTINGMISC_RADIO_MII_NAMETAG = 1,
-    SETTINGMISC_RADIO_PLAY_AS_WEEBOWO = 2,
     SETTINGMISC_SCROLL_HUDCOLOR = 0 + 8
 };
 
@@ -287,11 +286,6 @@ enum MiscSettingNoLightningFlash {
 enum MiscSettingMiiNametag {
     MISCSETTING_MII_NAMETAG_REGULAR = 0x0,
     MISCSETTING_MII_NAMETAG_MII_COLOR = 0x1
-};
-
-enum MiscSettingPlayAsWeebOwO {
-    MISCSETTING_PLAY_AS_WEEBOWO_DISABLED = 0x0,
-    MISCSETTING_PLAY_AS_WEEBOWO_ENABLED = 0x1
 };
 
 enum MiscSettingHUDColor {
