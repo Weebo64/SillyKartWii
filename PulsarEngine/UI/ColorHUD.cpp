@@ -7,35 +7,42 @@ namespace UI {
 static u8 hudR = 255;
 static u8 hudG = 255;
 static u8 hudB = 255;
+static bool colorInitialized = false;
 
 static const u8 hudColors[13][3] = {
-    {255, 255, 255},
-    {60, 60, 60},
-    {208, 1, 1},
-    {255, 141, 0},
-    {233, 212, 0},
-    {7, 255, 0},
-    {8, 39, 245},
-    {144, 0, 255},
-    {255, 201, 237},
-    {255, 0, 255},
-    {36, 224, 255},
-    {0, 128, 128},
-    {212, 175, 55}
+    {255, 255, 255}, // White
+    {60, 60, 60},    // Dark Gray
+    {255, 0, 0},     // Red
+    {255, 141, 0},   // Orange
+    {233, 212, 0},   // Yellow
+    {4, 108, 5},     // Green
+    {8, 39, 245},    // Blue
+    {77, 15, 163},   // Purple
+    {255, 109, 235}, // Pink
+    {255, 0, 255},   // Magenta
+    {36, 224, 255},  // Cyan
+    {0, 128, 128},   // Teal
+    {212, 175, 55}   // Gold
 };
 
 void UpdateHUDColor() {
+    static u8 lastSetting = 255;
     u8 setting = Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_SCROLL_HUDCOLOR);
     
-    if (setting == 13) {
-        hudR = 176;
-        hudG = 11;
-        hudB = 105;
-    } else {
-        if (setting >= 13) setting = 0;
-        hudR = hudColors[setting][0];
-        hudG = hudColors[setting][1];
-        hudB = hudColors[setting][2];
+    if (!colorInitialized || setting != lastSetting) {
+        // #b00b69 hehe xDDDDDDDDDDDDDDDDDD
+        if (setting == 13) {
+            hudR = 176;
+            hudG = 11;
+            hudB = 105;
+        } else {
+            if (setting > 13) setting = 0;
+            hudR = hudColors[setting][0];
+            hudG = hudColors[setting][1];
+            hudB = hudColors[setting][2];
+        }
+        lastSetting = setting;
+        colorInitialized = true;
     }
 }
 
