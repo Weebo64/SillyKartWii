@@ -11,6 +11,18 @@ kmWrite32(0x8064b984, 0x60000000); //nop the InitControl call in the init func
 kmWrite24(0x80899a36, 'PUL'); //8064ba38
 kmWrite24(0x80899a5B, 'PUL'); //8064ba90
 
+// Remove WW Button and change Regional button text to "SKW WW" [Based on Chadderz code]
+kmWrite16(0x8064B982, 0x00000005);  // Change control count to 5 (remove WW button)
+kmWrite32(0x8064BA10, 0x60000000);  // NOP - disable WW button load
+kmWrite32(0x8064BA38, 0x60000000);  // NOP
+kmWrite32(0x8064BA50, 0x60000000);  // NOP
+kmWrite32(0x8064BA5C, 0x60000000);  // NOP
+kmWrite16(0x8064BC12, 0x00000001);  // Set initial button index to 1 (Regional)
+kmWrite16(0x8064BC3E, 0x00000484);  // Regional button offset
+kmWrite16(0x8064BC4E, 0x0000284d);  // Change Regional button BMG ID to SKW WW
+kmWrite16(0x8064BCB6, 0x00000484);  // Regional button offset
+kmWrite16(0x8064BCC2, 0x0000284d);  // Change Regional button BMG ID to SKW WW
+
 ExpWFCMain::ExpWFCMain() {
     this->onSettingsClick.subject = this;
     this->onSettingsClick.ptmf = &ExpWFCMain::OnSettingsButtonClick;
@@ -28,6 +40,11 @@ void ExpWFCMain::OnInit() {
     this->settingsButton.SetOnSelectHandler(this->onButtonSelectHandler);
 
     this->topSettingsPage = SettingsPanel::id;
+}
+
+void ExpWFCMain::OnActivate() {
+    WFCMainMenu::OnActivate();
+    // Regional button is already selected by the memory patches
 }
 
 void ExpWFCMain::OnSettingsButtonClick(PushButton& pushButton, u32 r5) {
