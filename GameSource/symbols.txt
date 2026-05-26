@@ -120,6 +120,7 @@ sInstance__13SystemManager = 0x80386000
 ##RVL##
 mInstance__Q22OS8BootInfo = 0x80000000
 REGION = 0x80000003
+U8_WWS_CHECK = 0x800003CC
 current__Q22OS6Thread = 0x800000e4
 busClock__2OS = 0x800000f8
 
@@ -1263,6 +1264,17 @@ __dt__24CtrlRaceWifiStartMessageFv = 0x807F91F0
 GetRuntimeTypeInfo__24CtrlRaceWifiStartMessageCFv = 0x807f924c
 __vt__24CtrlRaceWifiStartMessage = 0x808d4110
 
+#OnlinePauseMenu
+OnlinePausingEnd1 = 0x80623058
+OnlinePausingEnd2 = 0x80622458
+OnlinePausingEnd3 = 0x8062ECC8
+OnlinePausingEnd4 = 0x807F0778
+OnlinePausingEnd5 = 0x80858E28
+OnlinePausingEnd6 = 0x80858E30
+OnlinePausingEnd7 = 0x8085905C
+OnlinePausingEnd8 = 0x808569F0
+OnlinePausingEnd9 = 0x8085A460
+OnlinePausingEndA = 0x80554E50
 
 ##PAGES
 #Page
@@ -1891,6 +1903,12 @@ s_auth_error = 0x802f1cB8
 DestroyResponse__5NHTTPFPv = 0x801d92f8
 SendRequestAsync__5NHTTPFPv = 0x801d925c
 CreateRequest__5NHTTPFPCciPvUiPvPv = 0x801d8ff8
+NHTTPDestroyResponse = 0x801d92f8
+NHTTPSendRequestAsync = 0x801d925c
+NHTTPCreateRequest = 0x801d8ff8
+NHTTPDestroyResponse__FPv = 0x801d92f8
+NHTTPSendRequestAsync__FPv = 0x801d925c
+NHTTPCreateRequest__FPCciPvUiPvPv = 0x801d8ff8
 sprintf = 0x80011a2c
 
 HasPlayerFinished__12CtrlRaceTimeFUc = 0x807f82bc
@@ -2014,6 +2032,7 @@ SetupOnlineVSProbabilities__Q24Item12ItemSlotDataFv = 0x807bbd60
 SetupVSProbabilities__Q24Item12ItemSlotDataFv = 0x807bbef8
 PostProcessVSTable__Q24Item12ItemSlotDataFPQ34Item12ItemSlotData13Probabilities = 0x807bad20
 ptr_playerBase = 0x809C18F8
+ptr_inputBase = 0x809BD70C
 fun_playSound = 0x8071497C
 ptr_menuPageOrSomething = 0x809C2850
 
