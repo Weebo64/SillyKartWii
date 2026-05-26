@@ -1,4 +1,5 @@
 #include <kamek.hpp>
+#include <runtimeWrite.hpp>
 
 extern u8 U8_WWS_CHECK;
 
