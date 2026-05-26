@@ -3,6 +3,8 @@
 #include <Settings/UI/ExpWFCMainPage.hpp>
 #include <UI/UI.hpp>
 
+extern u8 U8_WWS_CHECK;
+
 namespace Pulsar {
 namespace UI {
 //EXPANDED WFC, keeping WW button and just hiding it in case it is ever needed...
@@ -30,6 +32,7 @@ ExpWFCMain::ExpWFCMain() {
 }
 
 void ExpWFCMain::OnInit() {
+    U8_WWS_CHECK = 0x00;
     this->InitControlGroup(6); //5 controls usually + settings button
     WFCMainMenu::OnInit();
     this->AddControl(5, settingsButton, 0);
@@ -54,6 +57,7 @@ void ExpWFCMain::OnSettingsButtonClick(PushButton& pushButton, u32 r5) {
 }
 
 void ExpWFCMain::ExtOnButtonSelect(PushButton& button, u32 hudSlotId) {
+    U8_WWS_CHECK = 0x00;
     if(button.buttonId == 5) {
         u32 bmgId = BMG_SETTINGS_BOTTOM + 1;
         if(this->topSettingsPage == PAGE_VS_TEAMS_VIEW) bmgId += 1;
@@ -92,6 +96,7 @@ void ExpWFCModeSel::InitOTTButton(ExpWFCModeSel& self) {
 kmCall(0x8064c294, ExpWFCModeSel::InitOTTButton);
 
 void ExpWFCModeSel::OnActivatePatch() {
+    U8_WWS_CHECK = 0x01;
     register ExpWFCModeSel* page;
     asm(mr page, r29;);
     register Pages::GlobeSearch* search;
