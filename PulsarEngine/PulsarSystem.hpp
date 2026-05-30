@@ -19,6 +19,14 @@ namespace KO {
 class Mgr;
 }//namespace KO
 
+namespace RealMarioKart {
+class Mgr;
+}//namespace RealMarioKart
+
+namespace FreeRoam {
+class Mgr;
+}//namespace FreeRoam
+
 class ConfigFile;
 
 
@@ -34,6 +42,9 @@ enum Context {
     PULSAR_MODE_OTT,
     PULSAR_MODE_KO,
     PULSAR_KOFINAL,
+    PULSAR_MODE_REALMARIOKART,
+    PULSAR_POINT_DISTRO,
+    PULSAR_MODE_IKW,
     PULSAR_CONTEXT_COUNT,
 };
 
@@ -49,12 +60,13 @@ private:
     void InitIO(IOType type) const;
     void InitCups(const ConfigFile& conf);
     void InitSettings(const u16* totalTrophyCount) const;
-    void UpdateContext();
 protected:
     //Virtual
     virtual void AfterInit() {};
 public:
     static System* sInstance;
+    
+    void UpdateContext();
 
     virtual void SetUserInfo(Network::ResvInfo::UserInfo& userInfo) {};
     virtual bool CheckUserInfo(const Network::ResvInfo::UserInfo& userInfo) { return true; };
@@ -109,6 +121,8 @@ public:
 
     //Modes
     KO::Mgr* koMgr;
+    RealMarioKart::Mgr* realMarioKartMgr;
+    FreeRoam::Mgr* freeRoamMgr;
     u32 ottVoteState;
     bool ottHideNames;
     u8 nonTTGhostPlayersCount; //because a ghost can be added in vs, racedata's playercount is not reliable

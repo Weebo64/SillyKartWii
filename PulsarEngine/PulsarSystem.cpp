@@ -8,6 +8,8 @@
 #include <Gamemodes/KO/KOMgr.hpp>
 #include <Gamemodes/KO/KOHost.hpp>
 #include <Gamemodes/OnlineTT/OnlineTT.hpp>
+#include <Gamemodes/RealMarioKart/RealMarioKartMgr.hpp>
+#include <Gamemodes/FreeRoam/FRMgr.hpp>
 #include <Settings/Settings.hpp>
 #include <Config.hpp>
 #include <SlotExpansion/CupsConfig.hpp>
@@ -37,8 +39,7 @@ BootHook CreateSystem(System::CreateSystem, 0);
 
 System::System() :
     heap(RKSystem::mInstance.EGGSystem), taskThread(EGG::TaskThread::Create(8, 0, 0x4000, this->heap)),
-    //Modes
-    koMgr(nullptr), ottHideNames(false) {
+    koMgr(nullptr), realMarioKartMgr(nullptr), freeRoamMgr(nullptr), ottHideNames(false) {
 }
 
 void System::Init(const ConfigFile& conf) {
@@ -123,12 +124,15 @@ void System::UpdateContext() {
     bool isKO = false;
     bool isKOFinal = settings.GetSettingValue(Settings::SETTINGSTYPE_KO, SETTINGKO_FINAL) == KOSETTING_FINAL_ALWAYS;
     bool isOTT = false;
+    bool isRealMarioKart = false;
     bool isMiiHeads = settings.GetSettingValue(Settings::SETTINGSTYPE_RACE, SETTINGRACE_RADIO_MII);
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
     Network::Mgr& netMgr = this->netMgr;
-    const u32 sceneId = GameScene::GetCurrent()->id;
+    const GameScene* currentScene = GameScene::GetCurrent();
+    if(currentScene == nullptr) return;
+    const u32 sceneId = currentScene->id;
 
     bool is200 = racedataSettings.engineClass == CC_100 && this->info.Has200cc();
     bool isLegacy200 = is200 && this->info.HasLegacy200ccMaxSpeed();
@@ -149,6 +153,7 @@ void System::UpdateContext() {
                 isHAW = newContext & (1 << PULSAR_HAW);
                 isKO = newContext & (1 << PULSAR_MODE_KO);
                 isOTT = newContext & (1 << PULSAR_MODE_OTT);
+                isRealMarioKart = newContext & (1 << PULSAR_MODE_REALMARIOKART);
                 isMiiHeads = newContext & (1 << PULSAR_MIIHEADS);
                 if(isOTT) {
                     isUMTs &= newContext & (1 << PULSAR_UMTS);
@@ -170,7 +175,7 @@ void System::UpdateContext() {
 
     u32 context = (isCT << PULSAR_CT) | (isHAW << PULSAR_HAW) | (isMiiHeads << PULSAR_MIIHEADS);
     if(isCT) { //contexts that should only exist when CTs are on
-        context |= (is200 << PULSAR_200) | (isLegacy200 << PULSAR_LEGACY_200_MAX_SPEED) | (isFeather << PULSAR_FEATHER) | (isUMTs << PULSAR_UMTS) | (isMegaTC << PULSAR_MEGATC) | (isOTT << PULSAR_MODE_OTT) | (isKO << PULSAR_MODE_KO);
+        context |= (is200 << PULSAR_200) | (isLegacy200 << PULSAR_LEGACY_200_MAX_SPEED) | (isFeather << PULSAR_FEATHER) | (isUMTs << PULSAR_UMTS) | (isMegaTC << PULSAR_MEGATC) | (isOTT << PULSAR_MODE_OTT) | (isKO << PULSAR_MODE_KO) | (isRealMarioKart << PULSAR_MODE_REALMARIOKART);
     }
     this->context = context;
 
@@ -186,12 +191,35 @@ void System::UpdateContext() {
     */
 
     if(isKO) {
-        if(sceneId == SCENE_ID_MENU && SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber == -1) this->koMgr = new (this->heap) KO::Mgr; //create komgr when loading the select phase of the 1st race of a froom
+        if(sceneId == SCENE_ID_MENU && SectionMgr::sInstance->sectionParams->onlineParams.currentRaceNumber == -1) this->koMgr = new (this->heap) KO::Mgr;
     }
     if(!isKO && this->koMgr != nullptr || isKO && sceneId == SCENE_ID_GLOBE) {
         delete this->koMgr;
         this->koMgr = nullptr;
     }
+    
+    bool isFreeRoam = (mode == MODE_BATTLE || mode == MODE_PUBLIC_BATTLE || mode == MODE_PRIVATE_BATTLE);
+    if(isFreeRoam) {
+        if(sceneId == SCENE_ID_MENU && this->freeRoamMgr == nullptr) {
+            FreeRoam::Mgr::Create();
+        }
+    }
+    if(!isFreeRoam && this->freeRoamMgr != nullptr || isFreeRoam && sceneId == SCENE_ID_GLOBE) {
+        delete this->freeRoamMgr;
+        this->freeRoamMgr = nullptr;
+    }
+    
+    if(isRealMarioKart) {
+        if(sceneId == SCENE_ID_MENU && this->realMarioKartMgr == nullptr) {
+            RealMarioKart::Mgr::Create();
+        }
+    }
+    if(!isRealMarioKart && this->realMarioKartMgr != nullptr || isRealMarioKart && sceneId == SCENE_ID_GLOBE) {
+        delete this->realMarioKartMgr;
+        this->realMarioKartMgr = nullptr;
+    }
+    
+    context |= (isFreeRoam << PULSAR_MODE_IKW);
 }
 
 s32 System::OnSceneEnter(Random& random) {
