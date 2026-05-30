@@ -147,16 +147,6 @@ void FreeRoam() {
         u8 startItem = settingsMgr.GetSettingValue(Settings::SETTINGSTYPE_FREEROAM, SETTINGFREEROAM_RADIO_START_ITEM);
         u8 autoDrive = settingsMgr.GetSettingValue(Settings::SETTINGSTYPE_FREEROAM, SETTINGFREEROAM_RADIO_AUTO_DRIVE);
         u8 respawnButton = settingsMgr.GetSettingValue(Settings::SETTINGSTYPE_FREEROAM, SETTINGFREEROAM_RADIO_RESPAWN_BUTTON);
-        u8 lapCountSetting = settingsMgr.GetSettingValue(Settings::SETTINGSTYPE_FREEROAM, SETTINGFREEROAM_SCROLL_LAP_COUNT);
-        
-        u8 lapCount = 3;
-        switch(lapCountSetting) {
-            case FREEROAMSETTING_LAP_COUNT_1: lapCount = 1; break;
-            case FREEROAMSETTING_LAP_COUNT_3: lapCount = 3; break;
-            case FREEROAMSETTING_LAP_COUNT_5: lapCount = 5; break;
-            case FREEROAMSETTING_LAP_COUNT_9: lapCount = 9; break;
-            case FREEROAMSETTING_LAP_COUNT_255: lapCount = 255; break;
-        }
         
         kmRuntimeWrite32A(0x805349d4, 0x38A00002);
         kmRuntimeWrite32A(0x8053353c, 0x380000F0);
@@ -172,16 +162,8 @@ void FreeRoam() {
         kmRuntimeWrite16A(0x80571dc4, 0x4800);
         kmRuntimeWrite16A(0x805867cc, 0x4800);
         
-        if(lapCount == 255) {
-            kmRuntimeWrite32A(0x80716638, 0x280401CF);
-            kmRuntimeWrite32A(0x808577e0, 0x388001CF);
-        }
-        else {
-            u32 lapInstruction = 0x28040000 | ((lapCount - 1) & 0xFFFF);
-            kmRuntimeWrite32A(0x80716638, lapInstruction);
-            u32 lapInstruction2 = 0x38800000 | ((lapCount - 1) & 0xFFFF);
-            kmRuntimeWrite32A(0x808577e0, lapInstruction2);
-        }
+        kmRuntimeWrite32A(0x80716638, 0x280401CF);
+        kmRuntimeWrite32A(0x808577e0, 0x388001CF);
         
         if(fallBoundaries == FREEROAMSETTING_FALL_BOUNDARIES_DISABLED) {
             kmRuntimeWrite16A(0x80571714, 0x4800);
