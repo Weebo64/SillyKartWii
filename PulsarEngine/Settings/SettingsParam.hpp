@@ -10,7 +10,7 @@ namespace Settings {
 
 class Params {
 public:
-    static const int pulsarPageCount = 7;
+    static const int pulsarPageCount = 8;
     static const int userPageCount = 0;
     static const int pageCount = pulsarPageCount + userPageCount;
 
@@ -32,6 +32,7 @@ enum Type {
     SETTINGSTYPE_KO,
     SETTINGSTYPE_RACE2,
     SETTINGSTYPE_MISC,
+    SETTINGSTYPE_FREEROAM,
 };
 
 enum UserType {
@@ -303,6 +304,43 @@ enum MiscSettingHUDColor {
     HUDCOLOR_TEAL = 0xB,
     HUDCOLOR_GOLD = 0xC,
     HUDCOLOR_FUNNY = 0xD
+};
+
+enum FreeRoamSettings {
+    SETTINGFREEROAM_RADIO_FALL_BOUNDARIES = 0,
+    SETTINGFREEROAM_RADIO_START_ITEM = 1,
+    SETTINGFREEROAM_RADIO_AUTO_DRIVE = 2,
+    SETTINGFREEROAM_RADIO_RESPAWN_BUTTON = 3,
+    SETTINGFREEROAM_SCROLL_LAP_COUNT = 0 + 8
+};
+
+enum FreeRoamSettingFallBoundaries {
+    FREEROAMSETTING_FALL_BOUNDARIES_ENABLED = 0x0,
+    FREEROAMSETTING_FALL_BOUNDARIES_DISABLED = 0x1
+};
+
+enum FreeRoamSettingStartItem {
+    FREEROAMSETTING_START_ITEM_NONE = 0x0,
+    FREEROAMSETTING_START_ITEM_MUSHROOM = 0x1,
+    FREEROAMSETTING_START_ITEM_FEATHER = 0x2
+};
+
+enum FreeRoamSettingAutoDrive {
+    FREEROAMSETTING_AUTO_DRIVE_DISABLED = 0x0,
+    FREEROAMSETTING_AUTO_DRIVE_ENABLED = 0x1
+};
+
+enum FreeRoamSettingRespawnButton {
+    FREEROAMSETTING_RESPAWN_BUTTON_DISABLED = 0x0,
+    FREEROAMSETTING_RESPAWN_BUTTON_ENABLED = 0x1
+};
+
+enum FreeRoamSettingLapCount {
+    FREEROAMSETTING_LAP_COUNT_1 = 0x0,
+    FREEROAMSETTING_LAP_COUNT_3 = 0x1,
+    FREEROAMSETTING_LAP_COUNT_5 = 0x2,
+    FREEROAMSETTING_LAP_COUNT_9 = 0x3,
+    FREEROAMSETTING_LAP_COUNT_255 = 0x4
 };
 
 }//namespace Pulsar
