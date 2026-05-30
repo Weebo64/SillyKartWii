@@ -247,6 +247,13 @@ public:
     static void Exec() { DoFuncsHook::Exec(pageLoadHooks); }
 };
 
+class PageLoadHook2 : public DoFuncsHook {
+    static DoFuncsHook* pageLoadHooks2;
+public:
+    PageLoadHook2(Func& f) : DoFuncsHook(f, &pageLoadHooks2) {}
+    static void Exec() { DoFuncsHook::Exec(pageLoadHooks2); }
+};
+
 class SectionLoadHook {
 private:
     typedef void(Func)();
