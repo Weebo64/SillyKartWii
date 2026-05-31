@@ -1,23 +1,4 @@
-/*
- * Discord Rich Presence Integration for Mario Kart Wii Mods
- * 
- * This file provides Discord Rich Presence support for Pulsar-based
- * Mario Kart Wii mods using Dolphin Emulator's IOS device interface.
- * 
- * Usage:
- * 1. Replace "YOUR_CLIENT_ID_HERE" with your Discord Application ID
- * 2. Replace "YOUR_MOD_NAME" with your mod's name
- * 3. Replace "icon_big" with your Discord asset key
- * 4. Add to your project and compile
- * 
- * Requirements:
- * - Dolphin/DolphinIOS.hpp and .cpp files
- * - Pulsar framework
- * - Discord Application with uploaded assets
- * 
- * License: Public Domain / MIT (choose your preference)
- */
-
+#include <SillyKartWii.hpp>
 #include <Discord/Discord.hpp>
 #include <Dolphin/DolphinIOS.hpp>
 #include <MarioKartWii/Race/RaceInfo/RaceInfo.hpp>
@@ -27,6 +8,7 @@
 #include <MarioKartWii/UI/Section/SectionMgr.hpp>
 #include <UI/UI.hpp>
 #include <SlotExpansion/UI/ExpansionUIMisc.hpp>
+#include <Gamemodes/FreeRoam/FRMgr.hpp>
 
 namespace Discord {
 
@@ -60,13 +42,13 @@ void DiscordRichPresence(Section* _this) {
     }
 
     if (!hasWrittenClientID) {
-        Dolphin::SetDiscordClient("YOUR_CLIENT_ID_HERE");
+        Dolphin::SetDiscordClient("1493251523579347076");
         hasWrittenClientID = true;
     }
 
     char* state = "";
     char* details = "In a Menu";
-    char* largeImageText = "YOUR_MOD_NAME";
+    char* largeImageText = "Silly Kart Wii";
     int minPlayers = 0;
     int maxPlayers = 0;
 
@@ -81,7 +63,7 @@ void DiscordRichPresence(Section* _this) {
 
     u32 bmgId = Pulsar::UI::GetCurTrackBMG();
     const wchar_t* msg = Pulsar::UI::GetCustomMsg(bmgId);
-    if (msg && Raceinfo::sInstance && Raceinfo::sInstance->IsAtLeastStage(RACESTAGE_INTRO)) {
+    if (msg) {
         CleanBMGMessage(trackNameW, msg);
         wcstombs(trackName, trackNameW, 0x100);
         state = trackName;
@@ -99,7 +81,11 @@ void DiscordRichPresence(Section* _this) {
             details = "Grand Prix";
             break;
         case SECTION_TT:
-            details = "Time Trials";
+            if (Pulsar::FreeRoam::U16_FREE_ROAM == 0x0001) {
+                details = "Free Roam";
+            } else {
+                details = "Time Trials";
+            }
             break;
         case SECTION_P1VS:
         case SECTION_P2VS:
@@ -206,7 +192,7 @@ void DiscordRichPresence(Section* _this) {
     Dolphin::SetDiscordPresence(
         details,
         state,
-        "icon_big",
+        "skw_icon",
         largeImageText,
         "",
         "",
