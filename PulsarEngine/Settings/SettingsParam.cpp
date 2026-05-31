@@ -21,7 +21,7 @@ u8 Params::buttonsPerPagePerRow[Params::pageCount][Params::maxRadioCount] =
     { 2, 2, 0, 0, 0, 0, 0, 0 },
     { 2, 2, 2, 2, 0, 0, 0, 0 },
     { 2, 2, 0, 0, 0, 0, 0, 0 },
-    { 2, 3, 2, 2, 0, 0, 0, 0 },
+    { 2, 2, 2, 2, 0, 0, 0, 0 },
 };
 
 u8 Params::optionsPerPagePerScroller[Params::pageCount][Params::maxScrollerCount] =
