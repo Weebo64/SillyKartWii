@@ -29,6 +29,13 @@ u16 U16_SILLY_EFFECTS = 0;
 u16 U16_SILLY_SOUNDS = 0;
 u8 U8_SILLY_PHYSICS = 0;
 
+// Transmission & Brake Drifting variables
+u8 U8_BRAKEDRIFTING = 0;
+u16 U16_GAMEPLAY2 = 0;
+u32 TTS_CHECK = 0;
+u16 U16_MISSION_MODE_FIX = 0;
+u8 U8_WWS_CHECK = 0;
+
 namespace SillyKartWii {
 
 Pulsar::System* System::Create() {

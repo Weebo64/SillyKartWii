@@ -30,6 +30,13 @@ extern u8 RaceRename;
 extern u8 CommonRename;
 extern u8 AwardRename;
 
+// Transmission & Brake Drifting
+extern u8 U8_BRAKEDRIFTING;
+extern u16 U16_GAMEPLAY2;
+extern u32 TTS_CHECK;
+extern u16 U16_MISSION_MODE_FIX;
+extern u8 U8_WWS_CHECK;
+
 namespace SillyKartWii {
 
 extern bool isPAL;

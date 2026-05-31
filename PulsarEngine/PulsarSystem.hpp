@@ -48,6 +48,17 @@ enum Context {
     PULSAR_CONTEXT_COUNT,
 };
 
+enum Transmission{
+    TRANSMISSION_DEFAULT,
+    TRANSMISSION_OUTSIDE,
+    TRANSMISSION_INSIDE
+};
+
+enum ExtraPageId{
+    PAGE_TRANSMISSION_SELECT = PAGE_BATTLE_TOTAL_LEADERBOARDS,
+    PAGE_MULTI_TRANSMISSION_SELECT = PAGE_COMPETITION_LEADERBOARD
+};
+
 
 
 class System {
@@ -115,6 +126,12 @@ public:
     Network::Mgr netMgr;
 
     TTMode ttMode;
+
+    //Transmission system
+    u8 GetTransmission;
+    u8 transmissions[12];
+    u8 lastSelectedTransmission;
+    u32 lastSelectedTransmissionId;
 
     //LECODE data
     LECODE::Mgr lecodeMgr;
