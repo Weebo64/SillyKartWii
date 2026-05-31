@@ -1,6 +1,7 @@
 #include <kamek.hpp>
 #include <Settings/SettingsParam.hpp>
 #include <PulsarSystem.hpp>
+#include <SillyKartWii.hpp>
 #include <MarioKartWii/UI/Section/SectionMgr.hpp>
 #include <MarioKartWii/RKNet/RKNetController.hpp>
 #include <Gamemodes/FreeRoam/FRMgr.hpp>
@@ -34,6 +35,14 @@ void GameModeToggle() {
     System::sInstance->UpdateContext();
 }
 static PageLoadHook2 GAMEMODE(GameModeToggle);
+
+void BrakeDriftingToggle() {
+    U8_BRAKEDRIFTING = 0x00;
+    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_RADIO_BRAKE_DRIFTING) == RACE2SETTING_BRAKE_DRIFTING_ENABLED) {
+        U8_BRAKEDRIFTING = 0x01;
+    }
+}
+static PageLoadHook Codes3(BrakeDriftingToggle);
 
 }
 }
