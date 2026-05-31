@@ -2095,3 +2095,20 @@ U8_BOWSER_JR_ICON= 0x808AF570
 U8_DRY_BOWSER_ICON= 0x808AF580
 U8_FUNKY_KONG_ICON= 0x808AF590
 U8_ROSALINA_ICON= 0x808AF5A0
+
+#Transmission Symbols
+GetLocalPlayerCount__Fv = 0x808605fc
+LoadNextPageWithDelayById__Q25Pages4MenuF6PageIdf = 0x8083761c
+__ct__Q25Pages16MultiDriftSelectFv = 0x8062b8bc
+AreAllPlayersActive__Q25Pages4MenuFv = 0x808388f0
+SetAnimationType__19VehicleModelControlF6PageId = 0x805f3b98
+__dt__Q25Pages16MultiDriftSelectFv = 0x8084b984
+CreateControl__Q25Pages16MultiDriftSelectFUi = 0x8084b150
+CreateExternalControl__Q25Pages16MultiDriftSelectFUi = 0x8084aff4
+OnControlsInitialized__Q25Pages16MultiDriftSelectFv = 0x8084aff0
+OnExternalButtonSelect__Q25Pages16MultiDriftSelectFR10PushButtonUi = 0x8084b7ec
+GetRuntimeTypeInfo__Q25Pages16MultiDriftSelectCFv = 0x8084ba04
+OnResume__Q25Pages16MultiDriftSelectFv = 0x8084b8c4
+AfterControlUpdate__Q25Pages16MultiDriftSelectFv = 0x8084b388
+OnInit__Q25Pages16MultiDriftSelectFv = 0x8084aac4
+LoadMessageBoxTransparentPage__Q25Pages4MenuFUiPCQ24Text4Info = 0x808386a0
