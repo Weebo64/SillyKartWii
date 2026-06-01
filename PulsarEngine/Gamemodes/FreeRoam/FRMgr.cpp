@@ -196,7 +196,7 @@ static PageLoadHook FREEROAM(FreeRoam);
 void FreeRoamRespawn() {
     kmRuntimeWrite32A(0x805954fc, 0x80B40004);
     if(U16_FREE_ROAM == 0x1) {
-        if(GCInput == 0x0880 || ClassicInput == 0x1000 || WiiInput == 0x1000) kmRuntimeWrite32A(0x805954fc, 0x38A00010);
+        if(GCInput == 0x0800 || ClassicInput == 0x1000 || WiiInput == 0x1000) kmRuntimeWrite32A(0x805954fc, 0x38A00010);
     }
 }
 static PageLoadHook2 FREEROAMRESPAWN(FreeRoamRespawn);
