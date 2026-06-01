@@ -3,7 +3,7 @@
  * 
  * This file is released as open source under the MIT License.
  * 
- * Copyright (c) 2024 Silly Kart Wii Team
+ * Copyright (c) 2026 Weebo64
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
