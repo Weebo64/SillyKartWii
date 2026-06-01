@@ -10,7 +10,7 @@ namespace Pulsar {
 namespace UI {
 
 void GameModeToggle() {
-    if(Racedata::sInstance->menusScenario.settings.gamemode != MODE_TIME_TRIAL) FreeRoam::U16_FREE_ROAM = 0x0000;
+    if(Racedata::sInstance->menusScenario.settings.gamemode != MODE_TIME_TRIAL) U16_FREE_ROAM = 0x0000;
 
     SectionId id = SectionMgr::sInstance->nextSectionId;
     if(id == SECTION_SINGLE_P_BT_NEXT_BATTLE) {
