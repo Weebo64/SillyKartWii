@@ -3,6 +3,8 @@
  * 
  * This file is released as open source under the MIT License.
  * 
+ * Copyright (c) 2024 Silly Kart Wii Team
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -105,7 +107,7 @@ void DiscordRichPresence(Section* _this) {
             details = "Grand Prix";
             break;
         case SECTION_TT:
-            if (Pulsar::FreeRoam::U16_FREE_ROAM == 0x0001) {
+            if (U16_FREE_ROAM == 0x0001) {
                 details = "Free Roam";
             } else {
                 details = "Time Trials";
