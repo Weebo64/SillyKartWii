@@ -8,11 +8,6 @@
 namespace Pulsar {
 namespace FreeRoam {
 
-extern u16 U16_FREE_ROAM;
-extern u16 WiiInput;
-extern u16 GCInput;
-extern u16 ClassicInput;
-
 class Mgr {
 public:
     static void Create();

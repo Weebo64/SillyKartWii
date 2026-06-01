@@ -20,10 +20,6 @@ namespace Pulsar {
 namespace FreeRoam {
 
 Mgr* Mgr::sInstance = nullptr;
-u16 U16_FREE_ROAM = 0x0;
-u16 WiiInput = 0x0;
-u16 GCInput = 0x0;
-u16 ClassicInput = 0x0;
 
 Mgr::Mgr() {
 }
@@ -69,6 +65,17 @@ asmFunc Mushrooms() {
   li        r12, 0x1;
   stw       r12, 0x90(r4);
   li        r12, 0x4;
+  stw       r12, 0x8C(r4);
+  lwz       r0, 0x8C(r4);
+  blr;
+    )
+}
+
+asmFunc Feather() {
+    ASM(
+  li        r12, 0x1;
+  stw       r12, 0x90(r4);
+  li        r12, 0xC;
   stw       r12, 0x8C(r4);
   lwz       r0, 0x8C(r4);
   blr;
@@ -175,6 +182,7 @@ void FreeRoam() {
             kmRuntimeCallA(0x807eee98, Mushrooms);
         }
         else if(startItem == FREEROAMSETTING_START_ITEM_FEATHER) {
+            kmRuntimeCallA(0x807eee98, Feather);
         }
         
         if(autoDrive == FREEROAMSETTING_AUTO_DRIVE_ENABLED) {
@@ -188,17 +196,10 @@ static PageLoadHook FREEROAM(FreeRoam);
 void FreeRoamRespawn() {
     kmRuntimeWrite32A(0x805954fc, 0x80B40004);
     if(U16_FREE_ROAM == 0x1) {
-        const Settings::Mgr& settingsMgr = Settings::Mgr::Get();
-        u8 respawnButton = settingsMgr.GetSettingValue(Settings::SETTINGSTYPE_FREEROAM, SETTINGFREEROAM_RADIO_RESPAWN_BUTTON);
-        
-        if(respawnButton == FREEROAMSETTING_RESPAWN_BUTTON_ENABLED) {
-            if(GCInput == 0x0880 || ClassicInput == 0x1000 || WiiInput == 0x1000) {
-                kmRuntimeWrite32A(0x805954fc, 0x38A00010);
-            }
-        }
+        if(GCInput == 0x0880 || ClassicInput == 0x1000 || WiiInput == 0x1000) kmRuntimeWrite32A(0x805954fc, 0x38A00010);
     }
 }
-static PageLoadHook2 FreeRoamRespawnHook(FreeRoamRespawn);
+static PageLoadHook2 FREEROAMRESPAWN(FreeRoamRespawn);
 
 }
 }
