@@ -30,6 +30,11 @@ extern u8 RaceRename;
 extern u8 CommonRename;
 extern u8 AwardRename;
 
+extern u16 WiiInput;
+extern u16 GCInput;
+extern u16 ClassicInput;
+extern u16 U16_FREE_ROAM;
+
 // Transmission & Brake Drifting
 extern u8 U8_BRAKEDRIFTING;
 extern u16 U16_GAMEPLAY2;

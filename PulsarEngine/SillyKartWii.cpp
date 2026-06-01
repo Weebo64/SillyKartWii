@@ -36,6 +36,11 @@ u32 TTS_CHECK = 0;
 u16 U16_MISSION_MODE_FIX = 0;
 u8 U8_WWS_CHECK = 0;
 
+u16 WiiInput = 0;
+u16 GCInput = 0;
+u16 ClassicInput = 0;
+u16 U16_FREE_ROAM = 0;
+
 namespace SillyKartWii {
 
 Pulsar::System* System::Create() {
