@@ -44,6 +44,7 @@ System::System() :
 
 void System::Init(const ConfigFile& conf) {
     IOType type = IOType_ISO;
+    bool isDolphin = Dolphin::IsEmulator();
     s32 ret = IO::OpenFix("file", IOS::MODE_NONE);
 
     if(ret >= 0) {
@@ -58,6 +59,8 @@ void System::Init(const ConfigFile& conf) {
         }
     }
     strncpy(this->modFolderName, conf.header.modFolderName, IOS::ipcMaxFileName);
+    static char* pulMagic = reinterpret_cast<char*>(0x800017CC);
+    strcpy(pulMagic, "PUL2")
 
     //InitInstances
     CupsConfig::sInstance = new CupsConfig(conf.GetSection<CupsHolder>());

@@ -41,6 +41,7 @@ extern u16 U16_GAMEPLAY2;
 extern u32 TTS_CHECK;
 extern u16 U16_MISSION_MODE_FIX;
 extern u8 U8_WWS_CHECK;
+extern float F32_MENUSPEED;
 
 namespace SillyKartWii {
 
