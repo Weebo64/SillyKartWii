@@ -11,18 +11,18 @@ static bool colorInitialized = false;
 
 static const u8 hudColors[13][3] = {
     {255, 255, 255}, // White
-    {60, 60, 60},    // Dark Gray
-    {255, 0, 0},     // Red
-    {255, 141, 0},   // Orange
-    {233, 212, 0},   // Yellow
-    {4, 108, 5},     // Green
-    {8, 39, 245},    // Blue
-    {77, 15, 163},   // Purple
-    {255, 109, 235}, // Pink
-    {255, 0, 255},   // Magenta
-    {36, 224, 255},  // Cyan
-    {0, 128, 128},   // Teal
-    {212, 175, 55}   // Gold
+    {60, 60, 60},    // Dark Gray/Black
+    {198, 0, 0},     // Red
+    {240, 136, 10},   // Orange
+    {245, 200, 20},   // Yellow
+    {2, 95, 2},     // Green
+    {8, 39, 205},    // Blue
+    {70, 15, 150},   // Purple
+    {235, 105, 210}, // Pink
+    {230, 0, 230},   // Magenta
+    {36, 167, 240},  // Cyan
+    {0, 160, 145},   // Teal
+    {207, 160, 45}   // Gold
 };
 
 void UpdateHUDColor() {
