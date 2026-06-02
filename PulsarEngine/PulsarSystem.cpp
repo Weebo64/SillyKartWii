@@ -14,6 +14,7 @@
 #include <Config.hpp>
 #include <SlotExpansion/CupsConfig.hpp>
 #include <core/egg/DVD/DvdRipper.hpp>
+#include <Dolphin/DolphinIOS.hpp>
 namespace Pulsar {
 
 System* System::sInstance = nullptr;
@@ -60,7 +61,7 @@ void System::Init(const ConfigFile& conf) {
     }
     strncpy(this->modFolderName, conf.header.modFolderName, IOS::ipcMaxFileName);
     static char* pulMagic = reinterpret_cast<char*>(0x800017CC);
-    strcpy(pulMagic, "PUL2")
+    strcpy(pulMagic, "PUL2");
 
     //InitInstances
     CupsConfig::sInstance = new CupsConfig(conf.GetSection<CupsHolder>());
