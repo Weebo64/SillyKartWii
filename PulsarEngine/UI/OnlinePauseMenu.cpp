@@ -1,7 +1,6 @@
 #include <kamek.hpp>
 #include <runtimeWrite.hpp>
-
-extern u8 U8_WWS_CHECK;
+#include <SillyKartWii.hpp>
 
 namespace Pulsar {
 namespace UI {
