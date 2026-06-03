@@ -61,8 +61,154 @@ int GetCurTrackBMG() {
     return GetTrackBMGId(CupsConfig::sInstance->GetWinning(), false);
 }
 
+// Helper functions for track name and author formatting
+static const wchar_t FONT_SIZE_ESCAPE_SMALL[] = {0x001A, 0x0800, 0x0000, 0x0050, 0x0000};
+
+static void RemoveAllEscapeSequences(wchar_t* dest, const wchar_t* src) {
+    while (*src != L'\0') {
+        if (src[0] == 0x001A) {
+            const u8* escapeBytes = reinterpret_cast<const u8*>(src);
+            u8 escapeLength = escapeBytes[2];
+            src = reinterpret_cast<const wchar_t*>(escapeBytes + escapeLength);
+        } else {
+            *dest++ = *src++;
+        }
+    }
+    *dest = L'\0';
+}
+
+static const wchar_t* FindFirstColorEscape(const wchar_t* src) {
+    const u8* srcBytes = reinterpret_cast<const u8*>(src);
+    while (*reinterpret_cast<const wchar_t*>(srcBytes) != L'\0') {
+        const wchar_t cur = *reinterpret_cast<const wchar_t*>(srcBytes);
+        if (cur == 0x001A) {
+            const u8 escapeLen = srcBytes[2];
+            if ((escapeLen == 0) || (escapeLen & 1)) break;
+
+            const wchar_t* escapeWchars = reinterpret_cast<const wchar_t*>(srcBytes);
+            const u8 escapeType = srcBytes[3];
+            if (escapeLen >= 8 && escapeType == 0 && escapeWchars[2] == 0x0001) return escapeWchars;
+
+            srcBytes += escapeLen;
+        } else {
+            srcBytes += sizeof(wchar_t);
+        }
+    }
+    return nullptr;
+}
+
+static u32 AppendTrackTextPreservingColor(wchar_t* dest, const wchar_t* src, u32 outLen, u32 maxLen) {
+    if (src == nullptr || maxLen == 0 || outLen >= maxLen - 1) return outLen;
+
+    u8* destBytes = reinterpret_cast<u8*>(dest);
+    const u8* srcBytes = reinterpret_cast<const u8*>(src);
+    u32 outBytes = outLen * sizeof(wchar_t);
+    const u32 maxDataBytes = (maxLen - 1) * sizeof(wchar_t);
+
+    while (outBytes < maxDataBytes) {
+        const wchar_t cur = *reinterpret_cast<const wchar_t*>(srcBytes);
+        if (cur == L'\0') break;
+
+        if (cur == 0x001A) {
+            const u8 escapeLen = srcBytes[2];
+            if ((escapeLen == 0) || (escapeLen & 1)) break;
+
+            bool keepEscape = false;
+            if (escapeLen >= 8) {
+                const wchar_t* escapeWchars = reinterpret_cast<const wchar_t*>(srcBytes);
+                const u8 escapeType = srcBytes[3];
+                keepEscape = (escapeType == 0) && (escapeWchars[2] == 0x0001);
+            }
+
+            if (keepEscape) {
+                if (outBytes + escapeLen > maxDataBytes) break;
+                for (u32 i = 0; i < static_cast<u32>(escapeLen); ++i) {
+                    destBytes[outBytes + i] = srcBytes[i];
+                }
+                outBytes += escapeLen;
+            }
+            srcBytes += escapeLen;
+            continue;
+        }
+
+        if (outBytes + sizeof(wchar_t) > maxDataBytes) break;
+        *reinterpret_cast<wchar_t*>(destBytes + outBytes) = cur;
+        outBytes += sizeof(wchar_t);
+        srcBytes += sizeof(wchar_t);
+    }
+
+    dest[outBytes / sizeof(wchar_t)] = L'\0';
+    return outBytes / sizeof(wchar_t);
+}
+
+static void BuildTrackNameAndAuthor(wchar_t* dest, const wchar_t* trackName, const wchar_t* authorName, u32 maxLen) {
+    if (maxLen == 0) return;
+
+    wchar_t cleanAuthor[0x100];
+    RemoveAllEscapeSequences(cleanAuthor, authorName);
+
+    u32 out = AppendTrackTextPreservingColor(dest, trackName, 0, maxLen);
+
+    if (out < maxLen - 1) {
+        dest[out++] = L'\n';
+    }
+
+    const u32 prefixLen = 4;
+    for (u32 i = 0; i < prefixLen && out < maxLen - 1; ++i) {
+        dest[out++] = FONT_SIZE_ESCAPE_SMALL[i];
+    }
+
+    const wchar_t* curAuthor = cleanAuthor;
+    while (*curAuthor != L'\0' && out < maxLen - 1) {
+        dest[out++] = *curAuthor++;
+    }
+
+    dest[out] = L'\0';
+}
+
+u32 GetTrackAuthorBMGId(PulsarId trackId, u32 trackBmgId) {
+    if (CupsConfig::IsReg(trackId) || trackBmgId < BMG_TRACKS) return BMG_NINTENDO;
+    
+    const CupsConfig* cupsConfig = CupsConfig::sInstance;
+    const bool hasVariants = cupsConfig->GetTrack(trackId).variantCount > 0;
+    const u8 curVariant = cupsConfig->GetCurVariantIdx();
+    const u32 realId = CupsConfig::ConvertTrack_PulsarIdToRealId(trackId);
+
+    // For variants, use the base track's author
+    if (hasVariants && curVariant > 0) {
+        return BMG_AUTHORS + realId;
+    }
+    
+    return BMG_AUTHORS + realId;
+}
+
+bool SetTrackNameAuthorMessage(LayoutUIControl& control, PulsarId trackId, u32 trackBmgId) {
+    if (CupsConfig::IsReg(trackId)) return false;
+
+    const CupsConfig* cupsConfig = CupsConfig::sInstance;
+    const u32 trackNameBmgId = GetTrackBMGId(trackId, true);
+    const u32 authorId = GetTrackAuthorBMGId(trackId, trackBmgId);
+    const wchar_t* trackText = GetCustomMsg(trackNameBmgId);
+    const wchar_t* authorText = GetCustomMsg(authorId);
+
+    if (trackText == nullptr || authorText == nullptr) return false;
+
+    static wchar_t s_trackAuthorBuffer[0x200];
+    BuildTrackNameAndAuthor(s_trackAuthorBuffer, trackText, authorText, 0x200);
+    Text::Info customInfo;
+    customInfo.strings[0] = s_trackAuthorBuffer;
+    control.SetMessage(BMG_TEXT, &customInfo);
+    return true;
+}
+
 static void SetVSIntroBmgId(LayoutUIControl* trackName) {
     u32 bmgId = GetCurTrackBMG();
+    const PulsarId winning = CupsConfig::sInstance->GetWinning();
+    
+    if (!CupsConfig::IsReg(winning)) {
+        if (SetTrackNameAuthorMessage(*trackName, winning, bmgId)) return;
+    }
+    
     Text::Info info;
     info.bmgToPass[0] = bmgId;
     u32 authorId;

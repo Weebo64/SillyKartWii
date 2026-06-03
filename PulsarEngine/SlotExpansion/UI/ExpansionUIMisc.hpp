@@ -8,6 +8,8 @@
 namespace Pulsar {
 namespace UI {
 int GetTrackBMGId(PulsarId pulsarId, bool useCommonName);
+u32 GetTrackAuthorBMGId(PulsarId pulsarId, u32 trackBmgId);
+bool SetTrackNameAuthorMessage(LayoutUIControl& control, PulsarId pulsarId, u32 trackBmgId);
 
 inline void GetTrackBMG(char* dest, PulsarId id) {
     const wchar_t* name = UI::GetCustomMsg(GetTrackBMGId(id, false));
