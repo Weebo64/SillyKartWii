@@ -2,6 +2,7 @@
 #include <UI/CtrlRaceBase/InfoDisplay.hpp>
 #include <SlotExpansion/UI/ExpansionUIMisc.hpp>
 #include <SlotExpansion/CupsConfig.hpp>
+#include <Settings/Settings.hpp>
 
 
 namespace Pulsar {
@@ -33,7 +34,15 @@ void CtrlRaceTrackInfoDisplay::Load() {
     ControlLoader loader(this);
     loader.Load("game_image", "CTInfo", "CTInfo", nullptr);
     this->textBox_00 = this->layout.GetPaneByName("TextBox_00");
+    
+    const CupsConfig* cupsConfig = CupsConfig::sInstance;
+    const PulsarId winning = cupsConfig->GetWinning();
     const u32 bmgId = GetCurTrackBMG();
+
+    // Try to use combined track name + author message
+    if (SetTrackNameAuthorMessage(*this, winning, bmgId)) return;
+
+    // Fallback to separate BMG IDs
     Text::Info info;
     info.bmgToPass[0] = bmgId;
     u32 authorId = BMG_NINTENDO;
