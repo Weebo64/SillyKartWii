@@ -2,6 +2,7 @@
 #include <UI/InputViewer.hpp>
 #include <Settings/Settings.hpp>
 #include <MarioKartWii/Race/RaceInfo/RaceInfo.hpp>
+#include <SillyKartWii.hpp>
 
 // Credits: Hinz, Bodacious
 // Ported from MKW-SP by Pablo Stebler
@@ -113,7 +114,7 @@ void CtrlRaceInputViewer::OnUpdate() {
 }
 
 u32 CtrlRaceInputViewer::Count() {
-    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_INPUTVIEWER) == 1) {
+    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE4,SETTINGS_INPUT_VIEWER) == 1) {
         const RacedataScenario& scenario = Racedata::sInstance->racesScenario;
         u32 localPlayerCount = scenario.localPlayerCount;
         const SectionId sectionId = SectionMgr::sInstance->curSection->sectionId;
@@ -148,7 +149,7 @@ void CtrlRaceInputViewer::Load(const char* variant, u8 id) {
     if (controllerHolder != nullptr && controllerHolder->curController != nullptr) {
         const ControllerType type = controllerHolder->curController->GetType();
         if (type == NUNCHUCK || type == WHEEL) {
-            loader.Load(UI::raceFolder, "PULInputViewerChuk", variant, groups);
+            loader.Load(UI::raceFolder, "PULInputViewerNunchuck", variant, groups);
         } 
         else {
             loader.Load(UI::raceFolder, "PULInputViewer", variant, groups);
