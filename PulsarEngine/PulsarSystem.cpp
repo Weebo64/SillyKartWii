@@ -8,7 +8,6 @@
 #include <Gamemodes/KO/KOMgr.hpp>
 #include <Gamemodes/KO/KOHost.hpp>
 #include <Gamemodes/OnlineTT/OnlineTT.hpp>
-#include <Gamemodes/RealMarioKart/RealMarioKartMgr.hpp>
 #include <Gamemodes/FreeRoam/FRMgr.hpp>
 #include <Settings/Settings.hpp>
 #include <Config.hpp>
@@ -40,7 +39,7 @@ BootHook CreateSystem(System::CreateSystem, 0);
 
 System::System() :
     heap(RKSystem::mInstance.EGGSystem), taskThread(EGG::TaskThread::Create(8, 0, 0x4000, this->heap)),
-    koMgr(nullptr), realMarioKartMgr(nullptr), freeRoamMgr(nullptr), ottHideNames(false) {
+    koMgr(nullptr), freeRoamMgr(nullptr), ottHideNames(false) {
 }
 
 void System::Init(const ConfigFile& conf) {
@@ -128,7 +127,6 @@ void System::UpdateContext() {
     bool isKO = false;
     bool isKOFinal = settings.GetSettingValue(Settings::SETTINGSTYPE_KO, SETTINGKO_FINAL) == KOSETTING_FINAL_ALWAYS;
     bool isOTT = false;
-    bool isRealMarioKart = false;
     bool isMiiHeads = settings.GetSettingValue(Settings::SETTINGSTYPE_RACE, SETTINGRACE_RADIO_MII);
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
@@ -157,7 +155,6 @@ void System::UpdateContext() {
                 isHAW = newContext & (1 << PULSAR_HAW);
                 isKO = newContext & (1 << PULSAR_MODE_KO);
                 isOTT = newContext & (1 << PULSAR_MODE_OTT);
-                isRealMarioKart = newContext & (1 << PULSAR_MODE_REALMARIOKART);
                 isMiiHeads = newContext & (1 << PULSAR_MIIHEADS);
                 if(isOTT) {
                     isUMTs &= newContext & (1 << PULSAR_UMTS);
@@ -178,8 +175,8 @@ void System::UpdateContext() {
     this->netMgr.hostContext = newContext;
 
     u32 context = (isCT << PULSAR_CT) | (isHAW << PULSAR_HAW) | (isMiiHeads << PULSAR_MIIHEADS);
-    if(isCT) { //contexts that should only exist when CTs are on
-        context |= (is200 << PULSAR_200) | (isLegacy200 << PULSAR_LEGACY_200_MAX_SPEED) | (isFeather << PULSAR_FEATHER) | (isUMTs << PULSAR_UMTS) | (isMegaTC << PULSAR_MEGATC) | (isOTT << PULSAR_MODE_OTT) | (isKO << PULSAR_MODE_KO) | (isRealMarioKart << PULSAR_MODE_REALMARIOKART);
+    if(isCT) {
+        context |= (is200 << PULSAR_200) | (isLegacy200 << PULSAR_LEGACY_200_MAX_SPEED) | (isFeather << PULSAR_FEATHER) | (isUMTs << PULSAR_UMTS) | (isMegaTC << PULSAR_MEGATC) | (isOTT << PULSAR_MODE_OTT) | (isKO << PULSAR_MODE_KO);
     }
     this->context = context;
 
@@ -211,16 +208,6 @@ void System::UpdateContext() {
     if(!isFreeRoam && this->freeRoamMgr != nullptr || isFreeRoam && sceneId == SCENE_ID_GLOBE) {
         delete this->freeRoamMgr;
         this->freeRoamMgr = nullptr;
-    }
-    
-    if(isRealMarioKart) {
-        if(sceneId == SCENE_ID_MENU && this->realMarioKartMgr == nullptr) {
-            RealMarioKart::Mgr::Create();
-        }
-    }
-    if(!isRealMarioKart && this->realMarioKartMgr != nullptr || isRealMarioKart && sceneId == SCENE_ID_GLOBE) {
-        delete this->realMarioKartMgr;
-        this->realMarioKartMgr = nullptr;
     }
     
     context |= (isFreeRoam << PULSAR_MODE_IKW);

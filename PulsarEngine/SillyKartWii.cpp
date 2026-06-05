@@ -41,6 +41,7 @@ u16 WiiInput = 0;
 u16 GCInput = 0;
 u16 ClassicInput = 0;
 u16 U16_FREE_ROAM = 0;
+u8 U8_BATTLE_CHECK = 0;
 
 namespace SillyKartWii {
 
