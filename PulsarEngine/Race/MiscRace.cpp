@@ -18,6 +18,7 @@ static void NonGhostPlayerCount(RacedataScenario& scenario, u8* playerCount, u8*
 }
 kmCall(0x8052fc78, NonGhostPlayerCount);
 
+
 kmWrite32(0x807997e0, 0x60000000);
 //Starting item for OTT and TT, id is TRIPLE_MUSHROOM by default
 static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool isItemForcedDueToCapacity) {
@@ -150,6 +151,9 @@ kmCall(0x807ef444, ChangeItemWindowPane);
 
 kmWrite24(0x808A9FF3, 'PUL');
 
+//Force Title Screen
+kmWrite32(0x8063AC94, 0x60000000);
+
 //Enhanced Pause Menu (Ro/Insane Kart Wii)
 //replaces all pause menus with TT pause so you can restart in GP/VS/Battle
 kmWrite32(0x8062c658, 0x38800019);
@@ -160,7 +164,7 @@ kmWrite32(0x80633970, 0x38600019);
 kmWrite32(0x8083d618, 0x60000000);
 
 //Instant POW Block (IKW)
-kmWrite16(0x807B1DD2, 0x00000080);
+//kmWrite16(0x807B1DD2, 0x00000080);
 
 extern "C" void sInstance__8Racedata(void*);
 extern "C" void sInstance__10SectionMgr(void*);
