@@ -6,6 +6,7 @@
 #include <SlotExpansion/CupsConfig.hpp>
 #include <Settings/Settings.hpp>
 #include <PulsarSystem.hpp>
+#include <SillyKartWii.hpp>
 
 
 namespace Pulsar {
@@ -65,7 +66,7 @@ inline int CupsConfig::GetCorrectMusicSlot() const {
     register const Audio::RaceMgr* mgr;
     asm(mr mgr, r30;);
     CourseId realId = mgr->courseId;
-    if (realId <= 0x1F) { //!battle
+    if (realId <= 0x29) {
         realId = ConvertTrack_PulsarIdToRealId(this->winningCourse);
         if (!IsReg(this->winningCourse)) realId = static_cast<CourseId>(this->cur.musicSlot);
     }
@@ -132,14 +133,15 @@ void CupsConfig::ToggleCTs(bool enabled) {
     if (!enabled) {
         if (lastSelectedCup > 7) {
             hasRegs = true;
+            selectedCourse = PULSARID_FIRSTREG;
+            lastSelectedCup = PULSARCUPID_FIRSTREG; //CT cup -> regs
+            lastSelectedCupButtonIdx = 0;
         }
         count = 0;
-        selectedCourse = PULSARID_FIRSTREG;
-        lastSelectedCup = PULSARCUPID_FIRSTREG;
-        lastSelectedCupButtonIdx = 0;
     }
     else {
         count = definedCTsCupCount;
+        hasRegs = regsMode > 0;
     }
     ctsCupCount = count;
 }
@@ -161,12 +163,17 @@ void CupsConfig::GetExpertPath(char* dest, PulsarId id, TTMode mode) const {
 
 PulsarId CupsConfig::RandomizeTrack() const {
     Random random;
-    u32 pulsarId;
-    if (this->HasRegs()) {
-        pulsarId = random.NextLimited(this->GetCtsTrackCount() + 32);
-        if (pulsarId > 31) pulsarId += (0x100 - 32);
+    u32 pulsarId = 0;
+
+    if (U8_BATTLE_CHECK == 0x01) {
+        pulsarId = random.NextLimited(200) + 5224 + 0x100;  // Battle tracks bleiben gleich
     }
-    else pulsarId = random.NextLimited(this->GetCtsTrackCount()) + 0x100;
+    if (U8_BATTLE_CHECK == 0x00) {
+        pulsarId = random.NextLimited(160) + 0x100;  // 40 cups * 4 tracks = 160 tracks
+    }
+    if(U16_FREE_ROAM == 0x01) {
+        pulsarId = random.NextLimited(160) + 0x100;  // 40 cups für free roam
+    }
     return static_cast<PulsarId>(pulsarId);
 }
 
@@ -185,11 +192,29 @@ PulsarCupId CupsDef::GetNextCupId(PulsarCupId pulsarId, s32 direction) const {
 
 PulsarCupId CupsConfig::GetNextCupId(PulsarCupId pulsarId, s32 direction) const {
     const u32 idx = ConvertCup_PulsarIdToIdx(pulsarId);
-    const u32 count = this->GetTotalCupCount();
-    const u32 min = count < 8 ? 8 : 0;
-    const u32 nextIdx = ((idx + direction + count) % count) + min;
-    if (!this->hasRegs && nextIdx < 8) return static_cast<PulsarCupId>(nextIdx + count + 0x38);
-    return ConvertCup_IdxToPulsarId(nextIdx);
+    if (U16_FREE_ROAM == 0x01) {
+        const u32 count = 40;  // 40 CT cups
+        const u32 min = count < 8 ? 8 : 0;
+        const u32 nextIdx = ((idx + direction + count) % count) + min;
+        if (!this->hasRegs && nextIdx < 8) return static_cast<PulsarCupId>(nextIdx + count + 0x38);
+        return ConvertCup_IdxToPulsarId(nextIdx);
+    }
+    if (U8_BATTLE_CHECK == 0x01) {
+        const u32 countBattle= 50;  // Battle cups bleiben bei 50
+        const u32 lastCupIndex = this->GetTotalCupCount() - 1;
+        const u32 startIdx = 1316;
+        const u32 nextIdxBattle= startIdx + ((idx - startIdx + direction + countBattle) % countBattle);
+        if (!this->hasRegs && nextIdxBattle< 8) return static_cast<PulsarCupId>(nextIdxBattle+ countBattle+ 0x38);
+        return ConvertCup_IdxToPulsarId(nextIdxBattle);
+    } 
+    if (U8_BATTLE_CHECK == 0x00) {
+        const u32 count = 40;  // 40 CT cups
+        const u32 min = count < 8 ? 8 : 0;
+        const u32 nextIdx = ((idx + direction + count) % count) + min;
+        if (!this->hasRegs && nextIdx < 8) return static_cast<PulsarCupId>(nextIdx + count + 0x38);
+        return ConvertCup_IdxToPulsarId(nextIdx);
+    }
+    return ConvertCup_IdxToPulsarId(0);
 }
 
 void CupsConfig::SaveSelectedCourse(const PushButton& courseButton) {
