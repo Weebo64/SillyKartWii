@@ -293,50 +293,12 @@ loc_0x10:
   )
 }
 
-asmFunc Crown() {
-    ASM(
-  lwzx      r4, r4, r0;
-  li        r11, 0;
-  lbz       r12, 0x20(r4);
-  cmpwi     r12, 0x1;
-  bne-      loc_0x4C;
-  lwz       r12, sInstance__8Racedata@l(r3);
-  lwz       r12, 0xB70(r12);
-  cmpwi     r12, 0x2;
-  blt-      loc_0x48;
-  cmpwi     r12, 0x3;
-  beq-      loc_0x3C;
-  cmpwi     r12, 0x7;
-  blt-      loc_0x5C;
-  cmpwi     r12, 0x9;
-  blt-      loc_0x48;
-
-loc_0x3C:
-  lhz       r12, 0x22(r4);
-  cmpwi     r12, 0x3;
-  blt-      loc_0x4C;
-
-loc_0x48:
-  li        r11, 0x1;
-
-loc_0x4C:
-  lwz       r12, 0x1B8(r28);
-  stb       r11, 0x887(r12);
-  lha       r11, 0xB8(r12);
-  stb       r11, 0x884(r12);
-
-loc_0x5C:
-  blr;
-    )
-}
-
 kmRuntimeUse(0x807EB38C);
 kmRuntimeUse(0x807EB9CC);
 kmRuntimeUse(0x807EB6E0);
 kmRuntimeUse(0x807EB1B0);
 kmRuntimeUse(0x807EB298);
 kmRuntimeUse(0x807EB550);
-kmRuntimeUse(0x807EB490);
 
 static void MinimapEffectsInit() {
     kmRuntimeWrite32A(0x807EB298, 0x48000034);
@@ -345,8 +307,6 @@ static void MinimapEffectsInit() {
     kmRuntimeBranchA(0x807EB6E0, KartStatusOnMinimap2);
     kmRuntimeBranchA(0x807EB9CC, KartStatusOnMinimap3);
     kmRuntimeCallA(0x807EB38C, KartStatusOnMinimap4);
-    kmRuntimeWrite32A(0x807EB490, 0x7C84002E);
-    kmRuntimeCallA(0x807EB490, Crown);
 }
 BootHook MinimapEffectsHook(MinimapEffectsInit, 5);
 
