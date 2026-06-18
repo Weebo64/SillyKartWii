@@ -15,22 +15,24 @@ void ApplyFPSSetting() {
     const Racedata* racedata = Racedata::sInstance;
     if(racedata == nullptr) return;
     
-    const GameMode mode = racedata->racesScenario.settings.gamemode;
-    
-    // always 60 fps in time trial
-    if(mode == MODE_TIME_TRIAL || mode == MODE_GHOST_RACE) {
-        *reinterpret_cast<u8*>(kmRuntimeAddr(0x80001200)) = 0;
-        return;
-    }
-    
     const Settings::Mgr& settings = Settings::Mgr::Get();
     u8 fpsSetting = settings.GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_FPS);
     
     *reinterpret_cast<u8*>(kmRuntimeAddr(0x80001200)) = (fpsSetting == MENUSETTING_FPS_30) ? 1 : 0;
 }
 
+void EnforceFPSSetting() {
+    const Racedata* racedata = Racedata::sInstance;
+    if(racedata == nullptr) return;
+    
+    const Settings::Mgr& settings = Settings::Mgr::Get();
+    u8 fpsSetting = settings.GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_FPS);
+    *reinterpret_cast<u8*>(kmRuntimeAddr(0x80001200)) = (fpsSetting == MENUSETTING_FPS_30) ? 1 : 0;
+}
+
 static SectionLoadHook ApplyFPS(ApplyFPSSetting);
 static RaceLoadHook ApplyFPSRace(ApplyFPSSetting);
+static RaceFrameHook EnforceFPS(EnforceFPSSetting);
 
 } //namespace Race
 } //namespace Pulsar
