@@ -19,6 +19,7 @@
 #include <Gamemodes/KO/KOMgr.hpp>
 #include <Gamemodes/KO/KOWinnerPage.hpp>
 #include <Settings/UI/SettingsPanel.hpp>
+#include <Settings/UI/SettingsPageSelect.hpp>
 
 namespace Pulsar {
 namespace UI {
@@ -113,6 +114,7 @@ void ExpSection::CreatePulPages() {
         case SECTION_P2_WIFI_FROM_FROOM_RACE:    //0x5c
         case SECTION_OPTIONS:                    //0x8c
             this->CreateAndInitPage(*this, SettingsPanel::id);
+            this->CreateAndInitPage(*this, SettingsPageSelect::id);
     }
     if(this->hasAutoVote) {
         this->CreateAndInitPage(*this, PAGE_AUTO_ENDING2);
@@ -193,6 +195,9 @@ void ExpSection::CreateAndInitPage(ExpSection& self, u32 id) {
             break;
         case SettingsPanel::id:
             page = new SettingsPanel;
+            break;
+        case SettingsPageSelect::id:
+            page = new SettingsPageSelect;
             break;
         default:
             page = self.CreatePageById(initId);
