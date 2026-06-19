@@ -34,7 +34,10 @@ extern u16 WiiInput;
 extern u16 GCInput;
 extern u16 ClassicInput;
 extern u16 U16_FREE_ROAM;
+extern u16 U16_FCOFFLINE;
+extern u16 U16_FCONLINE;
 extern u8 U8_BATTLE_CHECK;
+
 
 // Transmission & Brake Drifting
 extern u8 U8_BRAKEDRIFTING;
