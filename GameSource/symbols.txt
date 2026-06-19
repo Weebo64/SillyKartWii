@@ -121,6 +121,7 @@ sInstance__13SystemManager = 0x80386000
 mInstance__Q22OS8BootInfo = 0x80000000
 REGION = 0x80000003
 U8_WWS_CHECK = 0x800003CC
+F32_MENUSPEED = 0x808a81e4
 current__Q22OS6Thread = 0x800000e4
 busClock__2OS = 0x800000f8
 
@@ -720,6 +721,7 @@ __vt__5Timer = 0x808b2d44
 InitRace__8RacedataFv = 0x805302c4
 GetHudSlotId__8RacedataCFUc = 0x80531f18
 GetPlayerIdOfLocalPlayer__8RacedataFUc = 0x80531f70
+GetPlayerIdOfLocalPlayer__8RacedataCFUc = 0x80531f70
 SetGhost__8RacedataFRC3RKG = 0x80531f2c
 pointsRoom__8Racedata = 0x80890030
 sInstance__8Racedata = 0x809bd728
@@ -742,6 +744,10 @@ IsAtLeastStage__8RaceinfoCF9RaceStage = 0x80536230
 EndPlayerRace__8RaceinfoFUc = 0x80533c6c
 CheckEndRaceOnline__8RaceinfoFUc = 0x80533dd4
 sInstance__8Raceinfo = 0x809bd730
+
+#Minimap Effects
+KartStatusEnd2 = 0x807EB6E4
+KartStatusEnd3 = 0x807EB9D0
 
 #RaceinfoPlayer
 __dt__14RaceinfoPlayerFv = 0x80532f48
@@ -886,6 +892,7 @@ ChangeLicense__13SectionParamsFv = 0x805e40a8
 #SectionPad
 GetCurrentID__10SectionPadCFUi = 0x8061b358
 GetControllerHolder__10SectionPadCFUi = 0x8061b398
+GetControllerHolderByIdx__10SectionPadFUi = 0x8061b398
 EnablePointer__10SectionPadFb = 0x8061bd14
 GetType__10SectionPadFUi = 0x8061bfac
 
@@ -1750,6 +1757,16 @@ sInstance__Q24Item7Manager = 0x809c3618
 #ItemEVENT
 FillOrExtractShootPos__Q24Item11EVENTBufferFPsP4Vec3b = 0x8079ad38
 FillOrExtractShoot__Q24Item11EVENTBufferFPQ24Item10ShootEntryPQ24Item3Objb = 0x8079b4ac
+ItemsOnMinimapSymbol1= 0x808d3900
+ItemsOnMinimapSymbol2= 0x808A9477
+ItemsOnMinimapSymbol3= 0x808A9482
+ItemsOnMinimapSymbol4= 0x808A9491
+ItemsOnMinimapSymbol5= 0x808AA007
+ItemsOnMinimapSymbol6= 0x8063D9C0
+ItemsOnMinimapSymbol7= 0x808AF7C0
+ItemsOnMinimapSymbol9= 0x808AA7C8
+ItemsOnMinimapEnd3= 0x807ea6e4
+ItemsOnMinimapEnd4= 0x807eacac
 
 #ItemObj
 AddUseEVENTEntry__Q24Item3ObjF9ItemObjIdUc = 0x8079c220
@@ -2021,6 +2038,8 @@ GetAllocatableSizeForExpHeapEx__3MEMFPQ23MEM9iHeapHeadi = 0x80199180
 Create__Q23EGG7ExpHeapFPviUs = 0x80226a1c
 GetTotalItemCount__Q24Item9ObjHolderCFv = 0x807974ac
 Sqrt__Q23EGG4MathFf = 0x8022f80c
+SetMessageBoxMsg__Q25Pages5YesNoFUiPQ24Text4Info = 0x806525fc
+PrepareButton__Q25Pages5YesNoFUiUiPQ24Text4InfoUi39PtmfHolder_2A<4Page,v,Ui,R10PushButton> = 0x80652604
 PrepareButton__Q25Pages5YesNoFUiUiPQ24Text4InfoUiRC39PtmfHolder_2A<4Page,v,Ui,R10PushButton> = 0x80652604
 IsLocal__Q24Kart4LinkCFv = 0x80590650
 GetCupNameBMGId__FUi = 0x80833638
