@@ -128,6 +128,7 @@ void System::UpdateContext() {
     bool isKOFinal = settings.GetSettingValue(Settings::SETTINGSTYPE_KO, SETTINGKO_FINAL) == KOSETTING_FINAL_ALWAYS;
     bool isOTT = false;
     bool isMiiHeads = settings.GetSettingValue(Settings::SETTINGSTYPE_RACE, SETTINGRACE_RADIO_MII);
+    bool isChargeJump = false;
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
@@ -156,6 +157,7 @@ void System::UpdateContext() {
                 isKO = newContext & (1 << PULSAR_MODE_KO);
                 isOTT = newContext & (1 << PULSAR_MODE_OTT);
                 isMiiHeads = newContext & (1 << PULSAR_MIIHEADS);
+                isChargeJump = newContext & (1 << PULSAR_CHARGEJUMP);
                 if(isOTT) {
                     isUMTs &= newContext & (1 << PULSAR_UMTS);
                     isFeather &= newContext & (1 << PULSAR_FEATHER);
@@ -171,12 +173,14 @@ void System::UpdateContext() {
             isFeather &= (ottOffline == OTTSETTING_OFFLINE_FEATHER);
             isUMTs &= ~settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_ALLOWUMTS);
         }
+        // Enable ChargeJump in offline mode
+        isChargeJump = true;
     }
     this->netMgr.hostContext = newContext;
 
     u32 context = (isCT << PULSAR_CT) | (isHAW << PULSAR_HAW) | (isMiiHeads << PULSAR_MIIHEADS);
     if(isCT) {
-        context |= (is200 << PULSAR_200) | (isLegacy200 << PULSAR_LEGACY_200_MAX_SPEED) | (isFeather << PULSAR_FEATHER) | (isUMTs << PULSAR_UMTS) | (isMegaTC << PULSAR_MEGATC) | (isOTT << PULSAR_MODE_OTT) | (isKO << PULSAR_MODE_KO);
+        context |= (is200 << PULSAR_200) | (isLegacy200 << PULSAR_LEGACY_200_MAX_SPEED) | (isFeather << PULSAR_FEATHER) | (isUMTs << PULSAR_UMTS) | (isMegaTC << PULSAR_MEGATC) | (isOTT << PULSAR_MODE_OTT) | (isKO << PULSAR_MODE_KO) | (isChargeJump << PULSAR_CHARGEJUMP);
     }
     this->context = context;
 
