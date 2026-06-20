@@ -11,6 +11,7 @@
 #include <core/rvl/PAD.hpp>
 #include <core/rvl/WPAD.hpp>
 #include <PulsarSystem.hpp>
+#include <Settings/Settings.hpp>
 
 namespace Pulsar {
 namespace Race {
@@ -62,7 +63,7 @@ bool IsChargeJumpFeatherActive(u8 playerId) {
 }
 
 void UpdateChargeJump() {
-    if (!System::sInstance->IsContext(PULSAR_CHARGEJUMP)) {
+    if (Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_RADIO_CHARGE_JUMP) != MISCSETTING_CHARGE_JUMP_ENABLED) {
         return;
     }
 
@@ -261,7 +262,7 @@ void UpdateChargeJump() {
 static RaceFrameHook ChargeJumpUpdate(UpdateChargeJump);
 
 void DrawChargeJumpDebug() {
-    if (!System::sInstance->IsContext(PULSAR_CHARGEJUMP)) {
+    if (Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_RADIO_CHARGE_JUMP) != MISCSETTING_CHARGE_JUMP_ENABLED) {
         return;
     }
 
