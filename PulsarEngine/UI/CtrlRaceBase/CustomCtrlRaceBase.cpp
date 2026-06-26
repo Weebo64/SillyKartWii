@@ -2,11 +2,11 @@
 
 namespace Pulsar {
 namespace UI {
+
 CustomCtrlBuilder* CustomCtrlBuilder::sHooks = nullptr;
-void CustomCtrlBuilder::BuildCustomRaceCtrls(Pages::RaceHUD& racePage, u32 baseControlCount)
-{
+void CustomCtrlBuilder::BuildCustomRaceCtrls(Pages::RaceHUD& racePage, u32 baseControlCount) {
     u32 count = 0;
-    for(CustomCtrlBuilder* p = sHooks; p; p = p->next) {
+    for (CustomCtrlBuilder* p = sHooks; p; p = p->next) {
         p->ctrlCount = p->countCtrls();
         count += p->ctrlCount;
     }
