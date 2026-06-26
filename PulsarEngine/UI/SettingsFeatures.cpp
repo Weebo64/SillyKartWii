@@ -44,5 +44,35 @@ void BrakeDriftingToggle() {
 }
 static PageLoadHook Codes3(BrakeDriftingToggle);
 
+void RecolorsMenus() {
+    // Silly Kart Wii color scheme (haha boobs)
+    U8_RED1 = 176;
+    U8_GREEN1 = 11;
+    U8_BLUE1 = 105;
+    U8_ALPHA1= 0xFF;
+    U8_RED2 = 176;
+    U8_GREEN2 = 11;
+    U8_BLUE2 = 105;
+    U8_ALPHA2= 0xFF;
+    U8_RED3 = 176;
+    U8_GREEN3 = 11;
+    U8_BLUE3 = 105;
+    U8_ALPHA3= 0x70;
+    U8_RED4 = 176;
+    U8_GREEN4 = 11;
+    U8_BLUE4 = 105;
+    U8_ALPHA4= 0xFF;
+    U8_RED5 = 176;
+    U8_GREEN5 = 11;
+    U8_BLUE5 = 105;
+    U8_ALPHA5= 0xFF;
+    U8_RED6 = 176;
+    U8_GREEN6 = 11;
+    U8_BLUE6 = 105;
+    U8_ALPHA6= 0x70;
+}
+static Settings::Hook RECOLORSS(RecolorsMenus);
+BootHook RECOLORS(RecolorsMenus, 7);
+
 }
 }

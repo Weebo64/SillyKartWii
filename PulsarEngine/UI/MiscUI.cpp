@@ -132,6 +132,5 @@ u8 ModifyCheckRankings() {
 kmCall(0x8085b4bc, ModifyCheckRankings);
 kmPatchExitPoint(ModifyCheckRankings, 0x8085bbe0);
 
-
 }//namespace UI
 }//namespace Pulsar

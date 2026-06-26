@@ -8,7 +8,7 @@ static u8 hudR = 255;
 static u8 hudG = 255;
 static u8 hudB = 255;
 
-static const u8 hudColors[15][3] = {
+static const u8 hudColors[14][3] = {
     {255, 255, 255}, // White
     {60, 60, 60},    // Dark Gray/Black
     {198, 0, 0},     // Red
@@ -17,21 +17,27 @@ static const u8 hudColors[15][3] = {
     {2, 95, 2},     // Green
     {76, 255, 0},   // Lime
     {8, 39, 205},    // Blue
-    {70, 15, 150},   // Purple
+    {98, 20, 206},   // Purple
     {235, 105, 210}, // Pink
-    {161, 185, 197},  // Silver
+    {161, 185, 197},   // silver
     {36, 167, 240},  // Cyan
     {0, 160, 145},   // Teal
     {207, 160, 45},   // Gold
-    {176, 11, 105} // funny boobies 69 color XDDDDDDDDDDDDDD (#b00b69)
 };
 
 void UpdateHUDColor() {
     u8 setting = Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_SCROLL_HUDCOLOR);
-    if (setting >= 15   ) setting = 0;
-    hudR = hudColors[setting][0];
-    hudG = hudColors[setting][1];
-    hudB = hudColors[setting][2];
+    
+    if (setting == 14) {
+        hudR = U8_RED1;
+        hudG = U8_GREEN1;
+        hudB = U8_BLUE1;
+    } else {
+        if (setting >= 14) setting = 0;
+        hudR = hudColors[setting][0];
+        hudG = hudColors[setting][1];
+        hudB = hudColors[setting][2];
+    }
 }
 
 void GetHUDColor(void* self, RGBA16* c0, RGBA16* c1) {
@@ -57,22 +63,5 @@ void GetHUDBaseColor(void* self, RGBA16* c) {
 }
 kmBranch(0x805f04d8, GetHUDBaseColor);
 
-void GetHUDRaceColor(nw4r::lyt::Pane* _this, u32 idx, nw4r::ut::Color color) {
-    UpdateHUDColor();
-    if (idx < 2) {
-        color.r = hudR;
-        color.g = hudG;
-        color.b = hudB;
-        color.a = 0xFD;
-    } else {
-        color.r = hudR > 20 ? hudR - 20 : 0;
-        color.g = hudG > 20 ? hudG - 20 : 0;
-        color.b = hudB > 20 ? hudB - 20 : 0;
-        color.a = 0xFD;
-    }
-    _this->SetVtxColor(idx, color);
 }
-kmCall(0x807ec1dc, GetHUDRaceColor);
-
-}  // namespace UI
-}  // namespace Pulsar
+}

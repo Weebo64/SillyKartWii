@@ -63,10 +63,12 @@ void CtrlRaceInputViewer::Init() {
     }
     
     this->m_stickPane = this->layout.GetPaneByName("Stick");
-    this->m_stickOrigin = this->m_stickPane->trans;
+    if (this->m_stickPane) {
+        this->m_stickOrigin = this->m_stickPane->trans;
+        this->HudSlotColorEnable("Stick", true);
+        this->HudSlotColorEnable("StickBackdrop", true);
+    }
     this->m_playerId = this->GetPlayerId();
-    this->HudSlotColorEnable("Stick", true);
-    this->HudSlotColorEnable("StickBackdrop", true);
 
     LayoutUIControl::Init();
 }
@@ -114,7 +116,7 @@ void CtrlRaceInputViewer::OnUpdate() {
 }
 
 u32 CtrlRaceInputViewer::Count() {
-    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_RACE4,SETTINGS_INPUT_VIEWER) == 1) {
+    if(Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MENU, SETTINGMENU_RADIO_INPUTVIEWER) == 1) {
         const RacedataScenario& scenario = Racedata::sInstance->racesScenario;
         u32 localPlayerCount = scenario.localPlayerCount;
         const SectionId sectionId = SectionMgr::sInstance->curSection->sectionId;
@@ -145,16 +147,9 @@ void CtrlRaceInputViewer::Load(const char* variant, u8 id) {
     this->hudSlotId = id;
     ControlLoader loader(this);
     const char* groups[] = { nullptr, nullptr };
-    Input::ControllerHolder* controllerHolder = SectionMgr::sInstance->pad.GetControllerHolder(this->hudSlotId);
-    if (controllerHolder != nullptr && controllerHolder->curController != nullptr) {
-        const ControllerType type = controllerHolder->curController->GetType();
-        if (type == NUNCHUCK || type == WHEEL) {
-            loader.Load(UI::raceFolder, "PULInputViewerNunchuck", variant, groups);
-        } 
-        else {
-            loader.Load(UI::raceFolder, "PULInputViewer", variant, groups);
-        }
-    }
+    
+    // Always use normal InputViewer layout for all controllers
+    loader.Load(UI::raceFolder, "PULInputViewer", variant, groups);
 }
 
 void CtrlRaceInputViewer::setDpad(DpadState state) {
@@ -195,6 +190,10 @@ void CtrlRaceInputViewer::setTrigger(Trigger trigger, TriggerState state) {
 
 void CtrlRaceInputViewer::setStick(Vec2 state) {
     if (state.x == m_stickState.x && state.z == m_stickState.z) {
+        return;
+    }
+
+    if (!m_stickPane) {
         return;
     }
 
