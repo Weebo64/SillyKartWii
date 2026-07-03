@@ -1,4 +1,5 @@
 #include <Settings/UI/SettingsPanel.hpp>
+#include <Settings/UI/SettingsPageSelect.hpp>
 #include <Settings/Settings.hpp>
 #include <Settings/UI/ExpOptionsPage.hpp>
 #include <Settings/UI/ExpFroomPage.hpp>
@@ -8,17 +9,15 @@
 namespace Pulsar {
 namespace UI {
 
-//SETTINGS PANEL
 SettingsPanel::SettingsPanel()
 {
-    bmgOffset = 0;
-    sheetIdx = 0;
+    bmgOffset = BMG_USERSETTINGSOFFSET;
+    sheetIdx = Settings::Params::pulsarPageCount;
     catIdx = 0;
-    externControlCount = 3;
+    externControlCount = 1;
     internControlCount = Settings::Params::maxRadioCount + Settings::Params::maxScrollerCount;
-    hasBackButton = false;
+    hasBackButton = true;
     nextPageId = static_cast<PageId>(id);
-    //titleBmg = BMG_SETTINGS_TITLE;
     activePlayerBitfield = 1;
     movieStartFrame = -1;
     extraControlNumber = 0;
@@ -32,8 +31,6 @@ SettingsPanel::SettingsPanel()
     else if((id == SECTION_P1_WIFI) || (id == SECTION_P1_WIFI_FROM_FROOM_RACE) || (id == SECTION_P1_WIFI_FROM_FIND_FRIEND)
         || (id == SECTION_P2_WIFI) || (id == SECTION_P2_WIFI_FROM_FROOM_RACE)) prevPageId = PAGE_WFC_MAIN;
     else if(id >= SECTION_LICENSE_SETTINGS_MENU && id <= SECTION_SINGLE_P_LIST_RACE_GHOST) prevPageId = PAGE_SINGLE_PLAYER_MENU;
-
-    onMessageBoxClickHandler.ptmf = &Menu::ChangeToPrevSection;
 
     onRadioButtonClickHandler.subject = this;
     onRadioButtonClickHandler.ptmf = &SettingsPanel::OnRadioButtonClick;
@@ -54,6 +51,8 @@ SettingsPanel::SettingsPanel()
     onButtonDeselectHandler.ptmf = &Pages::VSSettings::OnButtonDeselect;
     onBackPressHandler.subject = this;
     onBackPressHandler.ptmf = &SettingsPanel::OnBackPress;
+    onBackButtonClickHandler.subject = this;
+    onBackButtonClickHandler.ptmf = &SettingsPanel::OnBackButtonClick;
     onStartPressHandler.subject = this;
     onStartPressHandler.ptmf = &MenuInteractable::HandleStartPress;
 
@@ -74,15 +73,10 @@ SettingsPanel::~SettingsPanel() {
     Settings::Mgr* mgr = Settings::Mgr::sInstance;
     mgr->SetLastSelectedCup(CupsConfig::sInstance->lastSelectedCup);
     mgr->RequestSave();
-    //delete[] radioButtonControls;
-    //delete[] upDownControls;
-    //delete[] textUpDown;
 }
 
 void SettingsPanel::OnInit() {
-    //radioButtonControls = new RadioButtonControl[this->radioCount];
-    //upDownControls = new UpDownControl[this->scrollersCount];
-    //textUpDown = new TextUpDownValueControl[this->scrollersCount];
+    this->backButton.SetOnClickHandler(this->onBackButtonClickHandler, 0);
 
     const Settings::Mgr& settings = Settings::Mgr::Get();
     for(int i = 0; i < Settings::Params::pageCount; ++i) {
@@ -149,7 +143,6 @@ UIControl* SettingsPanel::CreateControl(u32 id) {
         TextUpDownValueControl& valueControl = this->textUpDown[id];
         valueControl.Load(UI::controlFolder, "UpDownValue", "Value", "UpDownText", "Text");
         valueControl.SetOnTextChangeHandler(this->onTextChangeHandler);
-
     }
     return nullptr;
 }
@@ -166,10 +159,7 @@ void SettingsPanel::SetButtonHandlers(PushButton& button) {
 void SettingsPanel::OnActivate() {
     this->titleBmg = this->bmgOffset + BMG_SETTINGS_TITLE + this->catIdx;
     this->externControls[0]->SelectInitial(0);
-    this->bottomText->SetMessage(BMG_SETTINGS_BOTTOM); //no need for any offset here as this is the default "save" bottom msg
-
-    this->externControls[1]->SetMessage(BMG_SETTINGS_PAGE + this->GetNextBMGOffset(1));
-    this->externControls[2]->SetMessage(BMG_SETTINGS_PAGE + this->GetNextBMGOffset(-1));
+    this->bottomText->SetMessage(BMG_SETTINGS_BOTTOM);
     for(int i = 0; i < Settings::Params::maxRadioCount; ++i) {
         RadioButtonControl& radio = this->radioButtonControls[i];
         bool isDisabled = false;
@@ -208,9 +198,6 @@ void SettingsPanel::OnActivate() {
             scroller.SetMessage(scroller.id + bmgCategory);
             valueControl.activeTextValueControl->SetMessage((scroller.id + 1 << 4) + bmgCategory);
         }
-
-
-
     }
     MenuInteractable::OnActivate();
 }
@@ -220,12 +207,7 @@ const ut::detail::RuntimeTypeInfo* SettingsPanel::GetRuntimeTypeInfo() const {
 }
 
 void SettingsPanel::OnExternalButtonSelect(PushButton& button, u32 r5) {
-    u32 bmgId = BMG_SETTINGS_BOTTOM; //default "save"
-    const u32 id = button.buttonId;
-
-    if(id == 1) bmgId += 1 + this->GetNextBMGOffset(1);
-    else if(id == 2)  bmgId += 1 + this->GetNextBMGOffset(-1);
-    this->bottomText->SetMessage(bmgId);
+    this->bottomText->SetMessage(BMG_SETTINGS_BOTTOM);
 }
 
 int SettingsPanel::GetActivePlayerBitfield() const {
@@ -241,25 +223,16 @@ ManipulatorManager& SettingsPanel::GetManipulatorManager() {
 }
 
 void SettingsPanel::LoadPrevMenuAndSaveSettings(PushButton& button) {
-    this->LoadPrevPage(button);
-    const Section* section = SectionMgr::sInstance->curSection;
-    /*if(this->prevPageId == PAGE_OPTIONS) section->Get<ExpOptions>()->topSettingsPage = static_cast<PulPageId>(this->pageId);*/
-    if(this->prevPageId == PAGE_WFC_MAIN) section->Get<ExpWFCMain>()->topSettingsPage = static_cast<PulPageId>(this->pageId);
-    else if(this->prevPageId == PAGE_FRIEND_ROOM) {
-        section->Get<ExpFroom>()->topSettingsPage = static_cast<PulPageId>(this->pageId);
-        this->nextPageId = PAGE_NONE; //FriendRoom's OnResume is important
-    }
-    //else if(this->prevPageId == PAGE_SINGLE_PLAYER_MENU) ExpSinglePlayer::topSettingsPage = static_cast<PulPageId>(this->pageId);
+    this->nextPageId = static_cast<PageId>(SettingsPageSelect::id);
+    this->EndStateAnimated(0, button.GetAnimationFrameSize());
     this->SaveSettings(true);
 }
 
-//On Save Click/Back Press, is called and updates PulsarSettings
 void SettingsPanel::SaveSettings(bool writeFile) {
     const ExpSection* section = ExpSection::GetSection();
     Settings::Mgr* settings = Settings::Mgr::sInstance;
 
     for(int count = 0; count < Settings::Params::pageCount; ++count) {
-
         const bool isPulsarPage = count < Settings::Params::pulsarPageCount;
         for(int i = 0; i < Settings::Params::radioCount[count]; ++i) {
             const u8 value = this->radioSettings[count][i];
@@ -276,9 +249,12 @@ void SettingsPanel::SaveSettings(bool writeFile) {
 }
 
 void SettingsPanel::OnBackPress(u32 hudSlotId) {
-    PushButton& okButton = *this->externControls[0];
-    okButton.SelectFocus();
-    this->LoadPrevMenuAndSaveSettings(okButton);
+    this->backButton.SelectFocus();
+    this->LoadPrevMenuAndSaveSettings(this->backButton);
+}
+
+void SettingsPanel::OnBackButtonClick(PushButton& button, u32 hudSlotId) {
+    this->OnBackPress(hudSlotId);
 }
 
 void SettingsPanel::OnSaveButtonClick(PushButton& button, u32 hudSlotId) {
@@ -302,7 +278,7 @@ void SettingsPanel::OnButtonClick(PushButton& button, u32 direction) {
         this->bmgOffset = 0;
     }
     else {
-        this->catIdx = nextIdx - Settings::Params::pulsarPageCount; //5 becomes 0 if pulsarPageCount is 5
+        this->catIdx = nextIdx - Settings::Params::pulsarPageCount;
         this->bmgOffset = BMG_USERSETTINGSOFFSET;
     }
 
@@ -324,7 +300,6 @@ void SettingsPanel::OnUpDownClick(UpDownControl& upDownControl, u32 hudSlotId) {
 }
 
 void SettingsPanel::OnTextChange(TextUpDownValueControl::TextControl& text, u32 optionId) {
-
     const u32 bmgId = this->bmgOffset + BMG_SCROLLER_SETTINGS + (this->catIdx << 12) + optionId;
     u32 id = this->GetTextId(text);
     this->scrollerSettings[this->sheetIdx][id] = optionId;
@@ -344,14 +319,8 @@ int SettingsPanel::GetNextSheetIdx(s32 direction) {
     return (this->sheetIdx + direction + Settings::Params::pageCount) % Settings::Params::pageCount;
 }
 
-int SettingsPanel::GetNextBMGOffset(s32 direction) {
-    const u32 nextIdx = this->GetNextSheetIdx(direction);
-    if(nextIdx < Settings::Params::pulsarPageCount) return nextIdx;
-    else return BMG_USERSETTINGSOFFSET + nextIdx - Settings::Params::pulsarPageCount;
 }
-
-}//namespace UI
-}//namespace Pulsar
+}
 
 
 

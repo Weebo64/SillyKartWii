@@ -5,6 +5,7 @@
 #include <PulsarSystem.hpp>
 #include <UI/UI.hpp>
 #include <Settings/UI/SettingsPanel.hpp>
+#include <Settings/UI/SettingsPageSelect.hpp>
 #include <Gamemodes/FreeRoam/FRMgr.hpp>
 #include <SillyKartWii.hpp>
 
@@ -134,8 +135,9 @@ void OnButtonClick(Pages::SinglePlayer* page, PushButton& button, u32 hudSlotId)
     u32 count = page->externControlCount;
     
     if(id == count - 1) {
+        ExpSection::GetSection()->GetPulPage<SettingsPageSelect>()->prevPageId = PAGE_SINGLE_PLAYER_MENU;
         ExpSection::GetSection()->GetPulPage<SettingsPanel>()->prevPageId = PAGE_SINGLE_PLAYER_MENU;
-        page->nextPageId = static_cast<PageId>(SettingsPanel::id);
+        page->nextPageId = static_cast<PageId>(SettingsPageSelect::id);
         page->EndStateAnimated(0, button.GetAnimationFrameSize());
         return;
     }

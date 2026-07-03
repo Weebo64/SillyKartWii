@@ -2,13 +2,14 @@
 #include <MarioKartWii/3D/GlobeMgr.hpp>
 #include <PulsarSystem.hpp>
 #include <Settings/UI/ExpFroomPage.hpp>
+#include <Settings/UI/SettingsPageSelect.hpp>
 #include <UI/TeamSelect/TeamSelect.hpp>
 #include <UI/UI.hpp>
 
 namespace Pulsar {
 namespace UI {
 
-kmWrite32(0x805d8260, 0x60000000); //nop initcontrolgroup
+kmWrite32(0x805d8260, 0x60000000);
 
 ExpFroom::ExpFroom() : areControlsHidden(false) {
     this->onSettingsClickHandler.subject = this;
@@ -20,7 +21,7 @@ ExpFroom::ExpFroom() : areControlsHidden(false) {
 
 void ExpFroom::OnInit() {
 
-    this->InitControlGroup(7); //5 usually + settings button + teams button
+    this->InitControlGroup(7);
     FriendRoom::OnInit();
 
     this->AddControl(5, settingsButton, 0);
@@ -28,7 +29,7 @@ void ExpFroom::OnInit() {
     this->settingsButton.buttonId = 5;
     this->settingsButton.SetOnClickHandler(this->onSettingsClickHandler, 0);
     this->settingsButton.SetOnSelectHandler(this->onButtonSelectHandler);
-    this->topSettingsPage = SettingsPanel::id;
+    this->topSettingsPage = SettingsPageSelect::id;
 
     this->AddControl(6, teamsButton, 0);
     this->teamsButton.Load(UI::buttonFolder, "FroomButton", "Teams", 1, 0, false);
@@ -56,7 +57,8 @@ void ExpFroom::ExtOnButtonSelect(PushButton& button, u32 hudSlotId) {
 
 void ExpFroom::OnSettingsButtonClick(PushButton& button, u32 hudSlotId) {
     this->areControlsHidden = true;
-    ExpSection::GetSection()->GetPulPage<SettingsPanel>()->prevPageId = PAGE_FRIEND_ROOM;
+    ExpSection::GetSection()->GetPulPage<SettingsPageSelect>()->prevPageId = PAGE_NONE;
+    ExpSection::GetSection()->GetPulPage<SettingsPanel>()->prevPageId = PAGE_NONE;
     this->AddPageLayer(static_cast<PageId>(this->topSettingsPage), 0);
 }
 
@@ -82,7 +84,7 @@ void ExpFroom::AfterControlUpdate() {
     globe->miiName.isHidden = hidden;
     for(FriendMatchingPlayer* player = &mgr->miiIcons[0]; player < &mgr->miiIcons[24]; player++) player->isHidden = hidden;
     mgr->titleText.isHidden = hidden;
-    if(hidden) { //these get updated by the game too, so only need to update their isHidden when they should be forced hidden
+    if(hidden) {
         this->startButton.isHidden = hidden;
         this->addFriendsButton.isHidden = hidden;
         waiting->messageWindow.isHidden = hidden;
@@ -92,7 +94,7 @@ void ExpFroom::AfterControlUpdate() {
         globeMgr->ResetGlobeMii();
 
     }
-    else { //if controls are enabled, teamsButton is only visible for hosts when >2players in room
+    else {
         const RKNet::Controller* controller = RKNet::Controller::sInstance;
         const RKNet::ControllerSub& sub = controller->subs[controller->currentSub];
         bool teamHidden = true;
