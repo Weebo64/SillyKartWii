@@ -20,6 +20,7 @@ strtoul = 0x800152a8
 swprintf = 0x80017814
 wcslen = 0x80017998
 wcsncpy = 0x800179d0
+wcscmp = 0x80017a14
 wcschr = 0x80017a48
 cos = 0x8001b590
 sin = 0x8001ba98
@@ -1059,6 +1060,7 @@ Update__15LayoutUIControlFv = 0x8063DB00
 Draw__15LayoutUIControlFUi = 0x8063DB84
 SetTextBoxMessage__15LayoutUIControlFPCcUiPCQ24Text4Info = 0x8063dcbc
 SetMessage__15LayoutUIControlFUiPCQ24Text4Info = 0x8063ddb4
+ResetTextBoxMessage__15LayoutUIControlFPCc = 0x8063deec
 SetPicturePane__15LayoutUIControlFPCcPCc = 0x8063e0f0
 SetPaneVisibility__15LayoutUIControlFPCcb = 0x8063e54c
 SetMiiPane__15LayoutUIControlFPCcRC8MiiGroupUiUc = 0x8063e3dc
@@ -1616,6 +1618,40 @@ GetRuntimeTypeInfo__Q25Pages8RaceMenuCFv = 0x8085bd58
 #LeaderboardPages
 ComparePlayers__Q25Pages20GPVSLeaderboardTotalFPCQ35Pages21GPVSLeaderboardUpdate6PlayerPCQ35Pages21GPVSLeaderboardUpdate6Player = 0x8085cc84
 
+__ct__Q25Pages21GPVSLeaderboardUpdateFv = 0x8062526c
+__dt__Q25Pages21GPVSLeaderboardUpdateFv = 0x8085e5bc
+AfterControlUpdate__Q25Pages11LeaderboardFv = 0x8085c0c4
+OnActivate__Q25Pages11LeaderboardFv = 0x8085bf94
+GetRowCount__Q25Pages21GPVSLeaderboardUpdateCFv = 0x8085c4f4
+func_0x6c__Q25Pages21GPVSLeaderboardUpdateFv = 0x8085c5a0
+FillRows__Q25Pages21GPVSLeaderboardUpdateFv = 0x8085c858
+CanEnd__Q25Pages21GPVSLeaderboardUpdateFv = 0x8085c504
+GetRuntimeTypeInfo__Q25Pages21GPVSLeaderboardUpdateCFv = 0x8085e62c
+GetNextPage__Q25Pages21GPVSLeaderboardUpdateCFv = 0x8085c974
+OnInit__Q25Pages21GPVSLeaderboardUpdateFv = 0x8085c3e0
+__ct__Q25Pages20GPVSLeaderboardTotalFv = 0x806252a8
+__dt__Q25Pages20GPVSLeaderboardTotalFv = 0x8085e540
+FillRows__Q25Pages20GPVSLeaderboardTotalFv = 0x8085cae8
+GetRuntimeTypeInfo__Q25Pages20GPVSLeaderboardTotalCFv = 0x8085e5b0
+OnInit__Q25Pages20GPVSLeaderboardTotalFv = 0x8085c9b0
+GetNextPage__Q25Pages20GPVSLeaderboardTotalCFv = 0x8085cc40
+__ct__Q25Pages19WWLeaderboardUpdateFv = 0x806252e4
+__dt__Q25Pages19WWLeaderboardUpdateFv = 0x8085e4c4
+FillRows__Q25Pages19WWLeaderboardUpdateFv = 0x8085ce8c
+GetRuntimeTypeInfo__Q25Pages19WWLeaderboardUpdateCFv = 0x8085e534
+OnInit__Q25Pages19WWLeaderboardUpdateFv = 0x8085cd18
+GetNextPage__Q25Pages19WWLeaderboardUpdateCFv = 0x8085d55c
+ResetTextBoxMessage__15LayoutUIControlFPCc = 0x8063deec
+wcscmp = 0x80017a14
+wcscpy = 0x800179b4
+
+__ct__Q25Pages20GPVSLeaderboardTotalFv = 0x806252a8
+__dt__Q25Pages20GPVSLeaderboardTotalFv = 0x8085e540
+FillRows__Q25Pages20GPVSLeaderboardTotalFv = 0x8085cae8
+OnInit__Q25Pages20GPVSLeaderboardTotalFv = 0x8085c9b0
+
+__ct__Q25Pages19WWLeaderboardUpdateFv = 0x806252e4
+__dt__Q25Pages19WWLeaderboardUpdateFv = 0x8085e4c4
 
 ##RKNET
 #RKNetController
