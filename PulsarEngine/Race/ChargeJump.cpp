@@ -144,27 +144,26 @@ void UpdateChargeJump() {
         bool isBButtonHeld = false;
         bool wasButtonHeld = chargeJumpState.wasHoldingButton[hudSlotId];
         
-        if (controllerHolder->inputStates) {
-            const ControllerType controllerType = controllerHolder->curController->GetType();
-            
-            if (controllerType == GCN) {
-                bool isBButtonPressed = (buttonRaw & PAD::PAD_BUTTON_B) != 0;
-                bool isRButtonPressed = (buttonRaw & PAD::PAD_BUTTON_R) != 0;
-                isBButtonHeld = isBButtonPressed && !isRButtonPressed;
-            } else if (controllerType == NUNCHUCK) {
-                bool isBButtonPressed = (buttonRaw & WPAD::WPAD_BUTTON_B) != 0;
-                bool isZButtonPressed = (buttonRaw & WPAD::WPAD_BUTTON_Z) != 0;
-                isBButtonHeld = isBButtonPressed && !isZButtonPressed;
-            } else if (controllerType == WHEEL) {
-                bool is2ButtonPressed = (buttonRaw & WPAD::WPAD_BUTTON_2) != 0;
-                bool isBButtonPressed = (buttonRaw & WPAD::WPAD_BUTTON_B) != 0;
-                isBButtonHeld = is2ButtonPressed && !isBButtonPressed;
-            } else if (controllerType == CLASSIC) {
-                bool isBButtonPressed = (buttonRaw & WPAD::WPAD_CL_BUTTON_B) != 0;
-                bool isRButtonPressed = (buttonRaw & WPAD::WPAD_CL_TRIGGER_R) != 0;
-                isBButtonHeld = isBButtonPressed && !isRButtonPressed;
+            if (controllerHolder->inputStates) {
+                const ControllerType controllerType = controllerHolder->curController->GetType();
+                
+                if (controllerType == GCN) {
+                    bool isBButtonPressed = (buttonRaw & PAD::PAD_BUTTON_B) != 0;
+                    bool isRButtonPressed = (buttonRaw & PAD::PAD_BUTTON_R) != 0;
+                    isBButtonHeld = isBButtonPressed && !isRButtonPressed;
+                } else if (controllerType == NUNCHUCK) {
+                    bool is1ButtonPressed = (buttonRaw & WPAD::WPAD_BUTTON_1) != 0;
+                    isBButtonHeld = is1ButtonPressed;
+                } else if (controllerType == WHEEL) {
+                    bool is1ButtonPressed = (buttonRaw & WPAD::WPAD_BUTTON_1) != 0;
+                    bool isBButtonPressed = (buttonRaw & WPAD::WPAD_BUTTON_B) != 0;
+                    isBButtonHeld = is1ButtonPressed && !isBButtonPressed;
+                } else if (controllerType == CLASSIC) {
+                    bool isBButtonPressed = (buttonRaw & WPAD::WPAD_CL_BUTTON_B) != 0;
+                    bool isRButtonPressed = (buttonRaw & WPAD::WPAD_CL_TRIGGER_R) != 0;
+                    isBButtonHeld = isBButtonPressed && !isRButtonPressed;
+                }
             }
-        }
         
         bool bButtonPressed = isBButtonHeld && !wasButtonHeld;
 
