@@ -2,6 +2,7 @@
 #define _PULUI_
 #include <MarioKartWii/UI/Section/SectionMgr.hpp>
 #include <MarioKartWii/UI/Ctrl/UIControl.hpp>
+#include <UI/DisplayFC.hpp>
 
 namespace Pulsar {
 namespace UI {
