@@ -46,6 +46,7 @@ enum Context {
     PULSAR_POINT_DISTRO,
     PULSAR_MODE_IKW,
     PULSAR_CONTEXT_COUNT,
+    PULSAR_CHARGEJUMP,
 };
 
 enum Transmission{
