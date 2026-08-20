@@ -152,6 +152,7 @@ s_auth_error = 0x802f1cB8
 loginRegion__3DWC = 0x80384fd0
 DWC_AuthServer = 0x80386338
 authServer__3DWC = 0x80386338
+sInstance__Q23DWC12MatchControl = 0x8038630C
 s_auth_work = 0x8038633c
 
 #GHTTP
