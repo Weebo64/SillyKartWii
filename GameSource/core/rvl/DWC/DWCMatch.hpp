@@ -112,6 +112,7 @@ struct MatchCommandControl {
 }; //0x98
 
 struct NodeInfo {
+    u32 pid;
     u8 unknown[0x1a];
     u8 aid; //0x1a
     u8 unknown_0x1b[0x30 - 0x1b];
