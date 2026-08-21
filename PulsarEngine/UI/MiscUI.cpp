@@ -10,6 +10,8 @@
 #include <Gamemodes/KO/KORaceEndPage.hpp>
 #include <Debug/Debug.hpp>
 #include <UI/UI.hpp>
+#include <Dolphin/DolphinIOS.hpp>
+#include <SillyKartWii.hpp>
 
 
 
@@ -19,6 +21,18 @@ namespace UI {
 //No ghost saving on RKSYS
 kmWrite32(0x8054913C, 0x60000000);
 kmWrite32(0x80855f48, 0x48000148);
+
+static void CenterTopMenuWifiWaku(ControlLoader* loader, const char* folderName, const char* ctrName, const char* variant, const char** animNames) {
+    loader->Load(folderName, ctrName, variant, animNames);
+    if (Dolphin::IsEmulator() && strcmp(ctrName, "TopMenuWifiWaku") == 0) {
+        LayoutUIControl* control = loader->layoutUIControl;
+        for (int i = 0; i < 4; ++i) {
+            control->positionAndscale[i].position.x += 135.0f;
+        }
+        control->SetPosition(0.0f);
+    }
+}
+kmCall(0x80850604, CenterTopMenuWifiWaku);
 
 //BMG size patch (Diamond)
 kmWrite32(0x8007B37C, 0x38000128);
@@ -76,6 +90,7 @@ kmCall(0x807f8b7c, FixStartMessageFroom);
 static void DisplayDate(CtrlMenuPressStart* start) {
     start->Load();
     start->SetMessage(BMG_DATE);
+    ::SillyKartWii::HideChannelButton();
 }
 kmCall(0x8063ac58, DisplayDate);
 

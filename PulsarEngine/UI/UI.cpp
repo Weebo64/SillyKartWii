@@ -20,6 +20,7 @@
 #include <Gamemodes/KO/KOWinnerPage.hpp>
 #include <Settings/UI/SettingsPanel.hpp>
 #include <Settings/UI/SettingsPageSelect.hpp>
+#include <UI/RoomKick/RoomKickPage.hpp>
 
 namespace Pulsar {
 namespace UI {
@@ -122,10 +123,9 @@ void ExpSection::CreatePulPages() {
         this->CreateAndInitPage(*this, PAGE_SELECT_STAGE_MGR);
     }
     if(this->Get<ExpFroom>() != nullptr) {
-        this->CreateAndInitPage(*this, PULPAGE_TEAMSELECT); //can also put it as part of the case froom of createandinitpage
+        this->CreateAndInitPage(*this, PULPAGE_TEAMSELECT);
         this->CreateAndInitPage(*this, PULPAGE_ROOMKICK);
     }
-    
 }
 
 void ExpSection::CreateAndInitPage(ExpSection& self, u32 id) {
@@ -211,6 +211,9 @@ void ExpSection::CreateAndInitPage(ExpSection& self, u32 id) {
             break;
         case SettingsPageSelect::id:
             page = new SettingsPageSelect;
+            break;
+        case RoomKickPage::id:
+            page = new RoomKickPage;
             break;
         default:
             page = self.CreatePageById(initId);

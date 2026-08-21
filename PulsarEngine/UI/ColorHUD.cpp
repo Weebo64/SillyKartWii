@@ -1,5 +1,6 @@
 #include <SillyKartWii.hpp>
 #include <Settings/Settings.hpp>
+#include <UI/RainbowHUD.hpp>
 
 namespace Pulsar {
 namespace UI {
@@ -9,20 +10,20 @@ static u8 hudG = 255;
 static u8 hudB = 255;
 
 static const u8 hudColors[14][3] = {
-    {255, 255, 255}, // White
-    {60, 60, 60},    // Dark Gray/Black
-    {198, 0, 0},     // Red
-    {240, 136, 10},   // Orange
-    {245, 200, 20},   // Yellow
-    {2, 95, 2},     // Green
-    {76, 255, 0},   // Lime
-    {8, 39, 205},    // Blue
-    {98, 20, 206},   // Purple
-    {235, 105, 210}, // Pink
-    {161, 185, 197},   // silver
-    {36, 167, 240},  // Cyan
-    {0, 160, 145},   // Teal
-    {207, 160, 45},   // Gold
+    {255, 255, 255},
+    {60, 60, 60},
+    {198, 0, 0},
+    {240, 136, 10},
+    {245, 200, 20},
+    {2, 95, 2},
+    {76, 255, 0},
+    {8, 39, 205},
+    {98, 20, 206},
+    {235, 105, 210},
+    {161, 185, 197},
+    {36, 167, 240},
+    {0, 160, 145},
+    {207, 160, 45},
 };
 
 void UpdateHUDColor() {
@@ -41,7 +42,19 @@ void UpdateHUDColor() {
 }
 
 void GetHUDColor(void* self, RGBA16* c0, RGBA16* c1) {
-    UpdateHUDColor();
+    u8 rainbowSetting = Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_RADIO_RAINBOW_HUD);
+    
+    if(rainbowSetting == MISCSETTING_RAINBOW_HUD_ENABLED) {
+        RainbowHUD::Update();
+        u8 r, g, b;
+        RainbowHUD::GetColors(r, g, b);
+        hudR = r;
+        hudG = g;
+        hudB = b;
+    } else {
+        UpdateHUDColor();
+    }
+    
     c0->red = hudR;
     c0->green = hudG;
     c0->blue = hudB;
@@ -53,6 +66,8 @@ void GetHUDColor(void* self, RGBA16* c0, RGBA16* c1) {
 }
 kmBranch(0x805f03dc, GetHUDColor);
 kmBranch(0x805f0440, GetHUDColor);
+
+
 
 void GetHUDBaseColor(void* self, RGBA16* c) {
     UpdateHUDColor();
