@@ -74,6 +74,8 @@ extern bool isUSA;
 extern bool isJapan;
 extern bool isKorea;
 
+void HideChannelButton();
+
 class System : public Pulsar::System {
 public:
     static Pulsar::System* Create();

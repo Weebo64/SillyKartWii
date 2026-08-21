@@ -6,13 +6,27 @@
 #include <MarioKartWii/Kart/KartValues.hpp>
 #include <MarioKartWii/RKNet/RKNetController.hpp>
 #include <core/rvl/OS/OS.hpp>
+#include <runtimeWrite.hpp>
+#include <Dolphin/DolphinIOS.hpp>
 
 namespace SillyKartWii {
 bool isPAL = REGION == 'P';
 bool isUSA = REGION == 'E';
 bool isJapan = REGION == 'J';
 bool isKorea = REGION == 'K';
+
+// bye bye channel button (on dolphin LOL)
+kmRuntimeUse(0x80625E1C);
+void HideChannelButton() {
+    kmRuntimeWrite32A(0x80625E1C, 0x38800004);
+    if (Dolphin::IsEmulator()) {
+        kmRuntimeWrite32A(0x80625E1C, 0x38800003);
+    }
 }
+
+}
+
+static SectionLoadHook hideChannelButton(SillyKartWii::HideChannelButton);
 
 u32 FPSPatchHook = 0;
 u32 PredictionHook = 0;
