@@ -181,8 +181,8 @@ void RoomKickPage::OnYesNoClick(u32 choice, PushButton& button) {
 
 void RoomKickPage::ClearKickHistory() {
     this->kickedCount = 0;
-}
 
+}
 
 u32* RoomKickPage::GetKickHistory(u32& outCount) {
     outCount = this->kickedCount;
