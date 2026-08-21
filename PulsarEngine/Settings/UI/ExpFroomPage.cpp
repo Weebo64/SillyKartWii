@@ -4,8 +4,8 @@
 #include <Settings/UI/ExpFroomPage.hpp>
 #include <Settings/UI/SettingsPageSelect.hpp>
 #include <UI/TeamSelect/TeamSelect.hpp>
-#include <UI/RoomKick/RoomKickPage.hpp>
 #include <UI/UI.hpp>
+#include <UI/RoomKick/RoomKickPage.hpp>
 
 namespace Pulsar {
 namespace UI {
@@ -18,13 +18,13 @@ ExpFroom::ExpFroom() : areControlsHidden(false) {
     this->onTeamsClickHandler.subject = this;
     this->onTeamsClickHandler.ptmf = &ExpFroom::OnTeamsButtonClick;
     this->onKickClickHandler.subject = this;
-    this->onKickClickHandler.ptmf = &ExpFroom::OnKickButtonClick;
+    this->onKickClickHandler.ptmf = &ExpFroom::OnKickButtonClick;   
     this->onButtonSelectHandler.ptmf = &ExpFroom::ExtOnButtonSelect;
 }
 
 void ExpFroom::OnInit() {
 
-    this->InitControlGroup(8); //5 usually + settings button + teams button + kick button
+    this->InitControlGroup(8);
     FriendRoom::OnInit();
 
     this->AddControl(5, settingsButton, 0);
@@ -68,6 +68,7 @@ void ExpFroom::ExtOnButtonSelect(PushButton& button, u32 hudSlotId) {
     }
     else if(button.buttonId == 6) this->bottomText.SetMessage(BMG_TEAMS_BOTTOM, 0);
     else if(button.buttonId == 7) this->bottomText.SetMessage(BMG_KICK_BOTTOM, 0);
+
     else this->OnButtonSelect(button, hudSlotId);
 }
 
@@ -87,6 +88,7 @@ void ExpFroom::OnKickButtonClick(PushButton& button, u32 hudSlotId) {
     this->areControlsHidden = true;
     this->AddPageLayer(static_cast<PageId>(PULPAGE_ROOMKICK), 0);
 }
+
 
 void ExpFroom::AfterControlUpdate() {
     FriendRoom::AfterControlUpdate();

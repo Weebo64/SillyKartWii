@@ -166,13 +166,13 @@ PulsarId CupsConfig::RandomizeTrack() const {
     u32 pulsarId = 0;
 
     if (U8_BATTLE_CHECK == 0x01) {
-        pulsarId = random.NextLimited(200) + 5224 + 0x100;  // Battle tracks bleiben gleich
+        pulsarId = random.NextLimited(200) + 5224 + 0x100;  // Battle tracks stays the same
     }
     if (U8_BATTLE_CHECK == 0x00) {
-        pulsarId = random.NextLimited(160) + 0x100;  // 40 cups * 4 tracks = 160 tracks
+        pulsarId = random.NextLimited(168) + 0x100;  // 42 cups * 4 tracks = 168 tracks
     }
     if(U16_FREE_ROAM == 0x01) {
-        pulsarId = random.NextLimited(160) + 0x100;  // 40 cups für free roam
+        pulsarId = random.NextLimited(168) + 0x100;  // 42 cups for free roam
     }
     return static_cast<PulsarId>(pulsarId);
 }
@@ -193,14 +193,14 @@ PulsarCupId CupsDef::GetNextCupId(PulsarCupId pulsarId, s32 direction) const {
 PulsarCupId CupsConfig::GetNextCupId(PulsarCupId pulsarId, s32 direction) const {
     const u32 idx = ConvertCup_PulsarIdToIdx(pulsarId);
     if (U16_FREE_ROAM == 0x01) {
-        const u32 count = 40;  // 40 CT cups
+        const u32 count = 42;  // 42 CT cups
         const u32 min = count < 8 ? 8 : 0;
         const u32 nextIdx = ((idx + direction + count) % count) + min;
         if (!this->hasRegs && nextIdx < 8) return static_cast<PulsarCupId>(nextIdx + count + 0x38);
         return ConvertCup_IdxToPulsarId(nextIdx);
     }
     if (U8_BATTLE_CHECK == 0x01) {
-        const u32 countBattle= 50;  // Battle cups bleiben bei 50
+        const u32 countBattle= 50;
         const u32 lastCupIndex = this->GetTotalCupCount() - 1;
         const u32 startIdx = 1316;
         const u32 nextIdxBattle= startIdx + ((idx - startIdx + direction + countBattle) % countBattle);
@@ -208,7 +208,7 @@ PulsarCupId CupsConfig::GetNextCupId(PulsarCupId pulsarId, s32 direction) const 
         return ConvertCup_IdxToPulsarId(nextIdxBattle);
     } 
     if (U8_BATTLE_CHECK == 0x00) {
-        const u32 count = 40;  // 40 CT cups
+        const u32 count = 42;  // 42 CT cups
         const u32 min = count < 8 ? 8 : 0;
         const u32 nextIdx = ((idx + direction + count) % count) + min;
         if (!this->hasRegs && nextIdx < 8) return static_cast<PulsarCupId>(nextIdx + count + 0x38);
