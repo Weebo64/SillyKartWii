@@ -64,6 +64,18 @@ int GetCurTrackBMG() {
 // Helper functions for track name and author formatting
 static const wchar_t FONT_SIZE_ESCAPE_SMALL[] = {0x001A, 0x0800, 0x0000, 0x0050, 0x0000};
 
+// colors for the author name according to the doc, u can use these colors
+static const wchar_t COLOR_ESCAPE_GRAY[] = {0x001A, 0x0800, 0x0001, 0x0000, 0x0000};
+static const wchar_t COLOR_ESCAPE_RED1[] = {0x001A, 0x0800, 0x0001, 0x0040, 0x0000};
+static const wchar_t COLOR_ESCAPE_RED2[] = {0x001A, 0x0800, 0x0001, 0x0020, 0x0000};
+static const wchar_t COLOR_ESCAPE_RED3[] = {0x001A, 0x0800, 0x0001, 0x0032, 0x0000};
+static const wchar_t COLOR_ESCAPE_BLUE1[] = {0x001A, 0x0800, 0x0001, 0x0021, 0x0000};
+static const wchar_t COLOR_ESCAPE_BLUE2[] = {0x001A, 0x0800, 0x0001, 0x0031, 0x0000};
+static const wchar_t COLOR_ESCAPE_YELLOW[] = {0x001A, 0x0800, 0x0001, 0x0030, 0x0000};
+static const wchar_t COLOR_ESCAPE_GREEN[] = {0x001A, 0x0800, 0x0001, 0x0033, 0x0000};
+static const wchar_t COLOR_ESCAPE_WHITE[] = {0x001A, 0x0800, 0x0001, 0x0002, 0x0000};
+static const wchar_t COLOR_ESCAPE_TRANSPARENT[] = {0x001A, 0x0800, 0x0001, 0x0008, 0x0000};
+
 static void RemoveAllEscapeSequences(wchar_t* dest, const wchar_t* src) {
     while (*src != L'\0') {
         if (src[0] == 0x001A) {
@@ -166,6 +178,42 @@ static void BuildTrackNameAndAuthor(wchar_t* dest, const wchar_t* trackName, con
     dest[out] = L'\0';
 }
 
+// Custom version with color support for author text
+static void BuildTrackNameAndAuthorWithColor(wchar_t* dest, const wchar_t* trackName, const wchar_t* authorName, const wchar_t* authorColor, u32 maxLen) {
+    if (maxLen == 0) return;
+
+    wchar_t cleanAuthor[0x100];
+    RemoveAllEscapeSequences(cleanAuthor, authorName);
+
+    u32 out = AppendTrackTextPreservingColor(dest, trackName, 0, maxLen);
+
+    if (out < maxLen - 1) {
+        dest[out++] = L'\n';
+    }
+
+    // Add font size escape
+    const u32 fontSizeLen = 4;
+    for (u32 i = 0; i < fontSizeLen && out < maxLen - 1; ++i) {
+        dest[out++] = FONT_SIZE_ESCAPE_SMALL[i];
+    }
+
+    // Add custom color escape sequence
+    if (authorColor != nullptr) {
+        const u32 colorLen = 4;
+        for (u32 i = 0; i < colorLen && out < maxLen - 1; ++i) {
+            dest[out++] = authorColor[i];
+        }
+    }
+
+    // Add author text
+    const wchar_t* curAuthor = cleanAuthor;
+    while (*curAuthor != L'\0' && out < maxLen - 1) {
+        dest[out++] = *curAuthor++;
+    }
+
+    dest[out] = L'\0';
+}
+
 u32 GetTrackAuthorBMGId(PulsarId trackId, u32 trackBmgId) {
     if (CupsConfig::IsReg(trackId) || trackBmgId < BMG_TRACKS) return BMG_NINTENDO;
     
@@ -194,7 +242,10 @@ bool SetTrackNameAuthorMessage(LayoutUIControl& control, PulsarId trackId, u32 t
     if (trackText == nullptr || authorText == nullptr) return false;
 
     static wchar_t s_trackAuthorBuffer[0x200];
-    BuildTrackNameAndAuthor(s_trackAuthorBuffer, trackText, authorText, 0x200);
+    
+    // Author name with custom color (change to any COLOR_ESCAPE_* above)  -Weebo
+    BuildTrackNameAndAuthorWithColor(s_trackAuthorBuffer, trackText, authorText, COLOR_ESCAPE_BLUE2, 0x200);
+    
     Text::Info customInfo;
     customInfo.strings[0] = s_trackAuthorBuffer;
     control.SetMessage(BMG_TEXT, &customInfo);
