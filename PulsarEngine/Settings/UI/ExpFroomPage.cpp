@@ -45,6 +45,7 @@ void ExpFroom::OnInit() {
     this->kickButton.buttonId = 7;
     this->kickButton.SetOnClickHandler(this->onKickClickHandler, 0);
     this->kickButton.SetOnSelectHandler(this->onButtonSelectHandler);
+    this->kickButton.SetMessage(BMG_KICK_BUTTON, nullptr);
 }
 
 void ExpFroom::OnActivate() {
