@@ -19,6 +19,7 @@ RoomKickPage::RoomKickPage() {
 
     playerCount = 0;
     selectedIdx = -1;
+    kickedCount = 0;
 
     onButtonClickHandler.subject = this;
     onButtonClickHandler.ptmf = &RoomKickPage::OnButtonClick;
@@ -181,7 +182,6 @@ void RoomKickPage::OnYesNoClick(u32 choice, PushButton& button) {
 
 void RoomKickPage::ClearKickHistory() {
     this->kickedCount = 0;
-
 }
 
 u32* RoomKickPage::GetKickHistory(u32& outCount) {
