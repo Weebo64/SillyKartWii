@@ -33,8 +33,8 @@ public:
     UIControl* CreateControl(u32 id) override;
     void SetButtonHandlers(PushButton& button) override;
 
-void ClearKickHistory();
-u32* GetKickHistory(u32& outCount);
+    void ClearKickHistory();
+    u32* GetKickHistory(u32& outCount);
 
 private:
     void OnBackPress(u32 hudSlotId);
