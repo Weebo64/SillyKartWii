@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Modding\\Coding\\Kamek\\Common\\KamekLinker\\Kamek.csproj": {}
+    "E:\\SillyKartWii-main (2)\\SillyKartWii-main\\KamekLinker\\Kamek.csproj": {}
   },
   "projects": {
-    "C:\\Modding\\Coding\\Kamek\\Common\\KamekLinker\\Kamek.csproj": {
+    "E:\\SillyKartWii-main (2)\\SillyKartWii-main\\KamekLinker\\Kamek.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Modding\\Coding\\Kamek\\Common\\KamekLinker\\Kamek.csproj",
+        "projectUniqueName": "E:\\SillyKartWii-main (2)\\SillyKartWii-main\\KamekLinker\\Kamek.csproj",
         "projectName": "Kamek",
-        "projectPath": "C:\\Modding\\Coding\\Kamek\\Common\\KamekLinker\\Kamek.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Modding\\Coding\\Kamek\\Common\\KamekLinker\\obj\\",
+        "projectPath": "E:\\SillyKartWii-main (2)\\SillyKartWii-main\\KamekLinker\\Kamek.csproj",
+        "packagesPath": "C:\\Users\\sm64o\\.nuget\\packages\\",
+        "outputPath": "E:\\SillyKartWii-main (2)\\SillyKartWii-main\\KamekLinker\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\sm64o\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -52,7 +46,7 @@
             "Microsoft.NET.ILLink.Tasks": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.10, )",
+              "version": "[8.0.23, )",
               "autoReferenced": true
             }
           },
@@ -72,7 +66,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.417/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

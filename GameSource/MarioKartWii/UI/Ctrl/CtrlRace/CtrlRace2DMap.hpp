@@ -31,7 +31,15 @@ class CtrlRace2DMapCharacter : public CtrlRace2DMapObject {
     void CalculatePosition(const Vec3& kartPosition, Vec2& dest, u32 r6) override; //0x50 807eb3cc
     char* GetPaneName() const override; //0x5c 807ebe60
     virtual void Load(u8 index); //0x60 807eae00
-    u8 unknown_0x1b4[0x1CC - 0x1B4];
+public:  // Changed from private to allow CustomCharacters access
+    u8 playerId; //0x1b4
+    u8 padding_0x1b5[3];
+    nw4r::lyt::Pane* charaPane; //0x1b8
+    nw4r::lyt::Pane* charaShadow0Pane; //0x1bc
+    nw4r::lyt::Pane* charaShadow1Pane; //0x1c0
+private:
+    u32 unknown_0x1c4;
+    u32 unknown_0x1c8;
 }; //total size 0x1cc
 
 class CtrlRace2DMapBossObj : public CtrlRace2DMapObject {

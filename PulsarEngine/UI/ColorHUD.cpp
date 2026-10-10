@@ -1,6 +1,7 @@
 #include <SillyKartWii.hpp>
 #include <Settings/Settings.hpp>
 #include <UI/RainbowHUD.hpp>
+#include <MarioKartWii/UI/Ctrl/UIControl.hpp>
 
 namespace Pulsar {
 namespace UI {

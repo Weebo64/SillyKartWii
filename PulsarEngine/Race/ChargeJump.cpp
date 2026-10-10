@@ -1,3 +1,6 @@
+// Charge Jump code by Weebo64
+
+
 #include <kamek.hpp>
 #include <MarioKartWii/Item/ItemManager.hpp>
 #include <MarioKartWii/Item/Obj/ObjProperties.hpp>
@@ -62,11 +65,18 @@ bool IsChargeJumpFeatherActive(u8 playerId) {
     return g_chargeJumpUseFeather;
 }
 
-void UpdateChargeJump() {
-    if (Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_MISC, SETTINGMISC_RADIO_CHARGE_JUMP) != MISCSETTING_CHARGE_JUMP_ENABLED) {
-        return;
-    }
+bool IsGhostPlayer(u8 playerId) {
+    Racedata* racedata = Racedata::sInstance;
+    if (racedata == nullptr) return false;
+    
+    if (playerId >= 12) return false;
+    
+    const RacedataPlayer& player = racedata->racesScenario.players[playerId];
+    
+    return player.playerType == PLAYER_GHOST;
+}
 
+void UpdateChargeJump() {
     Raceinfo* raceInfo = Raceinfo::sInstance;
     if (raceInfo == nullptr || raceInfo->stage >= RACESTAGE_IS_FINISHING) {
         return;
@@ -89,6 +99,9 @@ void UpdateChargeJump() {
 
     const SectionPad& pad = sectionMgr->pad;
     
+    bool chargeJumpEnabled = Settings::Mgr::Get().GetSettingValue(
+        Settings::SETTINGSTYPE_MISC, SETTINGMISC_RADIO_CHARGE_JUMP) == MISCSETTING_CHARGE_JUMP_ENABLED;
+    
     for (u8 hudSlotId = 0; hudSlotId < 4; ++hudSlotId) {
         Input::ControllerHolder* controllerHolder = pad.GetControllerHolder(hudSlotId);
         if (controllerHolder == nullptr || controllerHolder->inputStates == nullptr) {
@@ -99,9 +112,18 @@ void UpdateChargeJump() {
             continue;
         }
 
-        // Get actual playerId from hudSlotId
         const u32 playerId = racedata->GetPlayerIdOfLocalPlayer(hudSlotId);
         if (playerId >= itemManager->playerCount) {
+            chargeJumpState.isCharging[hudSlotId] = false;
+            chargeJumpState.chargeTimer[hudSlotId] = 0;
+            chargeJumpState.wasHoldingButton[hudSlotId] = false;
+            chargeJumpState.rfhFrameCounter[hudSlotId] = 0;
+            continue;
+        }
+
+        bool isGhost = IsGhostPlayer(playerId);
+        
+        if (!isGhost && !chargeJumpEnabled) {
             chargeJumpState.isCharging[hudSlotId] = false;
             chargeJumpState.chargeTimer[hudSlotId] = 0;
             chargeJumpState.wasHoldingButton[hudSlotId] = false;
@@ -190,7 +212,7 @@ void UpdateChargeJump() {
             }
             
             if (controllerHolder->inputStates) {
-                controllerHolder->inputStates[0].stick.x *= 0.05f;
+                controllerHolder->inputStates[0].stick.x *= 0.01f;
             } 
             
             if (chargeJumpState.chargeTimer[hudSlotId] >= CHARGE_JUMP_MIN_TIME) {

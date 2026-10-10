@@ -134,8 +134,9 @@ namespace UI{
 
     void MultiTransmissionSelect::BeforeControlUpdate(){
         SectionMgr* sectionMgr = SectionMgr::sInstance;
+        if(sectionMgr == nullptr || sectionMgr->curSection == nullptr || sectionMgr->sectionParams == nullptr) return;
         Pulsar::UI::ExpCharacterSelect* charSelect = sectionMgr->curSection->Get<Pulsar::UI::ExpCharacterSelect>();
-        if(charSelect->rouletteCounter != -1 && this->currentState == 0x4) {
+        if(charSelect != nullptr && charSelect->rouletteCounter != -1 && this->currentState == 0x4) {
             this->controlsManipulatorManager.inaccessible = true;
             for(int i = 0; i < sectionMgr->sectionParams->localPlayerCount; ++i) {
                 Random random;

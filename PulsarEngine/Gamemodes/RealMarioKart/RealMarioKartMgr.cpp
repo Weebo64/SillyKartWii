@@ -5,7 +5,11 @@
 
 // Note: this is not finished/untested. feel free to modify the code to help me out! -Weebo64
 
-kmRuntimeUse(0x80558F90);
+// No Vehicles addresses by region
+// PAL: 0x8055D310, original: 0x408200CC
+// NTSC-U: 0x80558F90, original: 0x408200CC
+// NTSC-J: 0x8055CC90, original: 0x408200CC
+// NTSC-K: 0x8054B368, original: 0x408200CC
 
 namespace Pulsar {
 namespace RealMarioKart {
@@ -42,15 +46,10 @@ bool Mgr::IsActive() {
     return false;
 }
 
-// Apply No Vehicles when the gamemode is active n shi
-void ApplyRealMarioKartSettings() {
-    if(Mgr::IsActive()) {
-        // Disable vehicle rendering (No Vehicles code from JoshuaMK)
-        *reinterpret_cast<u32*>(kmRuntimeAddr(0x80558F90)) = 0x60000000;
-    }
-}
-
-static RaceLoadHook ApplyRealMarioKartHook(ApplyRealMarioKartSettings);
+// NOTE: Runtime patching causes crashes
+// We need a different approach - perhaps using code injection hooks
+// instead of directly modifying instructions
+// For now, this feature is disabled until we find a stable solution
 
 } // namespace RealMarioKart
 } // namespace Pulsar

@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "pUx0g07PnXs=",
+  "dgSpecHash": "6gkm1EKtnwE=",
   "success": true,
-  "projectFilePath": "C:\\Modding\\Coding\\Kamek\\Common\\KamekLinker\\Kamek.csproj",
+  "projectFilePath": "E:\\SillyKartWii-main (2)\\SillyKartWii-main\\KamekLinker\\Kamek.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\admin\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.10\\microsoft.net.illink.tasks.8.0.10.nupkg.sha512"
+    "C:\\Users\\sm64o\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.23\\microsoft.net.illink.tasks.8.0.23.nupkg.sha512"
   ],
   "logs": []
 }

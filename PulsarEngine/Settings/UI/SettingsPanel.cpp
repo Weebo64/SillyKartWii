@@ -11,10 +11,10 @@ namespace UI {
 
 SettingsPanel::SettingsPanel()
 {
-    bmgOffset = BMG_USERSETTINGSOFFSET;
-    sheetIdx = Settings::Params::pulsarPageCount;
+    bmgOffset = 0;
+    sheetIdx = 0;
     catIdx = 0;
-    externControlCount = 1;
+    externControlCount = 1;  // Save, Right, Left buttons
     internControlCount = Settings::Params::maxRadioCount + Settings::Params::maxScrollerCount;
     hasBackButton = true;
     nextPageId = static_cast<PageId>(id);
@@ -58,10 +58,6 @@ SettingsPanel::SettingsPanel()
 
     onButtonClickHandler.subject = this;
     onButtonClickHandler.ptmf = &SettingsPanel::OnSaveButtonClick;
-    onRightButtonClickHandler.subject = this;
-    onRightButtonClickHandler.ptmf = &SettingsPanel::OnRightButtonClick;
-    onLeftButtonClickHandler.subject = this;
-    onLeftButtonClickHandler.ptmf = &SettingsPanel::OnLeftButtonClick;
 
     this->controlsManipulatorManager.Init(1, false);
     this->SetManipulatorManager(controlsManipulatorManager);
@@ -93,9 +89,7 @@ void SettingsPanel::OnInit() {
 
 UIControl* SettingsPanel::CreateExternalControl(u32 id) {
     const char* variant = "SAVE";
-    if(id == 1) variant = "RIGHT";
-    else if(id == 2) variant = "LEFT";
-    PushButton* button = new(PushButton);
+    PushButton* button = new PushButton();
     this->AddControl(this->controlCount++, *button, 0);
     button->Load(UI::buttonFolder, "Settings", variant, this->activePlayerBitfield, 0, false);
     return button;
@@ -149,8 +143,6 @@ UIControl* SettingsPanel::CreateControl(u32 id) {
 
 void SettingsPanel::SetButtonHandlers(PushButton& button) {
     PtmfHolder_2A<MenuInteractable, void, PushButton&, u32>* onClickHandler = &this->onButtonClickHandler;
-    if(button.buttonId == 1) onClickHandler = &this->onRightButtonClickHandler;
-    else if(button.buttonId == 2) onClickHandler = &this->onLeftButtonClickHandler;
     button.SetOnClickHandler(*onClickHandler, 0);
     button.SetOnSelectHandler(this->onButtonSelectHandler);
     button.SetOnDeselectHandler(this->onButtonDeselectHandler);
@@ -160,6 +152,7 @@ void SettingsPanel::OnActivate() {
     this->titleBmg = this->bmgOffset + BMG_SETTINGS_TITLE + this->catIdx;
     this->externControls[0]->SelectInitial(0);
     this->bottomText->SetMessage(BMG_SETTINGS_BOTTOM);
+    
     for(int i = 0; i < Settings::Params::maxRadioCount; ++i) {
         RadioButtonControl& radio = this->radioButtonControls[i];
         bool isDisabled = false;
@@ -207,7 +200,12 @@ const ut::detail::RuntimeTypeInfo* SettingsPanel::GetRuntimeTypeInfo() const {
 }
 
 void SettingsPanel::OnExternalButtonSelect(PushButton& button, u32 r5) {
-    this->bottomText->SetMessage(BMG_SETTINGS_BOTTOM);
+    u32 bmgId = BMG_SETTINGS_BOTTOM; //default "save"
+    const u32 id = button.buttonId;
+
+    if(id == 1) bmgId += 1 + this->GetNextBMGOffset(1);
+    else if(id == 2)  bmgId += 1 + this->GetNextBMGOffset(-1);
+    this->bottomText->SetMessage(bmgId);
 }
 
 int SettingsPanel::GetActivePlayerBitfield() const {
@@ -233,16 +231,13 @@ void SettingsPanel::SaveSettings(bool writeFile) {
     Settings::Mgr* settings = Settings::Mgr::sInstance;
 
     for(int count = 0; count < Settings::Params::pageCount; ++count) {
-        const bool isPulsarPage = count < Settings::Params::pulsarPageCount;
         for(int i = 0; i < Settings::Params::radioCount[count]; ++i) {
             const u8 value = this->radioSettings[count][i];
-            if(isPulsarPage) settings->SetSettingValue(static_cast<Settings::Type>(count), i, value);
-            else settings->SetUserSettingValue(static_cast<Settings::UserType>(count - Settings::Params::pulsarPageCount), i, value);
+            settings->SetSettingValue(static_cast<Settings::Type>(count), i, value);
         }
         for(int i = 0; i < Settings::Params::scrollerCount[count]; ++i) {
             const u8 value = this->scrollerSettings[count][i];
-            if(isPulsarPage) settings->SetSettingValue(static_cast<Settings::Type>(count), i + Settings::Params::maxRadioCount, value);
-            else settings->SetUserSettingValue(static_cast<Settings::UserType>(count - Settings::Params::pulsarPageCount), i + Settings::Params::maxRadioCount, value);
+            settings->SetSettingValue(static_cast<Settings::Type>(count), i + Settings::Params::maxRadioCount, value);
         }
     }
     settings->Update();
@@ -259,14 +254,6 @@ void SettingsPanel::OnBackButtonClick(PushButton& button, u32 hudSlotId) {
 
 void SettingsPanel::OnSaveButtonClick(PushButton& button, u32 hudSlotId) {
     this->LoadPrevMenuAndSaveSettings(button);
-}
-
-void SettingsPanel::OnRightButtonClick(PushButton& button, u32 hudSlotId) {
-    this->OnButtonClick(button, 1);
-}
-
-void SettingsPanel::OnLeftButtonClick(PushButton& button, u32 hudSlotId) {
-    this->OnButtonClick(button, -1);
 }
 
 void SettingsPanel::OnButtonClick(PushButton& button, u32 direction) {
@@ -308,6 +295,9 @@ void SettingsPanel::OnTextChange(TextUpDownValueControl::TextControl& text, u32 
     if(!this->externControls[0]->IsSelected()) {
         this->bottomText->SetMessage(bmgId + (id + 1 << 8));
     }
+    
+    // Save settings immediately when character layer changes (IKW realtime save)
+    this->SaveSettings(true);
 };
 
 void SettingsPanel::OnUpDownSelect(UpDownControl& upDownControl, u32 hudSlotId) {
@@ -317,6 +307,12 @@ void SettingsPanel::OnUpDownSelect(UpDownControl& upDownControl, u32 hudSlotId) 
 
 int SettingsPanel::GetNextSheetIdx(s32 direction) {
     return (this->sheetIdx + direction + Settings::Params::pageCount) % Settings::Params::pageCount;
+}
+
+int SettingsPanel::GetNextBMGOffset(s32 direction) {
+    const u32 nextIdx = this->GetNextSheetIdx(direction);
+    if(nextIdx < Settings::Params::pulsarPageCount) return nextIdx;
+    else return BMG_USERSETTINGSOFFSET + nextIdx - Settings::Params::pulsarPageCount;
 }
 
 }

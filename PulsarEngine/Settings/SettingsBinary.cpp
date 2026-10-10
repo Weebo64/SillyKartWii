@@ -23,6 +23,13 @@ Binary::Binary(u32 pulsarPageCount, u32 userPageCount, u32 trackCount) {
     pages.header.size = sizeof(PagesHolder) + sizeof(Page) * (pulsarPageCount + userPageCount - 1);
     pages.pulsarPageCount = pulsarPageCount;
     pages.userPageCount = userPageCount;
+    
+    // Initialize all page settings to 0 (default values)
+    // This ensures all character settings initialize to NORMAL (0)
+    // Requirements: 16.1-16.4
+    for (u32 pageIdx = 0; pageIdx < (pulsarPageCount + userPageCount); ++pageIdx) {
+        memset(&pages.pages[pageIdx].settings, 0, sizeof(pages.pages[pageIdx].settings));
+    }
 
     MiscParams& params = this->GetSection<MiscParams>();
     params.header.magic = MiscParams::miscMagic;

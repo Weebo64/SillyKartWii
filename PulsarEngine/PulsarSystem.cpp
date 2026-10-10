@@ -9,6 +9,7 @@
 #include <Gamemodes/KO/KOHost.hpp>
 #include <Gamemodes/OnlineTT/OnlineTT.hpp>
 #include <Gamemodes/FreeRoam/FRMgr.hpp>
+//#include <Gamemodes/RealMarioKart/RealMarioKartMgr.hpp>  // TODO: Enable when properly implemented
 #include <Settings/Settings.hpp>
 #include <Config.hpp>
 #include <SlotExpansion/CupsConfig.hpp>
@@ -39,7 +40,8 @@ BootHook CreateSystem(System::CreateSystem, 0);
 
 System::System() :
     heap(RKSystem::mInstance.EGGSystem), taskThread(EGG::TaskThread::Create(8, 0, 0x4000, this->heap)),
-    koMgr(nullptr), freeRoamMgr(nullptr), ottHideNames(false) {
+    koMgr(nullptr), realMarioKartMgr(nullptr), freeRoamMgr(nullptr), ottHideNames(false) {
+    // realMarioKartMgr is kept in the initializer list but not used until properly implemented
 }
 
 void System::Init(const ConfigFile& conf) {
@@ -87,6 +89,10 @@ void System::Init(const ConfigFile& conf) {
     this->rawBmg = EGG::Heap::alloc<BMGHeader>(confBMG->fileLength, 0x4, RootScene::sInstance->expHeapGroup.heaps[1]);
     memcpy(this->rawBmg, confBMG, confBMG->fileLength);
     this->customBmgs.Init(*this->rawBmg);
+    
+    // SillyKartWii: Custom Characters disabled - using Character Layers instead
+    // CustomCharacters::Init();
+    
     this->AfterInit();
 }
 
@@ -129,6 +135,8 @@ void System::UpdateContext() {
     bool isOTT = false;
     bool isMiiHeads = settings.GetSettingValue(Settings::SETTINGSTYPE_RACE, SETTINGRACE_RADIO_MII);
     bool isChargeJump = false;
+    bool isItemRainActive = false;
+    bool isCountdown = false;
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
@@ -176,6 +184,13 @@ void System::UpdateContext() {
         // Enable ChargeJump in offline mode
         isChargeJump = true;
     }
+    
+    if(mode == MODE_VS_RACE) {
+        const u8 raceMode = settings.GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_SCROLL_GAMEMODES);
+        isItemRainActive = raceMode == RACE2SETTING_GAMEMODE_ITEMRAIN;
+        isCountdown = raceMode == RACE2SETTING_GAMEMODE_COUNTDOWN;
+    }
+    
     this->netMgr.hostContext = newContext;
 
     u32 context = (isCT << PULSAR_CT) | (isHAW << PULSAR_HAW) | (isMiiHeads << PULSAR_MIIHEADS);
@@ -214,6 +229,21 @@ void System::UpdateContext() {
         this->freeRoamMgr = nullptr;
     }
     
+    // TODO: RealMarioKart Manager - disabled until proper implementation
+    /*
+    // Create RealMarioKart Manager for friend rooms
+    bool isInFriendRoom = (mode == MODE_PRIVATE_VS || mode == MODE_PRIVATE_BATTLE);
+    if(isInFriendRoom) {
+        if(sceneId == SCENE_ID_MENU && this->realMarioKartMgr == nullptr) {
+            RealMarioKart::Mgr::Create();
+        }
+    }
+    if(!isInFriendRoom && this->realMarioKartMgr != nullptr || isInFriendRoom && sceneId == SCENE_ID_GLOBE) {
+        delete this->realMarioKartMgr;
+        this->realMarioKartMgr = nullptr;
+    }
+    */
+    
     context |= (isFreeRoam << PULSAR_MODE_IKW);
 }
 
@@ -251,10 +281,17 @@ asmFunc System::GetNonTTGhostPlayersCount() {
 //Unlock Everything Without Save (_tZ)
 kmWrite32(0x80549974, 0x38600001);
 
-//Skip ESRB page
-kmRegionWrite32(0x80604094, 0x4800001c, 'E');
+// Skip ESRB page
+void removeESRB() {
+    const u8 regionMem = *(u8 *)(0x80000003);
 
-//some NTSC-K Files by IKW Team
+    if (regionMem == 'E')
+        *(u32 *)0x80604094 = 0x4800001c;
+}
+
+BootHook RemoveESRBHook(removeESRB, 0);
+
+//NTSC-K Files
 kmRegionWrite32(0x8087E1F9, 0x2E737A73, 'K');
 kmRegionWrite16(0x8087E1FD, 0x00000000, 'K');
 kmRegionWrite16(0x8087E8B6, 0x00000000, 'K');
@@ -263,6 +300,7 @@ kmRegionWrite32(0x80882481, 0x695F666F, 'K');
 kmRegionWrite16(0x80882485, 0x00006E74, 'K');
 kmRegionWrite32(0x80007e28, 0x4800000c, 'K');
 
+
 const char System::pulsarString[] = "/Pulsar";
 const char System::CommonAssets[] = "/CommonAssets.szs";
 const char System::breff[] = "/Effect/Pulsar.breff";
@@ -270,3 +308,48 @@ const char System::breft[] = "/Effect/Pulsar.breft";
 const char* System::ttModeFolders[] ={ "150", "200", "150F", "200F" };
 
 }//namespace Pulsar
+
+
+//No Course Caching - CRITICAL FOR HEAP SPACE
+// This is essential for preventing DSI crashes in RacedataScenario::InitScreens
+// The NOP at 0x80542D9C (and region equivalents) frees up heap during initialization
+kmWrite32(0x8053FD70, 0x48000034);
+kmWrite32(0x80542D9C, 0x60000000); // PAL: THIS IS THE FIX FOR DSI CRASH - frees up heap space
+kmRegionWrite32(0x80542C1C, 0x60000000, 'J'); // NTSC-J: 0x80542D9C - 0x180 (fixes RacedataScenario crash)
+kmRegionWrite32(0x80531E1C, 0x60000000, 'K'); // NTSC-K
+kmWrite32(0x80531F80, 0x4E800020);
+kmWrite32(0x805407B8, 0x4800003C);
+kmWrite32(0x805408B4, 0x4800003C);
+
+// Additional safety patches from Insane Kart Wii
+kmWrite24(0x8088FE36, 'ikw');
+kmWrite32(0x801B1D68, 0x38600001);
+
+// String Anti-Freeze patches - prevents crashes with certain string operations
+extern "C" void StringAntiFreezeEnd(void*);
+asmFunc StringAntiFreeze() {
+    ASM(
+    nofralloc;
+    rlwinm. r0, r4, 0, 0, 0;
+    beq loc_0x10;
+    lbzu  r0, 0x1(r4);
+
+    loc_0x10:
+    b StringAntiFreezeEnd;
+    )
+}
+kmBranch(0x8002125c, StringAntiFreeze);
+
+extern "C" void StringAntiFreezeEnd2(void*);
+asmFunc StringAntiFreeze2() {
+    ASM(
+    nofralloc;
+    rlwinm. r0, r18, 0, 0, 0;
+    beq loc_0x10;
+    lbz r0, 0x0(r18);
+    
+    loc_0x10:
+    b StringAntiFreezeEnd2;
+    )
+}
+kmBranch(0x80011484, StringAntiFreeze2);

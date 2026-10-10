@@ -2,7 +2,6 @@
 #include <MarioKartWii/UI/Ctrl/UIControl.hpp>
 #include <Network/MatchCommand.hpp>
 #include <PulsarSystem.hpp>
-#include <UI/RoomKick/RoomKickPage.hpp>
 
 namespace Pulsar {
 namespace Network {
@@ -27,7 +26,7 @@ asmFunc MoveSize() { //needed to get datasize later
 }
 kmCall(0x800dc3bc, MoveSize);
 
-DWC::MatchCommand Process(DWC::MatchCommand type, const void* data, u32 dataSize, u32 pid) {
+DWC::MatchCommand Process(DWC::MatchCommand type, const void* data, u32 dataSize) {
     const RKNet::RoomType roomType = RKNet::Controller::sInstance->roomType;
     const bool isCustom = roomType == RKNet::ROOMTYPE_FROOM_NONHOST || roomType == RKNet::ROOMTYPE_FROOM_HOST
         || roomType == RKNet::ROOMTYPE_VS_REGIONAL || roomType == RKNet::ROOMTYPE_JOINING_REGIONAL;
@@ -42,7 +41,7 @@ DWC::MatchCommand Process(DWC::MatchCommand type, const void* data, u32 dataSize
             || strcmp(packet->pulInfo.modFolderName, system->GetModFolder()) != 0
             || !system->CheckUserInfo(packet->pulInfo.userInfo)) {
 
-            denyType = DENY_TYPE_BAD_PACK;
+            DenyType denyType = DENY_TYPE_BAD_PACK;
             if(roomType == RKNet::ROOMTYPE_VS_REGIONAL) mgr.deniesCount++;
             type = DWC::MATCH_COMMAND_RESV_DENY;
         }
@@ -50,22 +49,6 @@ DWC::MatchCommand Process(DWC::MatchCommand type, const void* data, u32 dataSize
             if(packet->pulInfo.statusData != mgr.ownStatusData) {
                 denyType = DENY_TYPE_OTT;
                 type = DWC::MATCH_COMMAND_RESV_DENY;
-            }
-        }
-
-        if (SectionMgr::sInstance && SectionMgr::sInstance->curSection) {
-            UI::ExpSection* expSection = reinterpret_cast<UI::ExpSection*>(SectionMgr::sInstance->curSection);
-            UI::RoomKickPage* roomKick = expSection->GetPulPage<UI::RoomKickPage>();
-            if (roomKick) {
-                u32 bannedCount = 0;
-                u32* bannedPIDs = roomKick->GetKickHistory(bannedCount);
-                for (u32 i = 0; i < bannedCount; i++) {
-                    if (bannedPIDs[i] == pid) {
-                        denyType = DENY_TYPE_KICK;
-                        type = DWC::MATCH_COMMAND_RESV_DENY;
-                        break;
-                    }
-                }
             }
         }
     }

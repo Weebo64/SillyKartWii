@@ -147,5 +147,10 @@ u8 ModifyCheckRankings() {
 kmCall(0x8085b4bc, ModifyCheckRankings);
 kmPatchExitPoint(ModifyCheckRankings, 0x8085bbe0);
 
+// THP Killer - enables killer.thp video during Bullet Bill [Toadette Hack Fan]
+// NOTE: These addresses are from Insane-Kart-Wii and may not work for all builds
+kmWrite8(0x808AD3A4, 0x75);
+kmWrite8(0x808AE1A8, 0x75);
+
 }//namespace UI
 }//namespace Pulsar

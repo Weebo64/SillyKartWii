@@ -70,6 +70,7 @@ struct RGBA16 {
 #define __sync(...)
 #define __isync(...)
 #define size_assert(type, num) static_assert(sizeof(type)==(num),"type")
+#define offset_assert(type, member, off)
 #define static_assert(...)
 #else
 #define asmFunc asm void
@@ -79,6 +80,7 @@ struct RGBA16 {
 #define ASM(...) __VA_ARGS__
 #define override
 #define size_assert(type, num) static_assert(sizeof(type) ==num,#type)
+#define offset_assert(type, member, off)  // Players24: offset checks disabled for old compiler
 #endif
 
 

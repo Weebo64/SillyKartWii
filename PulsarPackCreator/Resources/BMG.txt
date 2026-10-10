@@ -2,6 +2,8 @@
 
    3f7  = IKWFC (1P)
    58a  = {CC}cc
+   7d2  = Yes
+   7d3  = No
    7dd	= IKWFC
    7de	= Riivolution Channel
    7e8	= Play via IKWFC!
@@ -50,7 +52,7 @@
   1fe2	= You've earned trophies in all {CC}cc Cups!
   1fe3	= You've won 3000 times on IKWFC!
   210e	= Congratulations, %ls!\n\nAs a reward for earning trophies in\nall {CC}cc Cups, a new Engine Class\nhas become available:\n\n{CC}cc (Karts and Bikes)
-  2700	= \z{802,110000} by \z{802,110001}
+  2700	= \z{802,110000} by \c{purple}\z{802,110001}\c{off}
   2701	= You have earned a \u{f06a}!
   2702	= \z{802,110000} Grand Prix - Race \z{a02,1000000000} of \z{a02,1000010000}
   2703	= Choose the next track.
@@ -83,12 +85,14 @@
   2844	= \u{f047} Random Track
   2845	= \u{f05e} Random Track\n\u{e002} Random No-Trophy Track
   2846	= \u{f05e} Random Track
-  2847  = Version created {date}
+  2847  = Silly Kart Wii v2\nPress A to Play
   2848  = Nintendo
   2849  = \z{a02,2000000000}
   284A  = Assign players to teams
   284b  = Unable to join due to Room Key mismatch.\nCheck your pack version.
-  284c  = Issues creating lobby.\nCheck your pack version.
+  284c  = Select a player to kick from the room.
+  284d  = Do you want to kick \z{802,120000}?
+  284e  = Kick
   2850  = Race with up to 11 other players on OnlineTT!
   2851  = OnlineTT
   2852  = I'm in an OnlineTT Race!
@@ -122,29 +126,51 @@
   2917  = We're playing Team OnlineTT!
   2918  = We're playing Team KO!
   2919  = We're playing Team KO OnlineTT!
+ 13000  = Free Roam
+ 13001  = Explore tracks freely without time limits.
   2f00	= Save
-  2f01	= \z{800,55}Menu Settings
-  2f02	= \z{800,55}Race Settings
-  2f03	= \z{800,55}Host Settings
-  2f04	= \z{800,55}OTT Settings
-  2f05	= \z{800,55}KO Settings
+  2f01	= \z{800,55}Menu
+  2f02	= \z{800,55}Race
+  2f03	= \z{800,55}Host
+  2f04	= \z{800,55}OTT
+  2f05	= \z{800,55}KO 
+  2f06	= \z{800,55}Race2
+  2f07	= \z{800,55}Misc
+  2f08	= \z{800,55}Free Roam
+  2f09	= \z{800,55}Characters
+  2f0a	= \z{800,55}Time Trail
+  2f0b	= \z{800,55}Button Remap
   2f10	= Save these settings.
   2f11	= Access your menu settings.
   2f12	= Access your race settings.
   2f13	= Access your host settings.
   2f14  = Access your Online TT settings.
   2f15  = Access your KO settings.
+  2f16  = Access your race settings 2.
+  2f17  = Access your misc settings.
+  2f18  = Access your Free Roam settings.
+  2f19  = Access your character settings.
+  2f1a  = Access your Time Trial settings.
+  2f1b  = Customize your controller buttons.
   2f20	= Menu Settings
   2f21	= Race Settings
   2f22	= Host Settings (Friend Rooms Only)
   2f23  = OnlineTT Settings
   2f24  = KO Settings
+  2f25  = Race Settings 2
+  2f26  = Misc Settings
+  2f27  = Free Roam Settings
+  2f28	= Character Settings
+  2f29	= Time Trial Settings
+  2f2a	= Button Remap
   3000	= Fast Menus
   3001	= CT Layout
   3002	= Music
   3003	= FPS
+  3004	= Input Viewer
   3010	= Disabled
-  3011	= Enabled
+  3011	= Faster
+  3012	= Instant
   3020	= Default
   3021	= Alphabetical
   3030	= Default
@@ -152,6 +178,8 @@
   3032  = Disable Race
   3040  = 60 FPS
   3041  = 30 FPS
+  3050  = Disabled
+  3051  = Enabled
   3100	= Menus will animate at the default speed.
   3101	= Removes the animation on button press.
   3200	= Use the default pack layout.
@@ -161,6 +189,8 @@
   3302	= Disables only race BRSTMs.
   3400	= The game will be played at 60 FPS.
   3401	= The game will be played at 30 FPS.
+  3500	= Input Viewer is disabled.
+  3501	= Input Viewer is enabled.
   3700	= Boot To IKWFC
   3710	= Disabled
   3711	= License 1
@@ -185,8 +215,8 @@
   4031	= Enabled
   4040	= Disabled
   4041	= Enabled
-  4050  = Right
-  4051  = Left
+  4050  = Left
+  4051  = Right
   4052  = Disabled
   4100	= Character icons will show on the minimap.
   4101	= Mii Heads will show on the minimap.
@@ -196,8 +226,8 @@
   4301	= Battle glitch will be enabled.
   4400	= Blue shells will behave normally.
   4401	= Holding the item button will cause blue shells to drag.
-  4500	= The speedometer will be on the right.
-  4501	= The speedometer will be on the left.
+  4500	= The speedometer will be on the left.
+  4501	= The speedometer will be on the right.
   4502	= The speedometer will be disabled.
   4700  = Speedometer Fractional
   4710  = None
@@ -299,3 +329,264 @@
   7901  = KOs will occur every 2 races.
   7902  = KOs will occur every 3 races.
   7903  = KOs will occur every 4 races.
+  8000  = Triple Bananas
+  8001  = Turn in Air
+  8002  = Trick Chaining
+  8003  = Brake Drifting
+  8004  = Crown
+  8005  = FOV
+  8010  = Trail
+  8011  = Rotate
+  8020  = Disabled
+  8021  = Enabled
+  8030  = Enabled
+  8031  = Disabled
+  8040  = Disabled
+  8041  = Enabled
+  8050  = Disabled
+  8051  = Enabled
+  8060  = Normal
+  8061  = 4:3
+  8062  = 16:9
+  8063  = GH0STP4WZ Moment
+  8100  = Triple bananas will trail behind you.
+  8101  = Triple bananas will rotate around you.
+  8200  = You cannot turn in the air.
+  8201  = You can turn in the air.
+  8300  = Trick chaining is enabled.
+  8301  = Trick chaining is disabled.
+  8400  = Brake drifting is disabled.
+  8401  = Brake drifting is enabled.
+  8500  = Crown is disabled on the minimap.
+  8501  = Crown is shown on the minimap for the 1st place player.
+  8600  = Normal field of view.
+  8601  = Field of view adjusted for 4:3 aspect ratio.
+  8602  = Field of view adjusted for 16:9 aspect ratio.
+  8603  = holy aurora moment XDDDD
+  9000  = No Lightning Flash
+  9001  = Mii Nametag Color
+  9002  = Items on Minimap
+  9003  = Charge Jump
+  9004  = Rainbow HUD
+  9010  = Disabled
+  9011  = Enabled
+  9020  = Regular
+  9021  = Mii Color
+  9030  = Disabled
+  9031  = Enabled
+  9040  = Disabled
+  9041  = Enabled
+  9050  = Disabled
+  9051  = Enabled
+  9100  = Lightning will flash the screen normally.
+  9101  = Lightning will not flash the screen.
+  9200  = Nametags will use the regular color.
+  9201  = Nametags will use the Mii's favorite color.
+  9300  = Items will not be shown on the minimap.
+  9301  = Items will be shown on the minimap.
+  9400  = Charge Jump is disabled.
+  9401  = Charge Jump is enabled.
+  9500  = Rainbow HUD is disabled.
+  9501  = Rainbow HUD is enabled.
+  9700  = HUD Color
+  9710  = White
+  9711  = Black
+  9712  = Red
+  9713  = Orange
+  9714  = Yellow
+  9715  = Green
+  9716  = Lime
+  9717  = Blue
+  9718  = Purple
+  9719  = Pink
+  971a  = Silver
+  971b  = Cyan
+  971c  = Teal
+  971d  = Gold
+  971e  = Funny Color
+  9800  = HUD elements will be white.
+  9801  = HUD elements will be black.
+  9802  = HUD elements will be red.
+  9803  = HUD elements will be orange.
+  9804  = HUD elements will be yellow.
+  9805  = HUD elements will be green.
+  9806  = HUD elements will be lime.
+  9807  = HUD elements will be blue.
+  9808  = HUD elements will be purple.
+  9809  = HUD elements will be pink.
+  980a  = HUD elements will be brown.
+  980b  = HUD elements will be cyan.
+  980c  = HUD elements will be teal.
+  980d  = HUD elements will be gold.
+  980e  = The Hex is #b00b69. heh. nice.
+  9900  = Loose Files
+  9901  = Display Online Custom Skins
+  9902  = Enable Custom Characters
+  9910  = Enabled
+  9911  = Disabled
+  9920  = Enabled
+  9921  = Disabled
+  9930  = Enabled
+  9931  = Disabled
+  9a00  = Loose archive files can replace disc archives.
+  9a01  = Loose archive files are disabled.
+  9b00  = Custom skins from other players will be visible online.
+  9b01  = Custom skins from other players will not be visible online.
+  9c00  = Custom characters can be selected and used.
+  9c01  = Custom characters are disabled - only vanilla characters available.
+  a000  = Fall Boundaries
+  a001  = Start Item
+  a002  = Auto Drive
+  a003  = Respawn Button
+  a010  = Enabled
+  a011  = Disabled
+  a020  = Mushroom
+  a021  = Feather
+  a030  = Disabled
+  a031  = Enabled
+  a040  = Disabled
+  a041  = Enabled
+  a100  = Fall boundaries are enabled.
+  a101  = Fall boundaries are disabled.
+  a200  = Start with a mushroom.
+  a201  = Start with a feather.
+  a300  = Auto drive is disabled.
+  a301  = Auto drive is enabled.
+  a400  = Respawn button is disabled.
+  a401  = Respawn button is enabled.
+ 15000  = Outside Drift
+ 15001  = Inside Drift
+ 15002  = Choose Outside Drift for karts and outside drifting bikes.
+ 15003  = Choose Inside Drift for inside drifting bikes.
+ 15004  = Help
+ 15005  = Press (A) for more information\nabout drift types.
+ 15006  = Outside Drift:\nKarts and bikes like the Flame Runner\ndrift wide around corners.\n\nInside Drift:\nBikes like the Mach Bike drift\ntight around corners.\nChoose XD
+ 15007  = Select Drift Type
+
+#Character Settings Page 8 (Pulsar Page, Index 8)
+# Radio button BMGs: 0xB000 + offsets
+ b000 = Rosalina
+ b010 = Normal
+ b011 = WeebOwO
+ b100 = Use the normal Rosalina.
+ b101 = Use the custom WeebOwO Rosalina.
+
+ c700 = Time Trail Item
+ c710 = Triple Mushroom
+ c711 = Star
+ c712 = Mega Mushroom
+ c713 = Bullet Bill
+ c800 = Start Time Trial with a Triple Mushroom.
+ c801 = Start Time Trial with a Star.
+ c802 = Start Time Trial with a Mega Mushroom.
+ c803 = Start Time Trial with a Bullet Bill.
+
+# Frenzy Mode Messages
+ d000 = FRENZY!
+
+# Race Settings 2 - Gamemodes Scroller
+ 8700  = Gamemodes
+ 8710  = Disabled
+ 8711  = Countdown
+ 8712  = ItemRain
+ 8800  = No special gamemode is active.
+ 8801  = Countdown mode - reach the finish before time runs out!
+ 8802  = ItemRain mode - items rain from the sky!
+
+# Custom character names/authors under character select.
+# Name:   (characterId << 16) | 0x6a00 | table
+# Author: (characterId << 16) | 0x7a00 | table
+# Mario = 0x00, so skin 1 is 6a01 / 7a01. Table 0 authors use 7a00, 77a00, ...
+
+# All Vanilla Characters - Nintendo Credits
+   7a00  = Nintendo
+  17a00  = Nintendo
+  27a00  = Nintendo
+  37a00  = Nintendo
+  47a00  = Nintendo
+  57a00  = Nintendo
+  67a00  = Nintendo
+  77a00  = Nintendo
+  87a00  = Nintendo
+  97a00  = Nintendo
+  a7a00  = Nintendo
+  b7a00  = Nintendo
+  c7a00  = Nintendo
+  d7a00  = Nintendo
+  e7a00  = Nintendo
+  f7a00  = Nintendo
+ 107a00  = Nintendo
+ 117a00  = Nintendo
+ 127a00  = Nintendo
+ 137a00  = Nintendo
+ 147a00  = Nintendo
+ 157a00  = Nintendo
+ 167a00  = Nintendo
+ 177a00  = Nintendo
+ 187a00  = Nintendo
+ 197a00  = Nintendo
+ 1a7a00  = Nintendo
+ 1b7a00  = Nintendo
+ 1c7a00  = Nintendo
+ 1d7a00  = Nintendo
+ 1e7a00  = Nintendo
+ 1f7a00  = Nintendo
+ 207a00  = Nintendo
+ 217a00  = Nintendo
+ 227a00  = Nintendo
+ 237a00  = Nintendo
+ 247a00  = Nintendo
+ 257a00  = Nintendo
+ 267a00  = Nintendo
+ 277a00  = Nintendo
+ 287a00  = Nintendo
+ 297a00  = Nintendo
+
+# Mario (0x00) Custom Skins
+   6a00  = Mario
+   6a01  = Fco64 The Fox
+   7a01  = Fco64
+
+# Rosalina (0x17) Custom Skins
+ 176a00  = Rosalina
+ 176a01  = WeebOwO
+ 176a02  = WeebOwO (Goth)
+ 176a03  = WeebOwO (Weebo Outfit)
+ 176a04  = WeebOwO (Biker)
+ 176a04  = WeebOwO (Overalls)
+ 176a05  = Brazilian WeebOwO
+ 176a06  = Rapper WeebOwO
+ 177a01  = Weebo64, Fco64
+ 177a02  = Weebo64, Fco64, Kytronix
+ 177a03  = Weebo64, Fco64
+ 177a04  = Weebo64, Fco64
+ 177a05  = Weebo64, Fco64, Kytronix
+ 177a06  = Weebo64, Fco64, Kytronix
+
+
+
+# Wario (0x0B) Custom Skins
+  b6a00  = Wario
+  b6a01  = CaseOh
+  b7a01  = Fco64
+
+ # Toadette (0x0D) Custom Skins
+  d6a00  = Toadette
+  d6a01  = Toadette (Tanooki)
+  d7a01  = Toadette Hack Fan
+
+ # Daisy (0x0F) Custom Skins
+  f6a00  = Daisy
+  f6a01  = Aurora the Lucario
+  f7a01  = GH0STP4WZ
+
+ # Birdo (0x11) Custom Skins
+ 116a00  = Birdo
+ 116a01  = Noly
+ 117a00  = Nintendo
+ 117a01  = Fco64, Nolynn
+
+# RACE Page Scroller 1: Player Count (0x4701 = 18177, options at 0x4720-0x4721 = 18208-18209)
+18177 = Player Count
+18208 = 12 Players
+18209 = 24 Players

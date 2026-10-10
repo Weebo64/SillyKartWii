@@ -223,7 +223,12 @@ bool Mgr::SaveGhost(const RKSYS::LicenseLdbEntry& entry, u32 ldbPosition, bool i
     buffer.ClearBuffer();
 
     bool gotTrophy = false;
-    if(data.CreateRKG(buffer) && buffer.CompressTo(this->rkg)) {
+    const bool createdRkg = data.CreateRKG(buffer);
+    if(createdRkg) {
+        // SillyKartWii: Character Layers don't use table system, always default (0)
+        buffer.header.customCharacterTable = 0;
+    }
+    if(createdRkg && buffer.CompressTo(this->rkg)) {
         if(this->cb != nullptr) {
             this->cb(buffer, IS_SAVING_GHOST, -1);
         }

@@ -10,7 +10,7 @@ namespace Settings {
 
 class Params {
 public:
-    static const int pulsarPageCount = 8;
+    static const int pulsarPageCount = 11;
     static const int userPageCount = 0;
     static const int pageCount = pulsarPageCount + userPageCount;
 
@@ -33,10 +33,12 @@ enum Type {
     SETTINGSTYPE_RACE2,
     SETTINGSTYPE_MISC,
     SETTINGSTYPE_FREEROAM,
+    SETTINGSTYPE_CHARACTERS,
+    SETTINGSTYPE_TT,
 };
 
 enum UserType {
-
+    SETTINGSTYPE_LANGUAGE
 };
 
 }//namespace Settings
@@ -57,7 +59,8 @@ enum RaceSettings {
     SETTINGRACE_RADIO_BLUES = 3,
     SETTINGRACE_RADIO_SOM = 4,
 
-    SETTINGRACE_SCROLL_SOM = 0 + 8
+    SETTINGRACE_SCROLL_SOM = 0 + 8,
+    SETTINGRACE_SCROLL_PLAYERS = 1 + 8  // NEW: 12 vs 24 player scroller
 };
 
 enum HostSettings {
@@ -65,6 +68,7 @@ enum HostSettings {
     SETTINGHOST_RADIO_CC = 1,
     SETTINGHOST_ALLOW_MIIHEADS = 2,
     SETTINGHOST_RADIO_POINT_DISTRO = 3,
+    //SETTINGHOST_RADIO_NO_VEHICLES = 4,  // TODO: better implatation oder so
 
     SETTINGHOST_SCROLL_GP_RACES = 0 + 8
 };
@@ -147,6 +151,11 @@ enum RaceSettingSOMDigits {
     HOSTSETTING_SOM_DIGITS_1,
     HOSTSETTING_SOM_DIGITS_2,
     HOSTSETTING_SOM_DIGITS_3,
+};
+
+enum RaceSettingPlayers {
+    RACESETTING_PLAYERS_12,
+    RACESETTING_PLAYERS_24
 };
 
 enum MenuSettingInputViewer {
@@ -244,6 +253,10 @@ enum Race2Settings {
     SETTINGRACE2_RADIO_TURN_IN_AIR = 1,
     SETTINGRACE2_RADIO_TRICK_CHAINING = 2,
     SETTINGRACE2_RADIO_BRAKE_DRIFTING = 3,
+    SETTINGRACE2_RADIO_CROWN = 4,
+    SETTINGRACE2_RADIO_FOV = 5,
+    
+    SETTINGRACE2_SCROLL_GAMEMODES = 0 + 8
 };
 
 enum MiscSettings {
@@ -252,7 +265,10 @@ enum MiscSettings {
     SETTINGMISC_RADIO_ITEMS_ON_MINIMAP = 2,
     SETTINGMISC_RADIO_CHARGE_JUMP = 3,
     SETTINGMISC_RADIO_RAINBOW_HUD = 4,
-    SETTINGMISC_SCROLL_HUDCOLOR = 0 + 8
+    SETTINGMISC_RADIO_INTENSE_CPUS = 5,
+    SETTINGMISC_SCROLL_HUDCOLOR = 0 + 8,
+    SETTING_LOOSEARCHIVEOVERRIDES = 1 + 8,
+    SETTING_DISPLAYCUSTOMSKINS = 2 + 8,
 };
 
 //RACE2 SETTINGS
@@ -274,6 +290,25 @@ enum Race2SettingTrickChaining {
 enum Race2SettingBrakeDrifting {
     RACE2SETTING_BRAKE_DRIFTING_DISABLED = 0x0,
     RACE2SETTING_BRAKE_DRIFTING_ENABLED = 0x1
+};
+
+enum CrownMinimap {
+    CROWN_DISABLED = 0x0,
+    CROWN_ENABLED = 0x1,
+};
+
+enum FovSetting {
+    FOV_NORMAL = 0x0,
+    FOV_4_3 = 0x1,
+    FOV_16_9 = 0x2,
+    FOV_CUSTOM = 0x3
+};
+
+//RACE2 GAMEMODE SETTINGS
+enum Race2SettingGamemodes {
+    RACE2SETTING_GAMEMODE_DISABLED = 0x0,
+    RACE2SETTING_GAMEMODE_COUNTDOWN = 0x1,
+    RACE2SETTING_GAMEMODE_ITEMRAIN = 0x2
 };
 
 enum MiscSettingNoLightningFlash {
@@ -335,6 +370,15 @@ enum FreeRoamSettingStartItem {
     FREEROAMSETTING_START_ITEM_FEATHER = 0x1
 };
 
+enum CharacterSettings {
+    SETTINGS_ROSALINA = 0
+};
+
+enum CharacterSettingRosalina {
+    CHARACTER_ROSALINA_DEFAULT = 0x0,
+    CHARACTER_ROSALINA_WINTERBIKE = 0x1
+};
+
 enum FreeRoamSettingAutoDrive {
     FREEROAMSETTING_AUTO_DRIVE_DISABLED = 0x0,
     FREEROAMSETTING_AUTO_DRIVE_ENABLED = 0x1
@@ -345,8 +389,37 @@ enum FreeRoamSettingRespawnButton {
     FREEROAMSETTING_RESPAWN_BUTTON_ENABLED = 0x1
 };
 
+enum LooseFilesToggle {
+    LOOSEARCHIVEOVERRIDES_ENABLED = 0x0,
+    LOOSEARCHIVEOVERRIDES_DISABLED = 0x1,
+};
+
+enum DisplayCustomSkinsToggle {
+    DISPLAYCUSTOMSKINS_ENABLED = 0x0,
+    DISPLAYCUSTOMSKINS_DISABLED = 0x1,
+};
+
+enum TTSettings {
+    SETTINGTT_SCROLL_ITEM = 0 + 8
+};
+
+enum TTSettingItem {
+    TTSETTING_ITEM_DISABLED = 0x0,
+    TTSETTING_ITEM_STAR = 0x1,
+    TTSETTING_ITEM_MEGA = 0x2,
+    TTSETTING_ITEM_BB = 0x3
+};
+
 }//namespace Pulsar
 
+// Language support for ButtonRemap (global namespace)
+enum Language {
+    LANGUAGE_ENGLISH,
+    LANGUAGE_ITALIAN
+};
 
+enum {
+    SCROLLER_LANGUAGE = 0 + 6
+};
 
 #endif

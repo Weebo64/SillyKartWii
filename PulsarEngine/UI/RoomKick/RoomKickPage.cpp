@@ -200,10 +200,12 @@ void RoomKickPage::OnButtonClick(PushButton& button, u32 hudSlotId) {
     const u32 btnIdx = button.buttonId;
     if (btnIdx < this->playerCount) {
         if (sub->localAid != this->aidIdx[btnIdx]) {
+            this->selectedIdx = btnIdx;
+            
             Pages::YesNoPopUp* msgBox = SectionMgr::sInstance->curSection->Get<Pages::YesNoPopUp>();
 
             Text::Info info;
-            info.miis[0] = this->miiGroup->GetMii(this->miiIdx[this->selectedIdx]);
+            info.miis[0] = this->miiGroup->GetMii(this->miiIdx[btnIdx]);
             msgBox->Reset();
             msgBox->SetMessageBoxMsg(BMG_KICK_CONFIRM, &info);
             msgBox->PrepareButton(0, BMG_YES, nullptr, 0, this->onYesNoClickHandler);

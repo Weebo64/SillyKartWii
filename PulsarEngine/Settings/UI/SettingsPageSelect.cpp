@@ -118,6 +118,10 @@ void SettingsPageSelect::OnActivate() {
             }
         }
 
+        // Character pages enabled (IKW character layout system)
+        // Note: BMG text files need to be added for proper display
+        // For now they will show with BMG IDs until text files are created
+
         this->pageButtons[i].isHidden = isHidden;
         this->pageButtons[i].manipulator.inaccessible = isHidden;
     }
@@ -152,6 +156,13 @@ void SettingsPageSelect::OnBackButtonClick(PushButton& button, u32 hudSlotId) {
 
 void SettingsPageSelect::OnButtonClick(PushButton& button, u32 hudSlotId) {
     const u32 selectedPage = button.buttonId;
+
+    // Special case: Button Remap (page 10) opens ButtonRemapPage instead of SettingsPanel
+    if(selectedPage == 10) {
+        this->nextPageId = static_cast<PageId>(PULPAGE_BUTTONREMAP);
+        this->EndStateAnimated(0, button.GetAnimationFrameSize());
+        return;
+    }
 
     SettingsPanel* settingsPanel = ExpSection::GetSection()->GetPulPage<SettingsPanel>();
     if(settingsPanel != nullptr) {

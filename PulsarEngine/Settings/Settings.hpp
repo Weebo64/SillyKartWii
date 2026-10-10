@@ -53,6 +53,7 @@ private:
 public:
     Mgr() : rawBin(nullptr) {}
     static const Mgr& Get() { return *sInstance; }
+    static bool IsCreated() { return sInstance != nullptr; }
 
     bool HasTrophy(u32 crc32, TTMode mode) const;
     bool HasTrophy(PulsarId id, TTMode mode) const;
@@ -71,6 +72,20 @@ public:
     }
     static u32 ComputeTrophyFromStatus(u8 gpStatus) {
         return gpStatus & 0b11;
+    }
+    //Button remap
+    static u32 GetButtonRemap(u32 license, u32 controllerType) {
+        Mgr* mgr = Mgr::sInstance;
+        if (mgr == nullptr || mgr->rawBin == nullptr || license >= 4 || controllerType >= 4) return 0;
+        return mgr->rawBin->GetSection<MiscParams>().buttonRemap[license][controllerType];
+    }
+    static void SetButtonRemap(u32 license, u32 controllerType, u32 profile) {
+        Mgr* mgr = Mgr::sInstance;
+        if (mgr == nullptr || mgr->rawBin == nullptr || license >= 4 || controllerType >= 4) return;
+        mgr->rawBin->GetSection<MiscParams>().buttonRemap[license][controllerType] = profile;
+    }
+    static void SaveButtonRemap() {
+        if (Mgr::sInstance != nullptr) Mgr::sInstance->RequestSave();
     }
     static void SaveGPResult(RKSYSRequester* requester, u32 r4, u32 r5, u32 r6, u32 r7, u32 r8, u32 r9, bool isNew);
     u8 GetSettingValue(Type type, u32 setting) const;

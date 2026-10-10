@@ -36,8 +36,6 @@ private:
     void SaveSettings(bool writeFile);
     void LoadPrevMenuAndSaveSettings(PushButton& button);
     void OnSaveButtonClick(PushButton& button, u32 hudSlotId);
-    void OnRightButtonClick(PushButton& button, u32 hudSlotId);
-    void OnLeftButtonClick(PushButton& button, u32 hudSlotId);
     void OnButtonClick(PushButton& button, u32 direction);
     void OnRadioButtonClick(RadioButtonControl& radioButtonControl, u32 r5, u32 optionId);
     void OnRadioButtonChange(RadioButtonControl& radioButtonControl, u32 r5, u32 optionId);
@@ -45,6 +43,7 @@ private:
     void OnUpDownSelect(UpDownControl& upDownControl, u32 hudSlotId);
     void OnTextChange(TextUpDownValueControl::TextControl& text, u32 optionId);
     int GetNextSheetIdx(s32 direction);
+    int GetNextBMGOffset(s32 direction);
     u32 GetTextId(const TextUpDownValueControl::TextControl& text) const {
         TextUpDownValueControl* valueControl = static_cast<TextUpDownValueControl*>(text.parentGroup->parentControl);
         return static_cast<int>(reinterpret_cast<u32>(valueControl) - reinterpret_cast<u32>(&this->textUpDown[0])) / sizeof(TextUpDownValueControl);
@@ -58,8 +57,6 @@ private:
     PtmfHolder_2A<SettingsPanel, void, UpDownControl&, u32> onUpDownClickHandler;
     PtmfHolder_2A<SettingsPanel, void, UpDownControl&, u32> onUpDownSelectHandler;
     PtmfHolder_2A<SettingsPanel, void, TextUpDownValueControl::TextControl&, u32> onTextChangeHandler;
-    PtmfHolder_2A<MenuInteractable, void, PushButton&, u32> onRightButtonClickHandler;
-    PtmfHolder_2A<MenuInteractable, void, PushButton&, u32> onLeftButtonClickHandler;
     PtmfHolder_2A<SettingsPanel, void, PushButton&, u32> onBackButtonClickHandler;
 
     u8 radioSettings[Settings::Params::pageCount][Settings::Params::maxRadioCount];

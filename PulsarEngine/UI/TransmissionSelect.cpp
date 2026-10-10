@@ -138,8 +138,11 @@ namespace UI{
     }
 
     void TransmissionSelect::BeforeControlUpdate(){
-        Pulsar::UI::ExpCharacterSelect* charSelect = SectionMgr::sInstance->curSection->Get<Pulsar::UI::ExpCharacterSelect>();
-        if(charSelect->rouletteCounter != -1 && this->currentState == 0x4) {
+        SectionMgr* sectionMgr = SectionMgr::sInstance;
+        if(sectionMgr == nullptr || sectionMgr->curSection == nullptr) return;
+        
+        Pulsar::UI::ExpCharacterSelect* charSelect = sectionMgr->curSection->Get<Pulsar::UI::ExpCharacterSelect>();
+        if(charSelect != nullptr && charSelect->rouletteCounter != -1 && this->currentState == 0x4) {
             this->controlsManipulatorManager.inaccessible = true;
             Random random;
             PushButton* randomTransmission = this->externControls[random.NextLimited(2)];

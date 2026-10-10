@@ -68,6 +68,7 @@ u8 U8_BRAKEDRIFTING = 0;
 u16 U16_GAMEPLAY2 = 0;
 u32 TTS_CHECK = 0;
 u16 U16_MISSION_MODE_FIX = 0;
+u8 U8_MISSION_ID = 0;
 u8 U8_WWS_CHECK = 0;
 float F32_MENUSPEED = 0.0f;
 
@@ -76,6 +77,17 @@ u16 GCInput = 0;
 u16 ClassicInput = 0;
 u16 U16_FREE_ROAM = 0;
 u8 U8_BATTLE_CHECK = 0;
+
+// Countdown Mode variables (defined in Countdown.cpp as extern "C")
+// u16 U16_GAMEPLAYG = 0;
+// u16 EndRaceCountdown = 0;
+// u8 LAPNUMBER = 0;
+// float U32_MUSIC_SPEED = 1.0f;
+
+// ItemRain Mode variables
+u16 U16_ITEMRAIN = 0;
+
+// Character Layer variables are defined in symbols.txt as memory addresses - DO NOT define them here!
 
 namespace SillyKartWii {
 
@@ -111,3 +123,6 @@ static void InitializeSillyKartWii() {
 BootHook initSillyKart(InitializeSillyKartWii, 0);
 
 }
+
+// Crown minimap setting variable
+u16 U16_CROWN = 0;

@@ -15,7 +15,7 @@ namespace Kamek.Hooks
 
             if (isRegion)
             {
-                char region = (char)GetValueArg(args[3]).Value;
+                char region = (char)GetValueArg(args[2]).Value;
                 if (region != Program._curVer.ToCharArray()[0]) return;
             }
             // expected args:

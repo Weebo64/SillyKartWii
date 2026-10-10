@@ -30,9 +30,10 @@ static u8* const HUD_COLOR_R = reinterpret_cast<u8*>(0x80815088);
 static u8* const HUD_COLOR_G = reinterpret_cast<u8*>(0x80815089);
 static u8* const HUD_COLOR_B = reinterpret_cast<u8*>(0x8081508A);
 
-static u8* const POS_COLOR_R = reinterpret_cast<u8*>(0x80815088);
-static u8* const POS_COLOR_G = reinterpret_cast<u8*>(0x80815089);
-static u8* const POS_COLOR_B = reinterpret_cast<u8*>(0x8081508A);
+// Rainbow color storage matching Gecko code
+static u8* const RAINBOW_COLOR_R = reinterpret_cast<u8*>(0x80815000);
+static u8* const RAINBOW_COLOR_G = reinterpret_cast<u8*>(0x80815001);
+static u8* const RAINBOW_COLOR_B = reinterpret_cast<u8*>(0x80815002);
 
 void RainbowHUD::Init() {
     red1 = 255; green1 = 0; blue1 = 0;
@@ -149,6 +150,11 @@ void RainbowHUD::Update() {
     *HUD_COLOR_R = red1;
     *HUD_COLOR_G = green1;
     *HUD_COLOR_B = blue1;
+    
+    // Also write to the memory locations that other UI elements (like minimap, position) read from
+    *RAINBOW_COLOR_R = red1;
+    *RAINBOW_COLOR_G = green1;
+    *RAINBOW_COLOR_B = blue1;
 }
 
 void RainbowHUD::GetColors(u8& r, u8& g, u8& b) {

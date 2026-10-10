@@ -10,7 +10,6 @@ enum DenyType {
     DENY_TYPE_NORMAL,
     DENY_TYPE_BAD_PACK,
     DENY_TYPE_OTT,
-    DENY_TYPE_KICK,
 };
 
 class Mgr { //Manages network related stuff within Pulsar

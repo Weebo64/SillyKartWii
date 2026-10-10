@@ -2,10 +2,32 @@
 #include <MarioKartWii/Kart/KartCollision.hpp>
 #include <MarioKartWii/Item/ItemManager.hpp>
 #include <MarioKartWii/Item/ItemBehaviour.hpp>
+#include <MarioKartWii/RKNet/RKNetController.hpp>
 #include <PulsarSystem.hpp>
 
 namespace Pulsar {
 namespace Race {
+
+static bool IsAllItemsCanLandActive() {
+    System* system = System::sInstance;
+    if(!system) return false;
+    
+    // Check if ItemRain is active
+    if(system->IsContext(PULSAR_ITEMMODERAIN)) {
+        const RKNet::RoomType roomType = RKNet::Controller::sInstance->roomType;
+        if (roomType == RKNet::ROOMTYPE_FROOM_HOST ||
+            roomType == RKNet::ROOMTYPE_FROOM_NONHOST ||
+            roomType == RKNet::ROOMTYPE_NONE ||
+            roomType == RKNet::ROOMTYPE_VS_REGIONAL ||
+            roomType == RKNet::ROOMTYPE_JOINING_REGIONAL) {
+            return true;
+        }
+    }
+    
+    // Check if CT is active
+    return system->IsContext(PULSAR_CT);
+}
+
 int UseItem(Kart::Collision *kartCollision, ItemId id){
     u8 playerId = kartCollision->GetPlayerIdx();
     Item::Manager::sInstance->players[playerId].inventory.currentItemCount++;
@@ -14,32 +36,32 @@ int UseItem(Kart::Collision *kartCollision, ItemId id){
 }
 
 int AllShocksCanLand(Kart::Collision *kartCollision){
-    if (System::sInstance->IsContext(PULSAR_CT)) return UseItem(kartCollision, LIGHTNING);
+    if (IsAllItemsCanLandActive()) return UseItem(kartCollision, LIGHTNING);
     return -1;
 }
 
 int AllMegasCanLand(Kart::Collision *kartCollision){
-    if (System::sInstance->IsContext(PULSAR_CT)) return UseItem(kartCollision, MEGA_MUSHROOM);
+    if (IsAllItemsCanLandActive()) return UseItem(kartCollision, MEGA_MUSHROOM);
     return -1;
 }
 
 int AllFeathersCanLand(Kart::Collision *kartCollision){
-    if (System::sInstance->IsContext(PULSAR_CT)) return UseItem(kartCollision, BLOOPER);
+    if (IsAllItemsCanLandActive()) return UseItem(kartCollision, BLOOPER);
     return -1;
 }
 
 int AllPOWsCanLand(Kart::Collision *kartCollision){
-    if (System::sInstance->IsContext(PULSAR_CT)) return UseItem(kartCollision, POW_BLOCK);
+    if (IsAllItemsCanLandActive()) return UseItem(kartCollision, POW_BLOCK);
     return -1;
 }
 
 int AllGoldensCanLand(Kart::Collision *kartCollision){
-    if (System::sInstance->IsContext(PULSAR_CT)) return UseItem(kartCollision, MUSHROOM);
+    if (IsAllItemsCanLandActive()) return UseItem(kartCollision, MUSHROOM);
     return -1;
 }
 
 int AllBulletsCanLand(Kart::Collision *kartCollision){
-    if (System::sInstance->IsContext(PULSAR_CT)) return UseItem(kartCollision, BULLET_BILL);
+    if (IsAllItemsCanLandActive()) return UseItem(kartCollision, BULLET_BILL);
     return -1;
 }
 

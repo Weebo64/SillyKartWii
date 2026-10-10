@@ -43,11 +43,14 @@ public:
     static void dumpAll();
     Heap* BecomeCurrentHeap() const; //returns old heap there's an unused r4 arg
     Heap* becomeCurrentHeapWithoutLocking();
-private:
+public:  // Changed from private to allow CustomCharacters heap operations
     MEM::iHeapHead* rvlHeap; //0x10
+private:
     void* parentHeapMBlock; //0x14
     Heap* parentHeap; //0x18
+public:  // Changed from private to allow CustomCharacters to unlock heaps
     u16 dameFlag; //0x1C
+private:
     u8 padding[2];
     nw4r::ut::Link globalLink; //0x20
     nw4r::ut::List childList; //0x28 list of disposers

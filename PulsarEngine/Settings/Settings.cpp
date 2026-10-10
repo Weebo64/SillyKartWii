@@ -109,7 +109,10 @@ bool Mgr::HasTrophy(PulsarId id, TTMode mode) const {
 }
 
 u8 Mgr::GetSettingValue(Type type, u32 setting) const {
-    return this->rawBin->GetSection<PagesHolder>().pages[type].settings[setting];
+    const PagesHolder& pagesHolder = this->rawBin->GetSection<PagesHolder>();
+    // Safety check: if page doesn't exist yet, return 0 (default)
+    if(type >= pagesHolder.pulsarPageCount) return 0;
+    return pagesHolder.pages[type].settings[setting];
 }
 u8 Mgr::GetUserSettingValue(UserType type, u32 setting) const {
     const PagesHolder& pagesHolder = this->rawBin->GetSection<PagesHolder>();
@@ -117,7 +120,11 @@ u8 Mgr::GetUserSettingValue(UserType type, u32 setting) const {
 }
 
 void Mgr::SetSettingValue(Type type, u32 setting, u8 value) {
-    this->rawBin->GetSection<PagesHolder>().pages[type].settings[setting] = value;
+    const PagesHolder& pagesHolder = this->rawBin->GetSection<PagesHolder>();
+    // Safety check: ensure we don't write beyond the array
+    if(type < pagesHolder.pulsarPageCount) {
+        this->rawBin->GetSection<PagesHolder>().pages[type].settings[setting] = value;
+    }
 }
 void Mgr::SetUserSettingValue(UserType type, u32 setting, u8 value) {
     PagesHolder& pagesHolder = this->rawBin->GetSection<PagesHolder>();
@@ -247,6 +254,14 @@ void Mgr::AdjustSectionsSizes() {
     //Pages offset should never be modified in this function
     PagesHolder& destPages = buffer->GetSection<PagesHolder>();
     memcpy(&destPages, &srcPages, srcPages.header.size - sizeof(Page) * srcPages.userPageCount); //start by copying the pulsarPages (and the header)
+    
+    // Initialize any NEW pulsar pages that didn't exist in the old binary with default values (0)
+    if(this->pulsarPageCount > srcPages.pulsarPageCount) {
+        for(u32 newPageIdx = srcPages.pulsarPageCount; newPageIdx < this->pulsarPageCount; ++newPageIdx) {
+            memset(&destPages.pages[newPageIdx].settings, 0, sizeof(Page));
+        }
+    }
+    
     destPages.pulsarPageCount = this->pulsarPageCount;
     destPages.userPageCount = this->userPageCount;
 
@@ -301,11 +316,18 @@ Binary* Mgr::CreateFromOld(const Binary* old) {
         const u32 pageCount = ut::Min(this->pulsarPageCount, oldPages->pageCount); //we use the minimum here, it's fine if some settings are lost
         const u32 trackCount = oldParams->trackCount; //we use the old track count to preserve all trophies
         ret = IO::sInstance->Alloc<Binary>(this->GetSettingsBinSize(trackCount));
-        new(ret) Binary(pageCount, 0, trackCount); //this didn't have userPageCount
+        new(ret) Binary(this->pulsarPageCount, 0, trackCount); //use NEW pulsarPageCount, not old pageCount
 
         //PAGES, version 4 modifies the header and adds user pages so just copy the pulsar pages
         PagesHolder& pages = ret->GetSection<PagesHolder>();
         memcpy(&pages.pages[0], &oldPages->pages[0], pageCount * sizeof(Page));
+        
+        // Initialize any NEW pulsar pages that didn't exist in the old binary with default values (0)
+        if(this->pulsarPageCount > pageCount) {
+            for(u32 newPageIdx = pageCount; newPageIdx < this->pulsarPageCount; ++newPageIdx) {
+                memset(&pages.pages[newPageIdx].settings, 0, sizeof(Page));
+            }
+        }
 
         //MISC, unchanged from 2/3 to 4
         MiscParams& params = ret->GetSection<MiscParams>();

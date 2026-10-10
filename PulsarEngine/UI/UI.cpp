@@ -20,6 +20,7 @@
 #include <Gamemodes/KO/KOWinnerPage.hpp>
 #include <Settings/UI/SettingsPanel.hpp>
 #include <Settings/UI/SettingsPageSelect.hpp>
+#include <UI/ButtonRemap/ButtonRemapPage.hpp>
 #include <UI/RoomKick/RoomKickPage.hpp>
 
 namespace Pulsar {
@@ -116,6 +117,7 @@ void ExpSection::CreatePulPages() {
         case SECTION_OPTIONS:                    //0x8c
             this->CreateAndInitPage(*this, SettingsPanel::id);
             this->CreateAndInitPage(*this, SettingsPageSelect::id);
+            this->CreateAndInitPage(*this, ButtonRemapPage::id);
     }
     if(this->hasAutoVote) {
         this->CreateAndInitPage(*this, PAGE_AUTO_ENDING2);
@@ -211,6 +213,9 @@ void ExpSection::CreateAndInitPage(ExpSection& self, u32 id) {
             break;
         case SettingsPageSelect::id:
             page = new SettingsPageSelect;
+            break;
+        case ButtonRemapPage::id:
+            page = new ButtonRemapPage;
             break;
         case RoomKickPage::id:
             page = new RoomKickPage;

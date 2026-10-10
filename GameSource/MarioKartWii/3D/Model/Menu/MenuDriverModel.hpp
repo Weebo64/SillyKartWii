@@ -28,7 +28,7 @@ public:
     };
     MenuDriverModel(); //8082f860
     ~MenuDriverModel() override; //80830708 vtable 808d8c44
-    void Init() override;  //0xc 8082f8f8
+    void Init() override; //0xc 8082f8f8
     void Update() override; //0x10 8082ff0c
     void SwitchState(u8 playerId, State newState); //8082fb78 for example with state == 2, will switch to OnKartAnms
     void Draw(u8 playerId); //80830a80 toggles chars not shown off so it only shows one model at a time
@@ -70,8 +70,5 @@ public:
     ToadetteHair* bangs; //0x4c
     u32 unknown_0x50; //0x50
 }; //0x54
-
-
-
 
 #endif

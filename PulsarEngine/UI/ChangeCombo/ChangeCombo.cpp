@@ -276,8 +276,11 @@ void ExpMultiKartSelect::BeforeControlUpdate() {
 }
 
 void DriftSelectBeforeControlUpdate(Pages::DriftSelect* driftSelect) {
-    ExpCharacterSelect* charSelect = SectionMgr::sInstance->curSection->Get<ExpCharacterSelect>();
-    if(charSelect->rouletteCounter != -1 && driftSelect->currentState == 0x4) {
+    SectionMgr* sectionMgr = SectionMgr::sInstance;
+    if(sectionMgr == nullptr || sectionMgr->curSection == nullptr) return;
+    
+    ExpCharacterSelect* charSelect = sectionMgr->curSection->Get<ExpCharacterSelect>();
+    if(charSelect != nullptr && charSelect->rouletteCounter != -1 && driftSelect->currentState == 0x4) {
         driftSelect->controlsManipulatorManager.inaccessible = true;
         PushButton* autoButton = driftSelect->controlGroup.GetControl<PushButton>(1);
         PushButton* manualButton = driftSelect->controlGroup.GetControl<PushButton>(0);
@@ -291,10 +294,11 @@ void DriftSelectBeforeControlUpdate(Pages::DriftSelect* driftSelect) {
 kmWritePointer(0x808D9DF8, DriftSelectBeforeControlUpdate);
 
 void MultiDriftSelectBeforeControlUpdate(Pages::MultiDriftSelect* multiDriftSelect) {
-
     SectionMgr* sectionMgr = SectionMgr::sInstance;
+    if(sectionMgr == nullptr || sectionMgr->curSection == nullptr || sectionMgr->sectionParams == nullptr) return;
+    
     ExpCharacterSelect* charSelect = sectionMgr->curSection->Get<ExpCharacterSelect>();
-    if(charSelect->rouletteCounter != -1 && multiDriftSelect->currentState == 0x4) {
+    if(charSelect != nullptr && charSelect->rouletteCounter != -1 && multiDriftSelect->currentState == 0x4) {
         multiDriftSelect->controlsManipulatorManager.inaccessible = true;
         for(int i = 0; i < sectionMgr->sectionParams->localPlayerCount; ++i) {
             PushButton* autoButton = multiDriftSelect->externControls[0 + 2 * i];
@@ -310,14 +314,19 @@ void MultiDriftSelectBeforeControlUpdate(Pages::MultiDriftSelect* multiDriftSele
 kmWritePointer(0x808D9C10, MultiDriftSelectBeforeControlUpdate);
 
 void AddCharSelectLayer(Pages::SELECTStageMgr& page, PageId id, u32 animDirection) {
-
     const System* system = System::sInstance;
-    const ExpVR* votingPage = SectionMgr::sInstance->curSection->Get<ExpVR>(); //always present when 0x90 is present
-    if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating) {
-        id = PAGE_VOTE;
-        page.status = Pages::SELECTStageMgr::STATUS_VOTES_PAGE;
+    const SectionMgr* sectionMgr = SectionMgr::sInstance;
+    
+    if(sectionMgr != nullptr && sectionMgr->curSection != nullptr) {
+        const ExpVR* votingPage = sectionMgr->curSection->Get<ExpVR>(); //always present when 0x90 is present
+        if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating) {
+            id = PAGE_VOTE;
+            page.status = Pages::SELECTStageMgr::STATUS_VOTES_PAGE;
+        }
+        else if(votingPage != nullptr && votingPage->comboButtonState != 0) {
+            id = PAGE_CHARACTER_SELECT;
+        }
     }
-    else if(votingPage->comboButtonState != 0) id = PAGE_CHARACTER_SELECT;
     page.AddPageLayer(id, animDirection);
 }
 kmCall(0x806509d0, AddCharSelectLayer);

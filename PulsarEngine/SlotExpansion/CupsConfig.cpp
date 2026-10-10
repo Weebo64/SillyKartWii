@@ -169,10 +169,10 @@ PulsarId CupsConfig::RandomizeTrack() const {
         pulsarId = random.NextLimited(200) + 5224 + 0x100;  // Battle tracks stays the same
     }
     if (U8_BATTLE_CHECK == 0x00) {
-        pulsarId = random.NextLimited(168) + 0x100;  // 42 cups * 4 tracks = 168 tracks
+        pulsarId = random.NextLimited(192) + 0x100;  // 48 cups * 4 tracks = 192 tracks
     }
     if(U16_FREE_ROAM == 0x01) {
-        pulsarId = random.NextLimited(168) + 0x100;  // 42 cups for free roam
+        pulsarId = random.NextLimited(192) + 0x100;  // 48 cups for free roam
     }
     return static_cast<PulsarId>(pulsarId);
 }
@@ -193,7 +193,7 @@ PulsarCupId CupsDef::GetNextCupId(PulsarCupId pulsarId, s32 direction) const {
 PulsarCupId CupsConfig::GetNextCupId(PulsarCupId pulsarId, s32 direction) const {
     const u32 idx = ConvertCup_PulsarIdToIdx(pulsarId);
     if (U16_FREE_ROAM == 0x01) {
-        const u32 count = 42;  // 42 CT cups
+        const u32 count = 48;  // 48 CT cups
         const u32 min = count < 8 ? 8 : 0;
         const u32 nextIdx = ((idx + direction + count) % count) + min;
         if (!this->hasRegs && nextIdx < 8) return static_cast<PulsarCupId>(nextIdx + count + 0x38);
@@ -208,7 +208,7 @@ PulsarCupId CupsConfig::GetNextCupId(PulsarCupId pulsarId, s32 direction) const 
         return ConvertCup_IdxToPulsarId(nextIdxBattle);
     } 
     if (U8_BATTLE_CHECK == 0x00) {
-        const u32 count = 42;  // 42 CT cups
+        const u32 count = 48;  // 48 CT cups
         const u32 min = count < 8 ? 8 : 0;
         const u32 nextIdx = ((idx + direction + count) % count) + min;
         if (!this->hasRegs && nextIdx < 8) return static_cast<PulsarCupId>(nextIdx + count + 0x38);

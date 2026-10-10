@@ -60,7 +60,7 @@ public:
     u8 unknown_0x1[7];
 
     USERPacket toSendPacket; //0x8
-    USERPacket receivedPackets[12]; //0xc8
+    u8 vanillaReceivedPackets[0x9c8 - 0xc8]; //0xc8 receivedPackets[12], moved below for 24 aids (Race/Players24/Online24Handlers.inc)
 
     RFL::WiFiInformation rflWifiInfo; //0x9c8
     void* rflWifiInfoBuffer; //0x9d8 just an array of RFL::WiFiPackets
@@ -70,7 +70,9 @@ public:
     u32 aidsThatHaveGivenMiis; //0x9e4
     u32 aidBitFlag2; //0x9e8
     u8 unknown_0x9ec[4];
-};
+    USERPacket receivedPackets[24]; //0x9f0 - EXTENDED from [12] for Players24
+}; //total size 0x1bf0 (was 0x9f0)
+size_assert(USERHandler, 0x1bf0);
 
 }//namespace RKNet
 #endif
