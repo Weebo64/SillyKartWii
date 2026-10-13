@@ -43,8 +43,8 @@ bool IsOnline24() {
     if(controller->roomType != RKNet::ROOMTYPE_FROOM_HOST && controller->roomType != RKNet::ROOMTYPE_FROOM_NONHOST) return false;
     const System* system = System::sInstance;
     if(system == nullptr || !system->IsContext(PULSAR_PLAYERS24)) return false;
-    return !system->IsContext(PULSAR_VR) && !system->IsContext(PULSAR_MODE_KO) && !system->IsContext(PULSAR_MODE_OTT)
-        && !system->IsContext(PULSAR_EXTENDEDTEAMS);
+    //SillyKartWii has no ranked rooms (PULSAR_VR) nor extended teams
+    return !system->IsContext(PULSAR_MODE_KO) && !system->IsContext(PULSAR_MODE_OTT);
 }
 
 static bool InRace24() { return RKNet::PacketMgr::sInstance != nullptr && IsOnline24(); }

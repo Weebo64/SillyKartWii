@@ -208,7 +208,7 @@ static u8 SwapUISelectInfo() {  // this can only be called if localPlayerCount >
     asm(mr localPlayerCount, r24;);
     asm(mr curHudSlotId, r16;);
 
-    asm(stb r16, 0x1f5(r22););  // default
+    asm(stb r16, 0x329(r22););  // default: SELECTStageMgr::infos[i].hudSlotid, infos moved to 0x328 (Race/Players24/Online24Pages.cpp)
     const System* system = System::sInstance;
     if (system->IsContext(PULSAR_MODE_KO)) {
         if (localPlayerCount == 1) {

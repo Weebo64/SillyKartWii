@@ -188,10 +188,7 @@ static PatchSet consolesSet("Online 24 consoles", words, P24_COUNT(words), calls
     P24_COUNT(hooks), funcs, P24_COUNT(funcs), false, true);
 
 void ApplyConsoles() {
-    if(!IsSupportedDisc() || !consolesSet.Check()) {
-        OSReport("[SKWii 24P] Console patches don't match this disc - 24-player mode disabled\n");
-        return;
-    }
+    if(!IsSupportedDisc() || !consolesSet.Check()) return;
     consolesSet.Apply();
 }
 

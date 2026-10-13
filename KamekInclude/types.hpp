@@ -58,6 +58,12 @@ struct RGBA16 {
     u16 red, green, blue, alpha;
 };
 
+// Helper struct used by `offset_assert` because the `offsetof` macro can't be used in a `static_assert(...)`
+template <typename T, T lhs, T rhs>
+struct _AssertEq {
+    static_assert(lhs == rhs, "Assertion failed");
+};
+
 #define offsetof(st, m) \
     ((const u32)&(((const st *)0)->m))
 #endif
@@ -80,7 +86,7 @@ struct RGBA16 {
 #define ASM(...) __VA_ARGS__
 #define override
 #define size_assert(type, num) static_assert(sizeof(type) ==num,#type)
-#define offset_assert(type, member, off)  // Players24: offset checks disabled for old compiler
+#define offset_assert(type, member, off) _AssertEq<int, offsetof(type, member), off>()
 #endif
 
 

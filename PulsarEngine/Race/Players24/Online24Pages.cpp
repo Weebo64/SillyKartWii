@@ -154,7 +154,7 @@ static PatchSet pagesSet("Online 24 pages", words, P24_COUNT(words), nullptr, 0,
 
 void ApplyOnlinePages() {
     if(!IsSupportedDisc() || !pagesSet.Check()) {
-        OSReport("[SKWii 24P] Online pages patches don't match this disc - 24-player mode disabled\n");
+        Debug::FatalError("SillyKartWii: the online pages patches (24 players) don't match this game disc.");
         return;
     }
     pagesSet.Apply();

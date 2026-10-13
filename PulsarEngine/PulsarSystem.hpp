@@ -46,8 +46,6 @@ enum Context {
     PULSAR_POINT_DISTRO,
     PULSAR_MODE_IKW,
     PULSAR_PLAYERS24, //24-player friend room VS mode, see Race/Players24/
-    PULSAR_VR, //ranked friend room
-    PULSAR_EXTENDEDTEAMS,
     PULSAR_CONTEXT_COUNT,
     PULSAR_CHARGEJUMP,
 };
@@ -144,7 +142,7 @@ public:
 
     //Transmission system
     u8 GetTransmission;
-    u8 transmissions[12];
+    u8 transmissions[24]; //by player id past the local ones: 24 racers with Race/Players24
     u8 lastSelectedTransmission;
     u32 lastSelectedTransmissionId;
 

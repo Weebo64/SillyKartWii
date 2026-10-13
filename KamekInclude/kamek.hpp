@@ -276,21 +276,25 @@ public:
 };
 
 //REL has NOT loaded yet, so do NOT do anything with REL addr, it will not work
+//Hooks run by ascending priority; hooks with the same priority run in link order.
+//Priority 0 is reserved for System::CreateSystem, everything else that can rely on System must use >= 1
 class BootHook {
 public:
     typedef void (Func)();
     Func* func;
+    u16 priority;
     nw4r::ut::Link link;
     static nw4r::ut::List list;
 
 public:
-    BootHook(Func* f, u16 position) {
+    BootHook(Func* f, u16 priority) {
         this->func = f;
-        Func* obj = (Func*)nw4r::ut::List_GetNth(&list, position);
-        if(obj == nullptr || position > list.count) nw4r::ut::List_Append(&list, this);
-        else {
-            nw4r::ut::List_Insert(&list, obj, this);
-        }
+        this->priority = priority;
+        //the insertion index used to depend on the static ctor (i.e. link) order, which could run hooks before System existed
+        BootHook* cur = (BootHook*)nw4r::ut::List_GetNth(&list, 0);
+        while(cur != nullptr && cur->priority <= priority) cur = (BootHook*)nw4r::ut::List_GetNext(&list, cur);
+        if(cur == nullptr) nw4r::ut::List_Append(&list, this);
+        else nw4r::ut::List_Insert(&list, cur, this);
     }
 
     static void Exec() {

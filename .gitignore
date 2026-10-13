@@ -57,3 +57,15 @@ BuildTesting.bat
 *.vsidx
 PulsarPackCreator/Executable/Pulsar Pack Creator.dll.config
 *.v2
+
+# Friivolution detection file
+PulsarEngine/Friivolution.cpp
+
+# Anticheat (kept private)
+PulsarEngine/AntiCheat.cpp
+PulsarEngine/AntiCheat.hpp
+anticheat.txt
+GameSource/anticheat.txt
+kamek_whitelist.inc
+build_output.txt
+rr-pulsar-main/

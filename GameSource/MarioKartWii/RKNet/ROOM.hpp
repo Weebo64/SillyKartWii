@@ -63,10 +63,10 @@ public:
     u8 vanillaPackets[0x68 - 0x8]; //0x8 toSend/receivedPackets[12], moved below for 24 aids (Race/Players24/Online24Handlers.inc)
     u8 lastSentToAid; //0x68
     u8 unknown_0x69[0x70 - 0x69];
-    u64 lastSentTime; //0x70
+    u64 lastSentTime;
     u32 unknown_0x78[2];
-    ROOMPacket toSendPackets[24]; //0x80 - EXTENDED from [12] for Players24
-    ROOMPacket receivedPackets[24]; //0xe0 - EXTENDED from [12] for Players24
+    ROOMPacket toSendPackets[24]; //0x80
+    ROOMPacket receivedPackets[24]; //0xe0
 }; //total size 0x140 (0x80 in the game)
 size_assert(ROOMHandler, 0x140);
 }//namespace RKNet

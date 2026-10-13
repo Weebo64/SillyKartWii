@@ -226,7 +226,7 @@ static PatchSet aidSet("Online 24 aid", words, P24_COUNT(words), nullptr, 0, nul
 
 void ApplyAidLayout() {
     if(!IsSupportedDisc() || !aidSet.Check()) {
-        OSReport("[SKWii 24P] Aid layout patches don't match this disc - 24-player mode disabled\n");
+        Debug::FatalError("SillyKartWii: the network patches (24 aids) don't match this game disc.");
         return;
     }
     aidSet.Apply();

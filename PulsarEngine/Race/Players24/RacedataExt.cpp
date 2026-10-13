@@ -475,7 +475,7 @@ static void ApplyAtBoot() {
     ApplyOnlinePages();
     ApplyRoomBubbles();
 }
-static BootHook Players24Racedata(ApplyAtBoot, 0);
+static BootHook Players24Racedata(ApplyAtBoot, 1);
 
 }
 }

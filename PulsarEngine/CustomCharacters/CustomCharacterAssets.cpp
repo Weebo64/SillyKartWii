@@ -321,30 +321,8 @@ bool MenuKartArchiveExists(const char *postfix, u32 gamemode) {
     return DiscFileSize(path, fileSize);
 }
 
-bool MenuKartArchiveExistsMiiC(const char *postfix, u32 gamemode) {
-    if (postfix == nullptr) return false;
-    char path[0x60];
-    const char *suffix = gamemode == 2 ? "" : "_BT";
-    const int written = snprintf(path, sizeof(path), "/MiiOutfitC/%s-allkart%s.szs", postfix, suffix);
-    if (written <= 0 || static_cast<u32>(written) >= sizeof(path)) return false;
-    u32 fileSize = 0;
-    return DiscFileSize(path, fileSize);
-}
-
 const char *MenuKartArchivePostfix(CharacterId character, u32 gamemode) {
     const char *customPostfix = GeneratedCustomPostfix(character, SelectedTable(character));
-    
-    // Check if this is a Mii Outfit C character
-    const u8 miiCIdx = MiiCIndex(character);
-    if (miiCIdx < MII_C_COUNT) {
-        // For Mii Outfit C, check custom /MiiOutfitC folder first
-        if (customPostfix != nullptr && MenuKartArchiveExistsMiiC(customPostfix, gamemode)) return customPostfix;
-        const char *defaultPostfix = GetDefaultCharacterPostfix(character);
-        if (MenuKartArchiveExistsMiiC(defaultPostfix, gamemode)) return defaultPostfix;
-        return defaultPostfix;
-    }
-    
-    // Default behavior for other characters
     if (customPostfix != nullptr && MenuKartArchiveExists(customPostfix, gamemode)) return customPostfix;
     return GetDefaultCharacterPostfix(character);
 }

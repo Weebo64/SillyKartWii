@@ -1,4 +1,5 @@
 
+#include <Race/Players24/Players24.hpp>
 #include <MarioKartWii/UI/Page/RaceHUD/RaceHUD.hpp>
 #include <MarioKartWii/UI/Page/RaceMenu/GhostReplayPause.hpp>
 #include <MarioKartWii/Kart/KartManager.hpp>
@@ -81,7 +82,7 @@ kmCall(0x8085728c, PatchFinishRaceBMGID);
 
 
 static int ChangePlayerType(const RacedataPlayer& player, u8 id) {
-    PlayerType type = Racedata::sInstance->racesScenario.players[id].playerType;
+    PlayerType type = Pulsar::Players24::GetPlayer(Racedata::sInstance->racesScenario, id).playerType;
     if(type == PLAYER_GHOST && id == 0) return 0;
     return type;
 }
@@ -110,7 +111,7 @@ kmCall(0x80783770, PatchIsLocalCheck);
 
 static bool EnableCPUDrivingAfterRace(const KartAIController& aiController) {
     const u8 id = aiController.GetPlayerIdx();
-    const PlayerType type = Racedata::sInstance->racesScenario.players[id].playerType;
+    const PlayerType type = Pulsar::Players24::GetPlayer(Racedata::sInstance->racesScenario, id).playerType;
     if(type == PLAYER_GHOST && id != 0) return true;
     return false;
 }

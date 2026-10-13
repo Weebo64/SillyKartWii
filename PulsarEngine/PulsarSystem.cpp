@@ -137,6 +137,7 @@ void System::UpdateContext() {
     bool isChargeJump = false;
     bool isItemRainActive = false;
     bool isCountdown = false;
+    bool isPlayers24 = false; //friend rooms only, from the host (Race/Players24)
 
     const RKNet::Controller* controller = RKNet::Controller::sInstance;
     const GameMode mode = racedataSettings.gamemode;
@@ -166,6 +167,7 @@ void System::UpdateContext() {
                 isOTT = newContext & (1 << PULSAR_MODE_OTT);
                 isMiiHeads = newContext & (1 << PULSAR_MIIHEADS);
                 isChargeJump = newContext & (1 << PULSAR_CHARGEJUMP);
+                isPlayers24 = newContext & (1 << PULSAR_PLAYERS24);
                 if(isOTT) {
                     isUMTs &= newContext & (1 << PULSAR_UMTS);
                     isFeather &= newContext & (1 << PULSAR_FEATHER);
@@ -193,7 +195,7 @@ void System::UpdateContext() {
     
     this->netMgr.hostContext = newContext;
 
-    u32 context = (isCT << PULSAR_CT) | (isHAW << PULSAR_HAW) | (isMiiHeads << PULSAR_MIIHEADS);
+    u32 context = (isCT << PULSAR_CT) | (isHAW << PULSAR_HAW) | (isMiiHeads << PULSAR_MIIHEADS) | (isPlayers24 << PULSAR_PLAYERS24);
     if(isCT) {
         context |= (is200 << PULSAR_200) | (isLegacy200 << PULSAR_LEGACY_200_MAX_SPEED) | (isFeather << PULSAR_FEATHER) | (isUMTs << PULSAR_UMTS) | (isMegaTC << PULSAR_MEGATC) | (isOTT << PULSAR_MODE_OTT) | (isKO << PULSAR_MODE_KO) | (isChargeJump << PULSAR_CHARGEJUMP);
     }
@@ -289,7 +291,7 @@ void removeESRB() {
         *(u32 *)0x80604094 = 0x4800001c;
 }
 
-BootHook RemoveESRBHook(removeESRB, 0);
+BootHook RemoveESRBHook(removeESRB, 1);
 
 //NTSC-K Files
 kmRegionWrite32(0x8087E1F9, 0x2E737A73, 'K');

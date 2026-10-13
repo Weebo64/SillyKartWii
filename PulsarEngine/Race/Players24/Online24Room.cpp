@@ -171,7 +171,7 @@ static PatchSet roomSet("Online 24 room", words, P24_COUNT(words), nullptr, 0, n
 
 void ApplyRoomBubbles() {
     if(!IsSupportedDisc() || !roomSet.Check()) {
-        OSReport("[SKWii 24P] Friend room patches don't match this disc - 24-player mode disabled\n");
+        Debug::FatalError("SillyKartWii: the friend room patches (24 players) don't match this game disc.");
         return;
     }
     roomSet.Apply();

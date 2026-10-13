@@ -172,9 +172,17 @@ static void BlooperDelay(HookRegs& regs, u32 original) {
     regs.gpr[RegD(original)] = *reinterpret_cast<u32*>(regs.gpr[RegA(original)] + offset);
 }
 
+/*
+    SillyKartWii has 27 item slots (Extensions/ItemExpansion/ItemSlotExpansion.cpp) where the game has 19: a column of
+    probabilities is 27 u16 and a roulette row 28 u32. ItemSlotExpansion patches the same instructions for 12 columns.
+*/
+static const u32 itemSlotCount = 27;
+static const u32 probabilityStride = itemSlotCount * sizeof(u16); //0x36, 0x26 in the game
+static const u32 rouletteStride = (itemSlotCount + 1) * sizeof(u32); //0x70, 0x50 in the game
+
 static void ItemTableSize(HookRegs& regs, u32) {
     const u32 count = regs.gpr[31] < 24 ? 24 : regs.gpr[31];
-    regs.gpr[3] = count * 0x26;
+    regs.gpr[3] = count * probabilityStride;
 }
 
 static void* scaleItemTableOriginal = nullptr;
@@ -193,13 +201,13 @@ static void ScaleItemTable(u8* slotData, u32* table) {
     const u32 last = count - 1;
     for(s32 column = last; column >= 0; --column) {
         const u32 source = column * 11 / last;
-        const u16* src = reinterpret_cast<const u16*>(probabilities + source * 0x26);
-        u16* dest = reinterpret_cast<u16*>(probabilities + column * 0x26);
-        for(int i = 0; i < 19; ++i) dest[i] = src[i];
+        const u16* src = reinterpret_cast<const u16*>(probabilities + source * probabilityStride);
+        u16* dest = reinterpret_cast<u16*>(probabilities + column * probabilityStride);
+        for(int i = 0; i < itemSlotCount; ++i) dest[i] = src[i];
         if(hasRoulette) {
-            const u32* srcRoulette = reinterpret_cast<const u32*>(roulette + source * 0x50);
-            u32* destRoulette = reinterpret_cast<u32*>(roulette + column * 0x50);
-            for(int i = 0; i < 20; ++i) destRoulette[i] = srcRoulette[i];
+            const u32* srcRoulette = reinterpret_cast<const u32*>(roulette + source * rouletteStride);
+            u32* destRoulette = reinterpret_cast<u32*>(roulette + column * rouletteStride);
+            for(int i = 0; i < itemSlotCount + 1; ++i) destRoulette[i] = srcRoulette[i];
         }
     }
 }
@@ -339,7 +347,7 @@ static const HookPatch hooks[] ={
     { 0x807a9344, 0x7c7c002e, BlooperDelay, false },
     { 0x807a94e4, 0x7c7a002e, BlooperDelay, false },
     { 0x807a95c8, 0x7c7ab82e, BlooperDelay, false },
-    { 0x807baa20, 0x1c7f0026, ItemTableSize, false },
+    { 0x807baa20, 0x1c7f0036, ItemTableSize, false }, //mulli r3, r31, 0x36: ItemSlotExpansion's 27 items
 };
 
 static const FuncHook funcs[] ={

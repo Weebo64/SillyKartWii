@@ -1,3 +1,5 @@
+#include <Race/Players24/Players24.hpp>
+#include <Race/Players24/Online24.hpp>
 #include <kamek.hpp>
 #include <MarioKartWii/RKNet/RKNetController.hpp>
 #include <MarioKartWii/UI/Ctrl/CtrlRace/CtrlRaceBalloon.hpp>
@@ -24,7 +26,7 @@ kmWrite32(0x807997e0, 0x60000000);
 static void SetStartingItem(Item::PlayerInventory& inventory, ItemId id, bool isItemForcedDueToCapacity) {
     register u32 playerId;
     asm(mr playerId, r29;);
-    if (Racedata::sInstance->racesScenario.players[playerId].playerType == PLAYER_CPU) return;
+    if (Players24::GetPlayer(Racedata::sInstance->racesScenario, playerId).playerType == PLAYER_CPU) return;
     const System* system = System::sInstance;
     const bool isTT = DriverMgr::isTT;
     if (isTT || system->IsContext(PULSAR_MODE_OTT)) {
@@ -43,7 +45,10 @@ kmCall(0x80799808, SetStartingItem);
 
 //From JoshuaMK, ported to C++ by Brawlbox and adapted as a setting
 static int MiiHeads(Racedata* racedata, u32 unused, u32 unused2, u8 id) {
-    CharacterId charId = racedata->racesScenario.players[id].characterId;
+    CharacterId charId = Players24::GetPlayer(racedata->racesScenario, id).characterId;
+    // Online 24: the CPUs of the other consoles have no Mii, and past 12 racers every driver keeps its character
+    // (a Mii driver with id 12+ read past playerMiis' 12 slots)
+    if (Players24::KeepsCharacterHead(id)) return charId;
     bool miiHeadFroom = HOSTSETTING_ALLOW_MIIHEADS_ENABLED;
     if (RKNet::Controller::sInstance->roomType == RKNet::ROOMTYPE_FROOM_HOST || RKNet::Controller::sInstance->roomType == RKNet::ROOMTYPE_FROOM_NONHOST) {
         miiHeadFroom = System::sInstance->IsContext(PULSAR_MIIHEADS) ? HOSTSETTING_ALLOW_MIIHEADS_ENABLED : HOSTSETTING_ALLOW_MIIHEADS_DISABLED;

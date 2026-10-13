@@ -6,7 +6,6 @@
 #include <MarioKartWii/Scene/GameScene.hpp>
 #include <MarioKartWii/UI/Section/SectionMgr.hpp>
 #include <core/egg/mem/Heap.hpp>
-// #include <Network/Rating/StaffBadge.hpp>
 #include <MarioKartWii/RKNet/RKNetController.hpp>
 
 namespace Pulsar {
@@ -154,13 +153,14 @@ static void BalloonMiiCount(HookRegs& regs, u32) {
     regs.gpr[0] = count;
 }
 
+//OnlineParams::rankBMG (0x35c) has 12 entries: ids 12-23 get no icon instead of reading past it.
+//SillyKartWii has no staff badges, so this only keeps the vanilla read in bounds.
 static void StaffBadgePast12(HookRegs& regs, u32) {
     const u8 id = regs.gpr[0] >> 2;
     if(id < vanillaPlayers) {
         regs.gpr[5] = *reinterpret_cast<const u32*>(regs.gpr[5] + 0x35c);
         return;
     }
-    // Staff badges not available in SKWii - return default BMG ID
     regs.gpr[5] = 0;
 }
 

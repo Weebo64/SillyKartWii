@@ -1,3 +1,4 @@
+#include <Race/Players24/Online24.hpp>
 #include <core/nw4r/ut/Misc.hpp>
 #include <MarioKartWii/GlobalFunctions.hpp>
 #include <MarioKartWii/UI/Page/Other/SELECTStageMgr.hpp>
@@ -20,20 +21,26 @@ ExpVR::ExpVR() : comboButtonState(0) {
 kmWrite32(0x8064a61c, 0x60000000); //nop initControlGroup
 
 kmWrite24(0x808998b3, 'PUL'); //WifiMemberConfirmButton -> PULiMemberConfirmButton
+/*
+    VR::OnInit fills 0 to 0xE with the page title, the bottom text, the OK button and the twelve vrControls. In a room
+    past 12 consoles the page has 24 vrControls (Race/Players24/Online24Pages.cpp): 0 to 0x1A, so the two buttons
+    added here go right after the rows.
+*/
 void ExpVR::OnInit() {
-    this->InitControlGroup(0x11);
+    const u32 firstButton = 3 + Players24::DecideVRRows(); //title, bottom text, OK button, then the rows
+    this->InitControlGroup(firstButton + 2);
     VR::OnInit();
 
     const System* system = System::sInstance;
     bool isKOd = false;
     if(system->IsContext(PULSAR_MODE_KO) && system->koMgr->isSpectating) isKOd = true;
 
-    this->AddControl(0xF, this->randomComboButton, 0);
+    this->AddControl(firstButton, this->randomComboButton, 0);
     this->randomComboButton.isHidden = isKOd;
     this->randomComboButton.Load(UI::buttonFolder, "PULiMemberConfirmButton", "Random", 1, 0, isKOd);
     this->randomComboButton.SetOnClickHandler(this->onRandomComboClick, 0);
 
-    this->AddControl(0x10, this->changeComboButton, 0);
+    this->AddControl(firstButton + 1, this->changeComboButton, 0);
     this->changeComboButton.isHidden = isKOd;
     this->changeComboButton.Load(UI::buttonFolder, "PULiMemberConfirmButton", "Change", 1, 0, isKOd);
     this->changeComboButton.SetOnClickHandler(this->onChangeComboClick, 0);

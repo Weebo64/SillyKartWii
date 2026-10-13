@@ -63,7 +63,7 @@ ChooseNextTrack::ChooseNextTrack() :
     onLeftArrowSelectHandler.ptmf = &ChooseNextTrack::OnLeftArrowSelect;
     onButtonClickHandler.ptmf = &ChooseNextTrack::OnButtonClick;
     for(int i = 0; i < 6; ++i) new (&this->manipulatorManager.holders[0].info) RaceControlButtonInfo;
-    for(int i = 0; i < 12; ++i) hasReceivedHostTrack[i] = false;
+    for(int i = 0; i < 24; ++i) hasReceivedHostTrack[i] = false;
     CupsConfig* cupsConfig = CupsConfig::sInstance;
     PulsarId lastTrack = cupsConfig->GetWinning();
     if(!this->isBattle && cupsConfig->IsAlphabetical() && lastTrack >= PULSARID_FIRSTCT) lastTrack = static_cast<PulsarId>(cupsConfig->GetInvertedArray()[lastTrack - PULSARID_FIRSTCT] + PULSARID_FIRSTCT);
@@ -201,7 +201,7 @@ void ChooseNextTrack::InitExtraControls(u32 gameControlCount) {
 void ChooseNextTrack::UpdateRH1() {
     RKNet::Controller* controller = RKNet::Controller::sInstance;
     RKNet::ControllerSub& sub = controller->subs[controller->currentSub];
-    for(int aid = 0; aid < 12; ++aid) {
+    for(int aid = 0; aid < 24; ++aid) { //24 consoles (Race/Players24)
         if((1 << aid & sub.availableAids) == 0) continue;
         if(aid == sub.localAid) continue;
         for(int i = 0; i < 2; ++i) {
@@ -237,7 +237,7 @@ SectionId ChooseNextTrack::ProcessHAW(SectionId defaultId) {
     bool isEveryoneWaiting = true;
     bool isEveryoneInRace = true;
 
-    for(int aid = 0; aid < 12; ++aid) {
+    for(int aid = 0; aid < 24; ++aid) { //24 consoles (Race/Players24)
         if((1 << aid & sub.availableAids) == 0) continue;
         if(aid == sub.localAid) continue;
         const u32 lastBufferUsed = controller->lastReceivedBufferUsed[aid][RKNet::PACKET_RACEHEADER1];

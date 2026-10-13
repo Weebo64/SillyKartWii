@@ -120,7 +120,7 @@ static void InitializeSillyKartWii() {
     U16_SILLY_EFFECTS = 0;
     U16_SILLY_SOUNDS = 0;
 }
-BootHook initSillyKart(InitializeSillyKartWii, 0);
+BootHook initSillyKart(InitializeSillyKartWii, 1);
 
 }
 

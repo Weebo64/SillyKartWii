@@ -467,16 +467,6 @@ u32 AlignUp(u32 value, u32 alignment) {
 bool BuildDriverPath(CharacterId character, u8 table, char *path, u32 pathSize) {
     const char *name = DriverBRRESName(character, table);
     if (name == nullptr) return false;
-    
-    // Check if this is a Mii Outfit C character
-    const u8 miiCIdx = MiiCIndex(character);
-    if (miiCIdx < MII_C_COUNT) {
-        // Use custom /MiiOutfitC folder for Mii Outfit C
-        const int written = snprintf(path, pathSize, "/MiiOutfitC/%s.brres", name);
-        return written > 0 && static_cast<u32>(written) < pathSize;
-    }
-    
-    // Default path for all other characters
     const int written = snprintf(path, pathSize, "/Scene/Model/Driver/%s.brres", name);
     return written > 0 && static_cast<u32>(written) < pathSize;
 }

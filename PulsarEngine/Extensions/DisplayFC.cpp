@@ -30,8 +30,8 @@ namespace Pulsar {
 namespace DisplayFc {
 
 typedef struct {
-    unsigned int pid[12];
-    unsigned char country[12];
+    unsigned int pid[24]; //by player id: 24 in an online 24 players room (Race/Players24)
+    unsigned char country[24];
 } SavedFc;
 
 SavedFc savedFc;

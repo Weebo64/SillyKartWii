@@ -158,8 +158,6 @@ void SetCustomCharacterNameMessage(LayoutUIControl &control, const char *paneNam
 void SetCustomCharacterNameMessage(LayoutUIControl &control, u32 bmgId);
 bool SetCustomCharacterAuthorMessage(LayoutUIControl &control, u32 bmgId);
 const char *DriverBRRESName(CharacterId character, u8 table);
-u8 MiiCIndex(CharacterId character);
-bool MenuKartArchiveExistsMiiC(const char *postfix, u32 gamemode);
 
 // Section and selection state.
 u8 SectionPlayerCount(const SectionMgr *mgr);

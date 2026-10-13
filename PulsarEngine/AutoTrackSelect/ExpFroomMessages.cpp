@@ -1,3 +1,4 @@
+#include <Race/Players24/Online24.hpp>
 #include <AutoTrackSelect/ExpFroomMessages.hpp>
 #include <Settings/Settings.hpp>
 #include <SlotExpansion/CupsConfig.hpp>
@@ -36,6 +37,11 @@ void ExpFroomMessages::OnCourseButtonClick(PushButton& button, u32 hudSlotId) {
     Pages::FriendRoomMessages::OnModeButtonClick(clickedButton, 0); //hudslot is unused
 }
 
+//A room opened with 24 places only starts plain VS (Race/Players24/Online24.hpp): its menu has that button alone
+static u32 ModeButtonCount() {
+    return Players24::IsHostingRoom24() ? 1 : 4;
+}
+
 //kmWrite32(0x805dc47c, 0x7FE3FB78); //Get Page in r3
 static void OnStartButtonFroomMsgActivate() {
     register ExpFroomMessages* msg;
@@ -43,7 +49,7 @@ static void OnStartButtonFroomMsgActivate() {
 
     if (!Settings::Mgr::Get().GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS)) {
         msg->onModeButtonClickHandler.ptmf = &Pages::FriendRoomMessages::OnModeButtonClick;
-        msg->msgCount = 4;
+        msg->msgCount = ModeButtonCount();
     }
     else {
         for (int i = 0; i < 4; ++i) msg->messages[0].buttons[i].HandleDeselect(0, -1);
@@ -56,7 +62,7 @@ static void OnStartButtonFroomMsgActivate() {
         }
         else {
             msg->isOnModeSelection = true;
-            msg->msgCount = 4;
+            msg->msgCount = ModeButtonCount();
             msg->onModeButtonClickHandler.ptmf = &ExpFroomMessages::OnModeButtonClick;
         }
     }

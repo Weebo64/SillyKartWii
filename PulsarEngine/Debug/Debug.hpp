@@ -50,19 +50,6 @@ struct ExceptionFile {
     FPR fprs[32];
     FPR fpscr;
     StackFrame frames[10];
-    
-    // SillyKartWii specific crash data
-    u8 vanillaMode;              // Game mode
-    u8 sillyMode;                // Silly mode setting
-    u8 sectionMode;              // Current section
-    u8 currentPage;              // Current UI page
-    u16 lastPlayedTrack;         // Last track played
-    u16 sillyEffects;            // Silly effects bitmap
-    u16 sillySounds;             // Silly sounds bitmap
-    u8 sillyPhysics;             // Silly physics setting
-    u8 braikeDrifting;           // Brake drifting setting
-    u16 freeRoamMode;            // Free roam setting
-    u8 padding[1];               // Padding for alignment
 };
 
 }//namespace Debug

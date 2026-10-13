@@ -21,7 +21,7 @@ PULSAR = "./PulsarEngine"
 BUILD = "build"
 MYDIRS = []
 
-RIIVO = ""
+RIIVO = "C:/Users/brutt/Desktop/Dolphin-x64/User/Load/Riivolution/Silly Kart Wii/SillyKartWii/Binaries"
 
 COMPILER = "C:/Program Files (x86)/Freescale/CW for MPC55xx and MPC56xx 2.10/PowerPC_EABI_Tools/Command_Line_Tools/mwcceppc.exe"
 FLAGS = (f'-I- -i "{ENGINE}" -i "{GAMESOURCE}" -i "{PULSAR}" ' +
@@ -77,11 +77,8 @@ if __name__ == "__main__":
 
 	# find every cpp that may need compiled
 	cpp_files = glob.glob(f"{PULSAR}/**/*.cpp", recursive=True)
-	# find every cpp that may need compiled
-	cpp_files = glob.glob(f"{PULSAR}/**/*.cpp", recursive=True)
-	cpp_files.extend(glob.glob(f"{ENGINE}/**/*.cpp", recursive=True))  # <--- QUI alla riga 80!
-	for d in MYDIRS:
-		cpp_files.extend(glob.glob(f"{d}/**/*.cpp", recursive=True))
+	cpp_files.append(f"{ENGINE}/kamek.cpp")
+	cpp_files.append(f"{ENGINE}/RuntimeWrite.cpp") # KamekRuntimeWrite (Race/Players24, kmRuntimeUse)
 	for d in MYDIRS:
 		cpp_files.extend(glob.glob(f"{d}/**/*.cpp", recursive=True))
 
@@ -104,7 +101,7 @@ if __name__ == "__main__":
 			quit()
 			
 	# build cpp files (in parallel!)
-
+	compile_cpp(f"{ENGINE}/kamek.cpp")
 	with concurrent.futures.ThreadPoolExecutor() as executor:
 		executor.map(compile_cpp, modified_cpps)
 

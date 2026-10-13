@@ -1,3 +1,4 @@
+#include <Race/Players24/Players24.hpp>
 #include <SillyKartWii.hpp>
 #include <RuntimeWrite.hpp>
 #include <MarioKartWii/Race/RaceData.hpp>
@@ -21,7 +22,7 @@ namespace Race{
             u8 playerId = link->GetPlayerIdx();
             u8 hudSlotId = raceData->GetHudSlotId(playerId);
             if (hudSlotId > 3) hudSlotId = playerId;
-            PlayerType playerType = raceData->racesScenario.players[playerId].playerType;
+            PlayerType playerType = Players24::GetPlayer(raceData->racesScenario, playerId).playerType;
             link->pointers->values->statsAndBsp.stats->targetAngle = 45;
             u8 chosenType;
             chosenType = System::sInstance->transmissions[hudSlotId];
@@ -41,9 +42,9 @@ namespace Race{
     static void SetCPUKartType(){
         Random random;
         u8 localPlayerCount = GetLocalPlayerCount();
-        for (int i = localPlayerCount; i < 12; ++i){
+        for (int i = localPlayerCount; i < Players24::maxPlayers; ++i){
             Pulsar::System* mkvn = System::sInstance;
-            PlayerType playerType = Racedata::sInstance->racesScenario.players[i].playerType;
+            PlayerType playerType = Players24::GetPlayer(Racedata::sInstance->racesScenario, i).playerType;
             if (playerType == PLAYER_CPU && mkvn->transmissions[i] == 0){
                 Transmission type = static_cast<Transmission>(random.NextLimited(2) + 1);
                 mkvn->transmissions[i] = type;
@@ -54,7 +55,7 @@ namespace Race{
 
     static void ResetTransmissions(){
         Racedata *racedata = Racedata::sInstance;
-        for (int i = 0; i < 12; ++i){
+        for (int i = 0; i < Players24::maxPlayers; ++i){
            System::sInstance->transmissions[i] = TRANSMISSION_DEFAULT;
         }
     }
