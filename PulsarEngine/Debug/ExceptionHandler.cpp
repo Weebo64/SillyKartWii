@@ -165,9 +165,9 @@ static void WriteHeaderCrash(u16 error, const OS::Context* context, u32 dsisr, u
     exception.displayedInfo = 0x23;
     exception.callbackArgs = nullptr;
 
-    db::Exception_Printf_("=========================================================\n");
+    db::Exception_Printf_("==================================================\n");
     db::Exception_Printf_(" Damn yo shi just got SILLY! get it? nah? ok\n");
-    db::Exception_Printf_("=========================================================\n\n");
+    db::Exception_Printf_("==================================================\n\n");
     db::Exception_Printf_("anyways, SKWii just crashed.\n");
     db::Exception_Printf_("If this is the first time, try to\nreplicate it. If it happened multiple\ntimes, please report this crash.\n\n");
     db::Exception_Printf_("Discord: discord.gg/j3MeZAkYPn\n");
