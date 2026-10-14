@@ -47,8 +47,35 @@ FrenzyManager::FrenzyManager() {
     Reset();
 }
 
+u8 FrenzyManager::GetFrenzyProbabilityPlayer() const {
+    const Racedata* racedata = Racedata::sInstance;
+    if (racedata) {
+        u8 playerCount = racedata->racesScenario.playerCount;
+        return (playerCount > 12) ? FRENZY_PROBABILITY_PLAYER_24 : FRENZY_PROBABILITY_PLAYER_12;
+    }
+    return FRENZY_PROBABILITY_PLAYER_12;
+}
+
+u8 FrenzyManager::GetFrenzyProbabilityCPU() const {
+    const Racedata* racedata = Racedata::sInstance;
+    if (racedata) {
+        u8 playerCount = racedata->racesScenario.playerCount;
+        return (playerCount > 12) ? FRENZY_PROBABILITY_CPU_24 : FRENZY_PROBABILITY_CPU_12;
+    }
+    return FRENZY_PROBABILITY_CPU_12;
+}
+
+u8 FrenzyManager::GetMaxSimultaneousFrenzies() const {
+    const Racedata* racedata = Racedata::sInstance;
+    if (racedata) {
+        u8 playerCount = racedata->racesScenario.playerCount;
+        return (playerCount > 12) ? MAX_SIMULTANEOUS_FRENZIES_24 : MAX_SIMULTANEOUS_FRENZIES_12;
+    }
+    return MAX_SIMULTANEOUS_FRENZIES_12;
+}
+
 void FrenzyManager::Reset() {
-    for (u8 i = 0; i < 12; i++) {
+    for (u8 i = 0; i < 24; i++) {
         playerFrenzies[i].Reset(true);
     }
 }
@@ -69,7 +96,7 @@ bool FrenzyManager::CanItemBeFrenzied(ItemId item) const {
 
 u8 FrenzyManager::GetActiveFrenzyCount() const {
     u8 count = 0;
-    for (u8 i = 0; i < 12; i++) {
+    for (u8 i = 0; i < 24; i++) {
         if (playerFrenzies[i].frenzyFrames > 0) {
             count++;
         }
@@ -78,23 +105,19 @@ u8 FrenzyManager::GetActiveFrenzyCount() const {
 }
 
 bool FrenzyManager::ShouldActivateFrenzy(u8 playerId, bool isHuman) {
-    // Disable frenzy mode in Time Trial, Battle modes, and Free Roam
     const Racedata* racedata = Racedata::sInstance;
     if (racedata) {
         const GameMode mode = racedata->racesScenario.settings.gamemode;
         
-        // Disable in Time Trial and Ghost Race
         if (mode == MODE_TIME_TRIAL || mode == MODE_GHOST_RACE) {
             return false;
         }
         
-        // Disable in all Battle modes
         if (mode == MODE_BATTLE || mode == MODE_PUBLIC_BATTLE || mode == MODE_PRIVATE_BATTLE) {
             return false;
         }
     }
     
-    // Disable in Free Roam mode (checking the global free roam flag)
     if (U16_FREE_ROAM != 0x0000) {
         return false;
     }
@@ -109,19 +132,19 @@ bool FrenzyManager::ShouldActivateFrenzy(u8 playerId, bool isHuman) {
         return false;
     }
     
-    if (GetActiveFrenzyCount() >= MAX_SIMULTANEOUS_FRENZIES) {
+    if (GetActiveFrenzyCount() >= GetMaxSimultaneousFrenzies()) {
         return false;
     }
     
     Random random;
-    u8 threshold = isHuman ? FRENZY_PROBABILITY_PLAYER : FRENZY_PROBABILITY_CPU;
+    u8 threshold = isHuman ? GetFrenzyProbabilityPlayer() : GetFrenzyProbabilityCPU();
     u32 roll = random.NextLimited(100);
     
     return roll < threshold;
 }
 
 void FrenzyManager::OnItemBoxHit(u8 playerId) {
-    if (playerId >= 12) return;
+    if (playerId >= 24) return;
     
     if (playerFrenzies[playerId].frenzyFrames > 0) {
         return;
@@ -141,7 +164,7 @@ void FrenzyManager::OnItemBoxHit(u8 playerId) {
 }
 
 void FrenzyManager::OnItemDecided(u8 playerId, ItemId decidedItem) {
-    if (playerId >= 12) return;
+    if (playerId >= 24) return;
     
     FrenzyInfo& info = playerFrenzies[playerId];
     
@@ -170,11 +193,10 @@ void FrenzyManager::StartFrenzy(u8 playerId, ItemId item) {
         Item::Player* itemPlayer = &mgr->players[playerId];
         itemPlayer->UseStar();
         
-        // Extend star duration to 9 seconds (540 frames) like Mario Kart Tour and CTGP-7
         if (kartMgr && kartMgr->players[playerId]) {
             Kart::Link* kartLink = kartMgr->players[playerId];
             Kart::Movement& movement = kartLink->GetMovement();
-            movement.starTimer = 540; // 9 seconds at 60 FPS
+            movement.starTimer = 540;
         }
     }
     
@@ -190,7 +212,7 @@ void FrenzyManager::GiveFrenzyItem(u8 playerId, Item::Player* itemPlayer) {
 }
 
 void FrenzyManager::UpdatePlayer(u8 playerId, Item::Player* itemPlayer, Kart::Link* kartLink) {
-    if (playerId >= 12 || !itemPlayer) return;
+    if (playerId >= 24 || !itemPlayer) return;
     
     FrenzyInfo& info = playerFrenzies[playerId];
     
@@ -220,10 +242,16 @@ void FrenzyManager::UpdatePlayer(u8 playerId, Item::Player* itemPlayer, Kart::Li
     }
 }
 
-static ItemId lastPlayerItems[12] = {ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, 
+static ItemId lastPlayerItems[24] = {ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, 
+                                     ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE,
+                                     ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE,
+                                     ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE,
                                      ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE,
                                      ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE};
-static bool lastRouletteStates[12] = {false, false, false, false,
+static bool lastRouletteStates[24] = {false, false, false, false,
+                                      false, false, false, false,
+                                      false, false, false, false,
+                                      false, false, false, false,
                                       false, false, false, false,
                                       false, false, false, false};
 
@@ -315,7 +343,7 @@ static void FrenzyFrameUpdate() {
     Kart::Manager* kartMgr = Kart::Manager::sInstance;
     if (!mgr || !mgr->players || !kartMgr || !FrenzyManager::sInstance) return;
     
-    for (u8 i = 0; i < 12; i++) {
+    for (u8 i = 0; i < 24; i++) {
         Item::Player* itemPlayer = &mgr->players[i];
         if (!itemPlayer) continue;
         
@@ -340,8 +368,6 @@ static void FrenzyFrameUpdate() {
             lastPlayerItems[i] = ITEM_NONE;
         }
     }
-    
-    // UI wird jetzt in FrenzyIndicator.cpp gehandelt
     
     if (FrenzyManager::sInstance->GetActiveFrenzyCount() == 0 && tricksPatched) {
         DisableTricksAnywhere();
