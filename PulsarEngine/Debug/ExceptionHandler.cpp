@@ -10,18 +10,30 @@
 #include <Debug/Debug.hpp>
 #include <PulsarSystem.hpp>
 #include <IO/IO.hpp>
-#include <SillyKartWiiChannel.hpp>
-#include <Settings/Settings.hpp>
 #include <SillyKartWii.hpp>
+#include <SillyKartWiiChannel.hpp>
 #include <SlotExpansion/CupsConfig.hpp>
-#include <RuntimeWrite.hpp>
+#include <Settings/Settings.hpp>
 
 namespace Pulsar {
 namespace Debug {
 
+// Declare OSYieldThread from symbols
+extern "C" void OSYieldThread();
+
 OS::Thread* crashThread = nullptr;
 static u16 crashError = 0;
-static u32 crashCounter = 0;
+
+// SillyKartWii crash data storage
+static u8 VanillaMode = 0;
+static u8 SillyMode = 0;
+static u8 SectionMode = 0;
+static u16 LastPlayedTrack = 0;
+static u16 SillyEffects = 0;
+static u16 SillySounds = 0;
+static u8 SillyPhysics = 0;
+static u8 BraikeDrifting = 0;
+static u16 FreeRoamMode = 0;
 
 using namespace nw4r;
 
@@ -34,17 +46,29 @@ void FatalError(const char* string) {
 
 #pragma suppress_warnings on
 void LaunchSoftware() {
-    s32 result = IO::OpenFix("/title/00010001/534b5743/content/title.tmd\0", IOS::MODE_NONE);  // Launcher
+    s32 result = IO::OpenFix("/dev/dolphin", IOS::MODE_NONE);
     if (result >= 0) {
-        ISFS::Close(result);
-        OS::__LaunchTitle(0x00010001, 0x534b5743);
+        IOS::Close(result);
+        SystemManager::Shutdown();
         return;
+    }
+    // Try Riivo, then HBC, then Wii Menu
+    static const u32 titleIds[2] = {'RIIV', 'LULZ'};
+    char tmdPath[IOS::ipcMaxPath];
+    for(int i = 0; i < 2; ++i) {
+        u32 launchCode = 0x00010001;
+        u32 titleId = titleIds[i];
+        snprintf(tmdPath, IOS::ipcMaxPath, "/title/%08x/%08x/content/title.tmd", launchCode, titleId);
+        result = IO::OpenFix(tmdPath, IOS::MODE_NONE);
+        if(result >= 0) {
+            ISFS::Close(result);
+            OS::__LaunchTitle(launchCode, titleId);
+            return;
+        }
     }
     OS::__LaunchTitle(0x1, 0x2);  // Launch Wii Menu if channel isn't found
 }
 #pragma suppress_warnings reset
-
-kmCall(0x8000b188, LaunchSoftware);
 
 // Credit Star
 
@@ -95,63 +119,44 @@ ExceptionFile::ExceptionFile(const OS::Context& context) : magic('PULD'), region
         this->frames[i].lr = sp[1];
         sp = (u32*)*sp;
     }
+    
+    // Initialize SillyKartWii specific data
+    this->vanillaMode = 0;
+    this->sillyMode = 0;
+    this->sectionMode = 0;
+    this->currentPage = 0;
+    this->lastPlayedTrack = 0;
+    this->sillyEffects = 0;
+    this->sillySounds = 0;
+    this->sillyPhysics = 0;
+    this->braikeDrifting = 0;
+    this->freeRoamMode = 0;
 }
 
-u8 GameMode = 0;
-u8 MyStuff = 0;
-u8 SectionMode = 0;
-u16 LastPlayedTrack = 0;
-
-
-#define GAMEPLAY2_BIT (1 << 0)
-#define GAMEPLAY4_BIT (1 << 1)
-#define GAMEPLAY5_BIT (1 << 2)
-#define GAMEPLAY6_BIT (1 << 3)
-#define GAMEPLAY8_BIT (1 << 4)
-#define GAMEPLAY9_BIT (1 << 5)
-#define GAMEPLAYA_BIT (1 << 6)
-#define GAMEPLAYD_BIT (1 << 7)
-#define GAMEPLAYE_BIT (1 << 8)
-#define GAMEPLAYF_BIT (1 << 9)
-#define GAMEPLAYG_BIT (1 << 10)
-#define GAMEPLAY1_BIT (1 << 11)
-#define GAMEPLAY3_BIT (1 << 12)
-#define GAMEPLAY7_BIT (1 << 13)
-#define GAMEPLAYB_BIT (1 << 14)
-#define U16_FREE_ROAM_BIT (1 << 15)
-
-u16 GameplayBitmap = 0;
-
-#define SET_GAMEPLAY_BIT(bitmap, bit) ((bitmap) |= (bit))
-#define CLEAR_GAMEPLAY_BIT(bitmap, bit) ((bitmap) &= ~(bit))
-#define CHECK_GAMEPLAY_BIT(bitmap, bit) (((bitmap) & (bit)) != 0)
-
-void UpdateExceptionHandlerBits() {
+// Function to update crash data before each page load
+void UpdateCrashData() {
     const CupsConfig* cupsConfig = CupsConfig::sInstance;
-    PulsarId pulsarId = cupsConfig->GetWinning();
-    GameMode = Racedata::sInstance->menusScenario.settings.gamemode;
-    MyStuff = 0; // Not available in SillyKartWii
+    if (cupsConfig != nullptr) {
+        PulsarId pulsarId = cupsConfig->GetWinning();
+        LastPlayedTrack = CupsConfig::ConvertTrack_PulsarIdToRealId(pulsarId);
+    }
+    
+    const Racedata* racedata = Racedata::sInstance;
+    if (racedata != nullptr) {
+        VanillaMode = racedata->menusScenario.settings.gamemode;
+    }
+    
     SectionMode = SectionMgr::sInstance->curSection->sectionId;
-    LastPlayedTrack = CupsConfig::ConvertTrack_PulsarIdToRealId(pulsarId);
-    GameplayBitmap = 0;
-    if (U16_GAMEPLAY2) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAY2_BIT);
-    if (U16_GAMEPLAY4) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAY4_BIT);
-    if (U16_GAMEPLAY5) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAY5_BIT);
-    if (U16_GAMEPLAY6) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAY6_BIT);
-    if (U16_GAMEPLAY8) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAY8_BIT);
-    if (U16_GAMEPLAY9) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAY9_BIT);
-    if (U16_GAMEPLAYA) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAYA_BIT);
-    if (U16_GAMEPLAYD) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAYD_BIT);
-    if (U16_GAMEPLAYE) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAYE_BIT);
-    if (U16_GAMEPLAYF) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAYF_BIT);
-    if (U16_GAMEPLAYG) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAYG_BIT);
-    if (U16_GAMEPLAY1) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAY1_BIT);
-    if (U16_GAMEPLAY3) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAY3_BIT);
-    if (U16_GAMEPLAY7) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAY7_BIT);
-    if (U16_GAMEPLAYB) SET_GAMEPLAY_BIT(GameplayBitmap, GAMEPLAYB_BIT);
-    if (U16_FREE_ROAM) SET_GAMEPLAY_BIT(GameplayBitmap, U16_FREE_ROAM_BIT);
+    
+    // Get SillyKartWii specific settings
+    SillyMode = U8_SILLY_MODE;
+    SillyEffects = U16_SILLY_EFFECTS;
+    SillySounds = U16_SILLY_SOUNDS;
+    SillyPhysics = U8_SILLY_PHYSICS;
+    BraikeDrifting = U8_BRAKEDRIFTING;
+    FreeRoamMode = U16_FREE_ROAM;
 }
-static PageLoadHook2 UPDATE_EXCEPTION_HANDLER(UpdateExceptionHandlerBits);
+static PageLoadHook2 UPDATE_CRASH_DATA(UpdateCrashData);
 
 static void WriteHeaderCrash(u16 error, const OS::Context* context, u32 dsisr, u32 dar) {
     crashError = error;
@@ -160,18 +165,32 @@ static void WriteHeaderCrash(u16 error, const OS::Context* context, u32 dsisr, u
     exception.displayedInfo = 0x23;
     exception.callbackArgs = nullptr;
 
-    db::Exception_Printf_("Oops. SKWii just crashed.\nIf this is the first time, try to replicate it.\nIf it happened multiple times, report this\ncrash with the Crash.pul to\nWeebo's Discord Server:\n\nhttps://discord.gg/j3MeZAkYPn\n\nPress A to exit and save the Crash.pul.\nWe are sorry for the inconvenience.\n\nFurther Crash Info:\n\n");
-    db::Exception_Printf_("Version: v2.0\n");
-    db::Exception_Printf_("Game Mode: %d\n", GameMode);
-    db::Exception_Printf_("My Stuff: %d\n", MyStuff);
-    db::Exception_Printf_("Section Mode: 0x%X\n", SectionMode);
-    db::Exception_Printf_("Page: 0x%X\n", U8_CURRENT_PAGE);
-    if(REGION == 'P') db::Exception_Printf_("Region: PAL\n");
-    else if(REGION == 'E') db::Exception_Printf_("Region: NTSC-U\n");
-    else if(REGION == 'J') db::Exception_Printf_("Region: NTSC-J\n");
-    else if(REGION == 'K') db::Exception_Printf_("Region: NTSC-K\n");
-    db::Exception_Printf_("Last Played Track: %d\n", LastPlayedTrack);
-    db::Exception_Printf_("Game Mode Bitmap: 0x%X\n\n", GameplayBitmap);
+    db::Exception_Printf_("==================================================\n");
+    db::Exception_Printf_(" Damn yo shi just got SILLY! get it? nah? ok\n");
+    db::Exception_Printf_("==================================================\n\n");
+    db::Exception_Printf_("anyways, SKWii just crashed.\n");
+    db::Exception_Printf_("If this is the first time, try to\nreplicate it. If it happened multiple\ntimes, please report this crash.\n\n");
+    db::Exception_Printf_("Discord: discord.gg/j3MeZAkYPn\n");
+    db::Exception_Printf_("Crash.pul will be saved automatically.\n");
+    db::Exception_Printf_("You can find it in SKWCrash/Crash.pul\n\n");
+    
+    db::Exception_Printf_("--- Crash Information ---\n");
+    db::Exception_Printf_("Version: SKWii v2.0.0\n");
+    db::Exception_Printf_("Vanilla Mode: %d\n", VanillaMode);
+    db::Exception_Printf_("Silly Mode: %d\n", SillyMode);
+    db::Exception_Printf_("Silly Physics: %d\n", SillyPhysics);
+    db::Exception_Printf_("Brake Drifting: %d\n", BraikeDrifting);
+    db::Exception_Printf_("Section: 0x%X\n", SectionMode);
+    
+    if (REGION == 'P') db::Exception_Printf_("Region: PAL\n");
+    else if (REGION == 'E') db::Exception_Printf_("Region: NTSC-U\n");
+    else if (REGION == 'J') db::Exception_Printf_("Region: NTSC-J\n");
+    else if (REGION == 'K') db::Exception_Printf_("Region: NTSC-K\n");
+    
+    db::Exception_Printf_("Last Track: %d\n", LastPlayedTrack);
+    db::Exception_Printf_("Effects: 0x%04X | Sounds: 0x%04X\n", SillyEffects, SillySounds);
+    db::Exception_Printf_("Free Roam: 0x%04X\n\n", FreeRoamMode);
+    
     db::PrintContext_(error, context, dsisr, dar);
 }
 kmCall(0x80023484, WriteHeaderCrash);
@@ -180,90 +199,151 @@ kmCall(0x80023484, WriteHeaderCrash);
 static void CreateCrashFile(s32 channel, KPAD::Status buff[], u32 count) {
     IO* io = IO::sInstance;
     
-    // Save crash file first, before checking for button press
-    if (crashThread != nullptr && crashCounter == 0) {
-        crashCounter++;  // Ensure we only save once
+    // Try to save the crash file
+    bool savedSuccessfully = false;
+    
+    if (io != nullptr) {
+        OS::Thread* thread = crashThread;
+        if (thread != nullptr) {
+            OS::DetachThread(thread);
+            OS::CancelThread(thread);
+            alignas(0x20) ExceptionFile exception(thread->context);
+            exception.error = static_cast<OS::Error>(crashError);
+            
+            // Fill in SillyKartWii specific crash data
+            exception.vanillaMode = VanillaMode;
+            exception.sillyMode = SillyMode;
+            exception.sectionMode = SectionMode;
+            exception.currentPage = *reinterpret_cast<u8*>(0x809C20F8);
+            exception.lastPlayedTrack = LastPlayedTrack;
+            exception.sillyEffects = SillyEffects;
+            exception.sillySounds = SillySounds;
+            exception.sillyPhysics = SillyPhysics;
+            exception.braikeDrifting = BraikeDrifting;
+            exception.freeRoamMode = FreeRoamMode;
+            
+            char path[IOS::ipcMaxPath];
+            const System* system = System::sInstance;
+            
+            if (system != nullptr) {
+                snprintf(path, IOS::ipcMaxPath, "%s/Crash.pul", system->GetModFolder());
+            } else {
+                // Fallback path if System is not initialized
+                snprintf(path, IOS::ipcMaxPath, "/SillyKartWii/Crash.pul");
+            }
+            
+            db::Exception_Printf_("\n>>> Saving crash to: %s\n", path);
+            
+            bool created = io->CreateAndOpen(path, IOS::MODE_READ_WRITE);
+            if (created) {
+                s32 written = io->Overwrite(sizeof(ExceptionFile), &exception);
+                io->Close();
+                db::Exception_Printf_(">>> Crash.pul saved successfully! (%d bytes)\n", written);
+                db::Exception_Printf_(">>> Please share this file with the developers.\n\n");
+                savedSuccessfully = true;
+            } else {
+                db::Exception_Printf_(">>> ERROR: Failed to create Crash.pul via IO!\n");
+            }
+            
+            // Also write the crash EPH file for the channel
+            NewChannel_WriteCrashEphFile();
+        }
+    } else {
+        // IO system not available - try direct ISFS write as fallback
+        db::Exception_Printf_("\n>>> IO system not initialized, trying ISFS...\n");
         
         OS::Thread* thread = crashThread;
-        alignas(0x20) ExceptionFile exception(thread->context);
-        exception.error = static_cast<OS::Error>(crashError);
-        exception.vanillaMode = GameMode;
-        exception.sillyMode = U8_SILLY_MODE;
-        exception.sectionMode = SectionMode;
-        exception.currentPage = U8_CURRENT_PAGE;
-        exception.lastPlayedTrack = LastPlayedTrack;
-        exception.sillyEffects = U16_SILLY_EFFECTS;
-        exception.sillySounds = U16_SILLY_SOUNDS;
-        exception.sillyPhysics = U8_SILLY_PHYSICS;
-        exception.braikeDrifting = U8_BRAKEDRIFTING;
-        exception.freeRoamMode = U16_FREE_ROAM;
-        
-        char path[IOS::ipcMaxPath];
-        const System* system = System::sInstance;
-        bool savedSuccessfully = false;
-        
-        // Try to save to mod folder first
-        if (system != nullptr && io != nullptr) {
-            snprintf(path, IOS::ipcMaxPath, "%s/Crash.pul", system->GetModFolder());
-            if (io->CreateAndOpen(path, IOS::MODE_READ_WRITE)) {
-                io->Overwrite(sizeof(ExceptionFile), &exception);
-                io->Close();
-                savedSuccessfully = true;
-            }
-        }
-        
-        // If mod folder failed, try NAND
-        if (!savedSuccessfully) {
-            // Create NAND directories
-            ISFS::CreateDir("/shared2", 0, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE);
-            ISFS::CreateDir("/shared2/SKWii_Crash", 0, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE);
+        if (thread != nullptr) {
+            OS::DetachThread(thread);
+            OS::CancelThread(thread);
+            alignas(0x20) ExceptionFile exception(thread->context);
+            exception.error = static_cast<OS::Error>(crashError);
             
-            snprintf(path, IOS::ipcMaxPath, "/shared2/SKWii_Crash/Crash.pul");
+            // Fill in SillyKartWii specific crash data
+            exception.vanillaMode = VanillaMode;
+            exception.sillyMode = SillyMode;
+            exception.sectionMode = SectionMode;
+            exception.currentPage = 0;
+            exception.lastPlayedTrack = LastPlayedTrack;
+            exception.sillyEffects = SillyEffects;
+            exception.sillySounds = SillySounds;
+            exception.sillyPhysics = SillyPhysics;
+            exception.braikeDrifting = BraikeDrifting;
+            exception.freeRoamMode = FreeRoamMode;
+            
+            // Try to save to NAND as fallback - use shared2 for persistence
+            char path[IOS::ipcMaxPath];
+            
+            // First try to create the directory
+            ISFS::CreateDir("/shared2", 0, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE);
+            ISFS::CreateDir("/shared2/SKWCrash", 0, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE);
+            
+            snprintf(path, IOS::ipcMaxPath, "/shared2/SKWCrash/Crash.pul");
+            
+            db::Exception_Printf_(">>> Attempting NAND write to: %s\n", path);
             
             // Create file with ISFS
             s32 result = ISFS::CreateFile(path, 0, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE, IOS::MODE_READ_WRITE);
             if (result >= 0 || result == -105) { // -105 = already exists
                 s32 fd = ISFS::Open(path, ISFS::MODE_READ_WRITE);
                 if (fd >= 0) {
-                    ISFS::Write(fd, &exception, sizeof(ExceptionFile));
+                    s32 written = ISFS::Write(fd, &exception, sizeof(ExceptionFile));
                     ISFS::Close(fd);
-                    savedSuccessfully = true;
+                    
+                    if (written == sizeof(ExceptionFile)) {
+                        db::Exception_Printf_(">>> Crash saved to NAND! (%d bytes)\n", written);
+                        db::Exception_Printf_(">>> File location: %s\n", path);
+                        savedSuccessfully = true;
+                    } else {
+                        db::Exception_Printf_(">>> ERROR: ISFS Write failed (%d)\n", written);
+                    }
+                } else {
+                    db::Exception_Printf_(">>> ERROR: ISFS Open failed (%d)\n", fd);
                 }
+            } else {
+                db::Exception_Printf_(">>> ERROR: ISFS CreateFile failed (%d)\n", result);
             }
         }
     }
     
-    // Now check for button press to exit
+    if (!savedSuccessfully) {
+        db::Exception_Printf_("\n>>> WARNING: Could not save crash file!\n");
+        db::Exception_Printf_(">>> Please take a photo of this screen.\n");
+    }
+    
+    // Now wait for A button before exiting
+    db::Exception_Printf_("\nPress A to exit...\n");
+    
     bool exit = false;
-    if (io == nullptr) {
-        exit = true;
-    } else {
+    while (!exit) {
         KPAD::Read(channel, buff, count);
         u8 wiimoteExtension = buff[0].extension;
+        
+        // Check Wiimote/Classic Controller A button
         if (buff[0].error == WPAD::WPAD_ERR_NONE && wiimoteExtension < WPAD::WPAD_DEV_FUTURE &&
-            (wiimoteExtension == WPAD::WPAD_DEV_CLASSIC && buff[0].extStatus.cl.trig & WPAD::WPAD_CL_BUTTON_A || buff[0].trig & WPAD::WPAD_BUTTON_A))
+            (wiimoteExtension == WPAD::WPAD_DEV_CLASSIC && buff[0].extStatus.cl.trig & WPAD::WPAD_CL_BUTTON_A || 
+             buff[0].trig & WPAD::WPAD_BUTTON_A)) {
             exit = true;
-        else {
-            PAD::Status padStatus[4];
-            PAD::Read(&padStatus[0]);
-            for (int channel = 0; channel < 4; ++channel) {
-                if (padStatus[channel].error == PAD::PAD_ERR_NONE) {
-                    if (padStatus[channel].buttons & PAD::PAD_BUTTON_A) {
-                        exit = true;
-                        break;
-                    }
+            break;
+        }
+        
+        // Check GameCube Controller A button
+        PAD::Status padStatus[4];
+        PAD::Read(&padStatus[0]);
+        for (int i = 0; i < 4; ++i) {
+            if (padStatus[i].error == PAD::PAD_ERR_NONE) {
+                if (padStatus[i].buttons & PAD::PAD_BUTTON_A) {
+                    exit = true;
+                    break;
                 }
             }
         }
+        
+        // Yield to prevent busy-waiting
+        OSYieldThread();
     }
     
-    if (exit) {
-        if (crashThread != nullptr) {
-            OS::DetachThread(crashThread);
-            OS::CancelThread(crashThread);
-        }
-        LaunchSoftware();
-    }
+    LaunchSoftware();
 }
 kmCall(0x80226610, CreateCrashFile);
 
