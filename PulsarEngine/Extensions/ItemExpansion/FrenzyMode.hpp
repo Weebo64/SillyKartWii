@@ -14,14 +14,17 @@ namespace Race {
 
 static const u32 FRENZY_DURATION = 540;
 
-static const u8 FRENZY_PROBABILITY_PLAYER = 100; // testing
-static const u8 FRENZY_PROBABILITY_CPU = 15;
+static const u8 FRENZY_PROBABILITY_PLAYER_12 = 35;
+static const u8 FRENZY_PROBABILITY_CPU_12 = 12;
 
-// BMG ID für Frenzy UI
+static const u8 FRENZY_PROBABILITY_PLAYER_24 = 10;
+static const u8 FRENZY_PROBABILITY_CPU_24 = 6;
+
 static const u32 BMG_FRENZY = 0xD000;
 
 static const u8 MAX_FRENZIES_PER_PLAYER = 10;
-static const u8 MAX_SIMULTANEOUS_FRENZIES = 2;
+static const u8 MAX_SIMULTANEOUS_FRENZIES_12 = 2;
+static const u8 MAX_SIMULTANEOUS_FRENZIES_24 = 4;
 
 static const ItemId FRENZY_BLACKLIST[] = {
     BULLET_BILL,
@@ -67,26 +70,30 @@ public:
     bool CanItemBeFrenzied(ItemId item) const;
     u8 GetActiveFrenzyCount() const;
     
+    u8 GetFrenzyProbabilityPlayer() const;
+    u8 GetFrenzyProbabilityCPU() const;
+    u8 GetMaxSimultaneousFrenzies() const;
+    
     bool IsFrenzyActive(u8 playerId) const {
         return playerFrenzies[playerId].frenzyFrames > 0;
     }
     
     u32 GetFrenzyFramesRemaining(u8 playerId) const {
-        if (playerId < 12) {
+        if (playerId < 24) {
             return playerFrenzies[playerId].frenzyFrames;
         }
         return 0;
     }
     
     ItemId GetFrenzyItem(u8 playerId) const {
-        if (playerId < 12) {
+        if (playerId < 24) {
             return playerFrenzies[playerId].frenzyItem;
         }
         return ITEM_NONE;
     }
     
     void ForceNextFrenzy(u8 playerId) {
-        if (playerId < 12) {
+        if (playerId < 24) {
             playerFrenzies[playerId].forceNextFrenzy = true;
         }
     }
@@ -94,7 +101,7 @@ public:
     void Reset();
     
 private:
-    FrenzyInfo playerFrenzies[12];
+    FrenzyInfo playerFrenzies[24];
     
     void StartFrenzy(u8 playerId, ItemId item);
     bool ShouldActivateFrenzy(u8 playerId, bool isHuman);

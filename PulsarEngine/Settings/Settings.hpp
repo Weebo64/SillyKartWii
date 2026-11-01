@@ -53,6 +53,7 @@ private:
 public:
     Mgr() : rawBin(nullptr) {}
     static const Mgr& Get() { return *sInstance; }
+    static Mgr& GetNonConst() { return *sInstance; }
     static bool IsCreated() { return sInstance != nullptr; }
 
     bool HasTrophy(u32 crc32, TTMode mode) const;
@@ -90,6 +91,16 @@ public:
     static void SaveGPResult(RKSYSRequester* requester, u32 r4, u32 r5, u32 r6, u32 r7, u32 r8, u32 r9, bool isNew);
     u8 GetSettingValue(Type type, u32 setting) const;
     u8 GetUserSettingValue(UserType type, u32 setting) const;
+    
+    // Display Location (Region Settings)
+    u8 GetDisplayCountry() const { return this->rawBin->GetSection<MiscParams>().displayCountry; }
+    u8 GetDisplaySubregion() const { return this->rawBin->GetSection<MiscParams>().displaySubregion; }
+    void SetDisplayLocation(u8 country, u8 subregion) {
+        this->rawBin->GetSection<MiscParams>().displayCountry = country;
+        this->rawBin->GetSection<MiscParams>().displaySubregion = subregion;
+        this->Update();
+    }
+    
     static void Create();
 
 

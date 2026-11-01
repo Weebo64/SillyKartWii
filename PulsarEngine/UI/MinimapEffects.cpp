@@ -30,6 +30,10 @@ asmFunc KartStatusOnMinimap2() {
     lis       r5, sInstance__8Racedata@ha;
     lbz       r12, 0x1B4(r28);
     lwz       r11, sInstance__8Racedata@l(r5);
+    // ids 12-23 -> 24 players shadow racers, like the Players24 site stubs (RacedataExt.cpp WriteStub)
+    addi      r12, r12, 52;
+    rlwinm    r12, r12, 0, 26, 24;
+    addi      r12, r12, -52;
     mulli     r12, r12, 0xF0;
     add       r11, r11, r12;
     lwz       r11, 0x38(r11);
@@ -56,7 +60,11 @@ asmFunc KartStatusOnMinimap3() {
   lwz       r12, sInstance__Q24Kart7Manager@l(r12);
   lwz       r12, 0x20(r12);
   lbz       r11, 0x1B4(r28);
-  mulli     r27, r11, 0xF0;
+  // ids 12-23 -> 24 players shadow racers, like the Players24 site stubs (RacedataExt.cpp WriteStub)
+  addi      r27, r11, 52;
+  rlwinm    r27, r27, 0, 26, 24;
+  addi      r27, r27, -52;
+  mulli     r27, r27, 0xF0;
   mulli     r11, r11, 0x4;
   add       r27, r10, r27;
   lwzx      r12, r12, r11;

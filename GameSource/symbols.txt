@@ -852,6 +852,7 @@ TryStart__Q24Kart5TrickFRC4Vec3 = 0x80575d7c
 StartInner__Q24Kart5TrickFQ24Kart13TrickCategory = 0x8057616c
 
 #KartMovement
+ApplyLightning__Q24Kart8MovementFv = 0x80580438
 ApplyLightningEffect__Q24Kart8MovementFiii = 0x80580778
 UpdateSlipstream__Q24Kart8MovementFv = 0x80586fa8
 
@@ -1239,7 +1240,13 @@ UpdateTrackList__23CtrlMenuCupSelectCourseFUi = 0x807e5ff0
 __vt__18CtrlMenuBackButton = 0x808d374c
 
 #CtrlMenuTitle
+__dt__21CtrlMenuPageTitleTextFv = 0x805baf10
 SetMessage__21CtrlMenuPageTitleTextFUiPCQ24Text4Info = 0x807e987c
+Load__21CtrlMenuPageTitleTextFb = 0x807e947c
+
+#CtrlMenuBackButton
+__dt__18CtrlMenuBackButtonFv = 0x805be7f4
+__vt__18CtrlMenuBackButton = 0x808d374c
 
 #CtrlMenuInstruction
 __dt__23CtrlMenuInstructionTextFv = 0x805c00c0
@@ -2690,6 +2697,7 @@ U16_GAMEPLAYG= 0x80000B4C
 #Item Rain Symbols
 GetPosition__Q24Kart4LinkCFv = 0x8059020c
 DisappearDueToExcess__Q24Item3ObjFb = 0x807a6c14
+GetSub__Q24Kart4LinkFv = 0x80590764
 GetMovement__Q24Kart4LinkFv = 0x8059077c
 CreateItemDirect__Q24Item7ManagerF9ItemObjIdPC4Vec3P4Vec3Ui = 0x80799fbc
 ItemRainOnlineFixHook = 0x8000120A
@@ -2701,3 +2709,17 @@ DoubleItemsEnd5= 0x807EEFC0
 DoubleItemsEnd6= 0x8081FDB0
 
 LoadPrevPageWithDelayById__Q25Pages4MenuF6PageIdf = 0x80837830
+Activate__Q24Kart5BoostFUis = 0x80588db0
+DoRespawn__Q24Kart8MovementFv = 0x80584334
+
+__vt__21CtrlMenuPageTitleText = 0x808d36d4
+SetMii__8GlobeMgrFRC3Mii = 0x807509a0
+SetPosition__8GlobeMgrFUif = 0x80750808
+IsMiiShown__8GlobeMgrFv = 0x807507fc
+Update__8GlobeMgrFv = 0x80750344
+GetLongitude__13SystemManagerCFRUib = 0x8000afec
+GetLatitude__13SystemManagerCFRUib = 0x8000b0a0
+GetCountry__13SystemManagerCFRUib = 0x8000af78
+
+#RKNet USERHandler
+CreateSendPacket__Q25RKNet11USERHandlerFv = 0x8066300c

@@ -15,6 +15,7 @@
 #include <SlotExpansion/CupsConfig.hpp>
 #include <core/egg/DVD/DvdRipper.hpp>
 #include <Dolphin/DolphinIOS.hpp>
+#include <SillyKartWii.hpp>
 namespace Pulsar {
 
 System* System::sInstance = nullptr;
@@ -191,6 +192,9 @@ void System::UpdateContext() {
         const u8 raceMode = settings.GetSettingValue(Settings::SETTINGSTYPE_RACE2, SETTINGRACE2_SCROLL_GAMEMODES);
         isItemRainActive = raceMode == RACE2SETTING_GAMEMODE_ITEMRAIN;
         isCountdown = raceMode == RACE2SETTING_GAMEMODE_COUNTDOWN;
+        
+        // Set U16_RANDOMEVENTS for Random Events mode
+        U16_RANDOMEVENTS = (raceMode == RACE2SETTING_GAMEMODE_RANDOMEVENTS) ? 0x0001 : 0x0000;
     }
     
     this->netMgr.hostContext = newContext;

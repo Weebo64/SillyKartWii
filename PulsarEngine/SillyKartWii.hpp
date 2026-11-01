@@ -117,13 +117,29 @@ extern u8 U8_FUNKY_KONG_ICON;
 extern u8 U8_ROSALINA_ICON;
 
 
-// Transmission & Brake Drifting
+// Transmission & Brake Drifting & Gameplay Flags
 extern u8 U8_BRAKEDRIFTING;
+extern u16 U16_GAMEPLAY1;
 extern u16 U16_GAMEPLAY2;
+extern u16 U16_GAMEPLAY3;
+extern u16 U16_GAMEPLAY4;
+extern u16 U16_GAMEPLAY5;
+extern u16 U16_GAMEPLAY6;
+extern u16 U16_GAMEPLAY7;
+extern u16 U16_GAMEPLAY8;
+extern u16 U16_GAMEPLAY9;
+extern u16 U16_GAMEPLAYA;
+extern u16 U16_GAMEPLAYB;
+extern u16 U16_GAMEPLAYD;
+extern u16 U16_GAMEPLAYE;
+extern u16 U16_GAMEPLAYF;
+extern u16 U16_GAMEPLAYG;
+extern u16 U16_RANDOMEVENTS;
 extern u32 TTS_CHECK;
 extern u16 U16_MISSION_MODE_FIX;
 extern u8 U8_MISSION_ID;
 extern u8 U8_WWS_CHECK;
+extern u8 U8_CURRENT_PAGE;
 extern float F32_MENUSPEED;
 
 // Countdown Mode variables (defined as extern "C" in Countdown/Countdown.cpp)

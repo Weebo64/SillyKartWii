@@ -49,6 +49,8 @@ struct MiscParams {
     u32 reserved[4]; //0x4c
     PulsarCupId lastSelectedCup; //0x5c
     u32 trackCount; //0x60
+    u8 displayCountry; //0x64
+    u8 displaySubregion; //0x65
 };
 
 struct TrophiesHolder {

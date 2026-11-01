@@ -36,9 +36,10 @@ enum PulPageId {
     PULPAGE_SETTINGS,
     PULPAGE_SETTINGSPAGESELECT,
     PULPAGE_BUTTONREMAP,
+    PULPAGE_REGION,
 
 
-    PULPAGE_MAX = PULPAGE_BUTTONREMAP - PULPAGE_INITIAL + 1
+    PULPAGE_MAX = PULPAGE_REGION - PULPAGE_INITIAL + 1
 };
 
 class ExpSection : public Section { //u32 id -> either a standard pageId but can also be a PulPageId
@@ -186,6 +187,11 @@ enum BMG {
     BMG_TEAMS_BOTTOM = 0x2910,
     BMG_TEAMS_ENABLED = 0x2912,
     BMG_TEAMS_DISABLED = 0x2913,
+
+    //Region Settings
+    BMG_REGION_BUTTON = 0x2920,
+    BMG_REGION_USE_WII_LOCATION = 0x2921,
+    BMG_REGION_DEFAULT_LOCATION = 0x2922,
 
     //froom
     BMG_PLAY_OTT = 0x2914,

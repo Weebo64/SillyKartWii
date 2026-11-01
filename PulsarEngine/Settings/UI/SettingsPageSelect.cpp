@@ -1,14 +1,15 @@
 #include <Settings/UI/SettingsPageSelect.hpp>
 #include <Settings/UI/SettingsPanel.hpp>
+#include <Settings/UI/RegionPage.hpp>
 #include <Settings/Settings.hpp>
 #include <MarioKartWii/UI/Page/Menu/VSSettings.hpp>
 
 namespace Pulsar {
 namespace UI {
 
-SettingsPageSelect::SettingsPageSelect() {
+SettingsPageSelect::SettingsPageSelect() : context(Settings::SETTINGS_CONTEXT_OFFLINE) {
     externControlCount = 0;
-    internControlCount = Settings::Params::pageCount;
+    internControlCount = buttonCount;
     hasBackButton = true;
     nextPageId = PAGE_NONE;
     titleBmg = BMG_SETTINGS_TITLE;
@@ -55,7 +56,7 @@ void SettingsPageSelect::OnInit() {
 }
 
 UIControl* SettingsPageSelect::CreateControl(u32 id) {
-    if(id < Settings::Params::pageCount) {
+    if(id < buttonCount) {
         PushButton& button = this->pageButtons[id];
         this->AddControl(this->controlCount++, button, 0);
 
@@ -67,6 +68,11 @@ UIControl* SettingsPageSelect::CreateControl(u32 id) {
         button.SetOnClickHandler(this->onButtonClickHandler, 0);
         button.SetOnSelectHandler(this->onButtonSelectHandler);
         button.SetOnDeselectHandler(this->onButtonDeselectHandler);
+
+        if(id == regionButtonIdx) {
+            button.SetMessage(BMG_REGION_BUTTON);
+            return &button;
+        }
 
         u32 bmgOffset = 0;
         u32 pageIdx = id;
@@ -101,7 +107,7 @@ void SettingsPageSelect::OnActivate() {
                             sectionId == SECTION_P1_WIFI_FROM_FROOM_RACE || sectionId == SECTION_P2_WIFI_FROM_FROOM_RACE ||
                             sectionId == SECTION_P1_WIFI_FROM_FIND_FRIEND || sectionId == SECTION_P2_WIFI_FROM_FIND_FRIEND);
 
-    for(int i = 0; i < Settings::Params::pageCount; ++i) {
+    for(int i = 0; i < buttonCount; ++i) {
         bool isHidden = false;
 
         if(isVotingSection) {
@@ -116,6 +122,12 @@ void SettingsPageSelect::OnActivate() {
             if(i == (Settings::SETTINGSTYPE_MISC + Settings::Params::pulsarPageCount)) {
                 isHidden = true;
             }
+        }
+
+        // Region Settings button only in offline single player sections
+        if(i == regionButtonIdx) {
+            const bool isOfflineSinglePlayer = (sectionId >= SECTION_SINGLE_P_FROM_MENU && sectionId <= SECTION_SINGLE_P_LIST_RACE_GHOST);
+            if(!isOfflineSinglePlayer) isHidden = true;
         }
 
         // Character pages enabled (IKW character layout system)
@@ -164,6 +176,12 @@ void SettingsPageSelect::OnButtonClick(PushButton& button, u32 hudSlotId) {
         return;
     }
 
+    // Special case: Region Settings opens RegionPage
+    if(selectedPage == regionButtonIdx) {
+        RegionPage::Open(*this, button);
+        return;
+    }
+
     SettingsPanel* settingsPanel = ExpSection::GetSection()->GetPulPage<SettingsPanel>();
     if(settingsPanel != nullptr) {
         settingsPanel->sheetIdx = selectedPage;
@@ -182,6 +200,10 @@ void SettingsPageSelect::OnButtonClick(PushButton& button, u32 hudSlotId) {
 }
 
 void SettingsPageSelect::OnButtonSelect(PushButton& button, u32 hudSlotId) {
+    if(button.buttonId == regionButtonIdx) {
+        this->bottomText->SetMessage(BMG_REGION_BUTTON);
+        return;
+    }
     u32 bmgOffset = 0;
     u32 pageIdx = button.buttonId;
     if(button.buttonId >= Settings::Params::pulsarPageCount) {

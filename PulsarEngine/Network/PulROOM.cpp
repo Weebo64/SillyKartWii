@@ -5,6 +5,7 @@
 #include <Settings/Settings.hpp>
 #include <Network/Network.hpp>
 #include <Network/PacketExpansion.hpp>
+#include <Race/Players24/Online24.hpp>
 
 namespace Pulsar {
 namespace Network {
@@ -17,6 +18,7 @@ namespace Network {
 static void ConvertROOMPacketToData(const PulROOM& packet) {
     System* system = System::sInstance;
     system->netMgr.hostContext = packet.hostSystemContext;
+    system->netMgr.hostContext2 = packet.hostSystemContext2;
     system->netMgr.racesPerGP = packet.raceCount;
 }
 
@@ -31,37 +33,47 @@ static void BeforeROOMSend(RKNet::PacketHolder<PulROOM>* packetHolder, PulROOM* 
         packetHolder->packetSize += sizeof(PulROOM) - sizeof(RKNet::ROOMPacket); //this has been changed by copy so it's safe to do this
         const Settings::Mgr& settings = Settings::Mgr::Get();
 
-        const u8 koSetting = settings.GetSettingValue(Settings::SETTINGSTYPE_KO, SETTINGKO_ENABLED) == KOSETTING_ENABLED;
-        const u8 koFinal = settings.GetSettingValue(Settings::SETTINGSTYPE_KO, SETTINGKO_FINAL) == KOSETTING_FINAL_ALWAYS;
+        //A room opened with 24 places is a plain VS of 24 players until it closes, whatever the host has set since:
+        //no battle or team VS start, and no KO or OTT (Race/Players24/Online24.hpp)
+        const bool isRoom24 = Players24::IsHostingRoom24();
+        if (isRoom24) destPacket->message = 0; //Solo VS
 
-        //invert mii setting as the first button is enabled, not disabled, so a value of 1 indicates disabled
+        const u8 koSetting = !isRoom24 && settings.GetSettingValue(Settings::SETTINGSTYPE_KO, SETTINGKO_ENABLED);
         const u8 ottOnline = settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_ONLINE);
-        destPacket->hostSystemContext = (ottOnline != OTTSETTING_OFFLINE_DISABLED) << PULSAR_MODE_OTT //ott
-            | (ottOnline == OTTSETTING_ONLINE_FEATHER) << PULSAR_FEATHER //ott feather
-            | (settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_ALLOWUMTS) ^ true) << PULSAR_UMTS //ott umts
-            | koSetting << PULSAR_MODE_KO | koFinal << PULSAR_KOFINAL
+        const u8 pointDistroTime = settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_POINT_DISTRO) == HOSTSETTING_POINT_DISTRO_TIME;
+        
+        // Only keep basic settings that SillyKartWii actually has
+        destPacket->hostSystemContext = (!isRoom24 && ottOnline != OTTSETTING_OFFLINE_DISABLED) << PULSAR_MODE_OTT
+            | (ottOnline == OTTSETTING_ONLINE_FEATHER) << PULSAR_FEATHER
+            | (settings.GetSettingValue(Settings::SETTINGSTYPE_OTT, SETTINGOTT_ALLOWUMTS) ^ true) << PULSAR_UMTS
+            | koSetting << PULSAR_MODE_KO
             | (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_ALLOW_MIIHEADS) ^ true) << PULSAR_MIIHEADS
-            | settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) << PULSAR_HAW;
+            | settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_RADIO_HOSTWINS) << PULSAR_HAW
+            | pointDistroTime << PULSAR_POINT_DISTRO
+            //24 players room (Race/Players24/Online24.cpp). Clients without it only see an unknown bit.
+            | Players24::HostPlayers24Bit() << PULSAR_PLAYERS24;
+            
+        destPacket->hostSystemContext2 = 0; // Reserved for future use
 
         u8 raceCount;
         if (koSetting == KOSETTING_ENABLED) raceCount = 0xFE;
         else switch (settings.GetSettingValue(Settings::SETTINGSTYPE_HOST, SETTINGHOST_SCROLL_GP_RACES)) {
-        case(0x1):
-            raceCount = 7; 
+        case(1):
+            raceCount = 7;
             break;
-        case(0x2):
+        case(2):
             raceCount = 11;
             break;
-        case(0x3):
+        case(3):
             raceCount = 23;
             break;
-        case(0x4):
+        case(4):
             raceCount = 31;
             break;
-        case(0x5):
+        case(5):
             raceCount = 63;
             break;
-        case(0x6):
+        case(6):
             raceCount = 1;
             break;
         default:

@@ -20,8 +20,10 @@
 #include <Gamemodes/KO/KOWinnerPage.hpp>
 #include <Settings/UI/SettingsPanel.hpp>
 #include <Settings/UI/SettingsPageSelect.hpp>
+#include <Settings/UI/RegionPage.hpp>
 #include <UI/ButtonRemap/ButtonRemapPage.hpp>
 #include <UI/RoomKick/RoomKickPage.hpp>
+#include <MarioKartWii/Archive/ArchiveMgr.hpp>
 
 namespace Pulsar {
 namespace UI {
@@ -118,6 +120,7 @@ void ExpSection::CreatePulPages() {
             this->CreateAndInitPage(*this, SettingsPanel::id);
             this->CreateAndInitPage(*this, SettingsPageSelect::id);
             this->CreateAndInitPage(*this, ButtonRemapPage::id);
+            this->CreateAndInitPage(*this, PULPAGE_REGION);
     }
     if(this->hasAutoVote) {
         this->CreateAndInitPage(*this, PAGE_AUTO_ENDING2);
@@ -217,6 +220,9 @@ void ExpSection::CreateAndInitPage(ExpSection& self, u32 id) {
         case ButtonRemapPage::id:
             page = new ButtonRemapPage;
             break;
+        case RegionPage::id:
+            page = new RegionPage;
+            break;
         case RoomKickPage::id:
             page = new RoomKickPage;
             break;
@@ -289,9 +295,24 @@ void ChangeImage(LayoutUIControl& control, const char* paneName, const char* tpl
 enum BMGType {
     BMG_NORMAL,
     CUSTOM_BMG,
+    COUNTRY_BMG,
     //CUP_TEXT
 };
 BMGType isCustom;
+
+//Country and subregion names of the Region page (UIAssets message/Country.bmg), only in menus with the UI archives
+//Raw storage: a global BMGHolder would run its constructor (in StaticR) when Code.pul is loaded, before StaticR is
+static u32 countryBmgRaw[sizeof(BMGHolder) / sizeof(u32)];
+static BMGHolder& CountryBMGHolder() { return *reinterpret_cast<BMGHolder*>(countryBmgRaw); }
+static const BMGHolder* GetCountryBMG() {
+    const ArchiveMgr* archives = ArchiveMgr::sInstance;
+    if(archives == nullptr) return nullptr;
+    const BMGHeader* file = static_cast<const BMGHeader*>(archives->GetFile(ARCHIVE_HOLDER_UI, "message/Country.bmg"));
+    if(file == nullptr) return nullptr;
+    BMGHolder& holder = CountryBMGHolder();
+    if(holder.bmgFile != file) holder.Init(*file); //the UI archives are reloaded with each section
+    return &holder;
+}
 
 static int GetMsgIdxByBmgId(const BMGHolder& bmg, s32 bmgId) {
     const BMGMessageIds& msgIds = *bmg.messageIds;
@@ -313,6 +334,13 @@ static int GetMsgIdxById(const BMGHolder& normalHolder, s32 bmgId) {
     if(ret < 0) {
         isCustom = BMG_NORMAL;
         ret = GetMsgIdxByBmgId(normalHolder, bmgId);
+        if(ret < 0) {
+            const BMGHolder* country = GetCountryBMG();
+            if(country != nullptr) {
+                ret = GetMsgIdxByBmgId(*country, bmgId);
+                if(ret >= 0) isCustom = COUNTRY_BMG;
+            }
+        }
     }
     else isCustom = CUSTOM_BMG;
     return ret;
@@ -351,6 +379,7 @@ wchar_t* GetMsg(const BMGHolder& normalHolder, s32 msgIdx) {
     else {*/
     wchar_t* ret = nullptr;
     if(isCustom == CUSTOM_BMG) ret = GetMsgByMsgIdx(System::sInstance->GetBMG(), msgIdx);
+    else if(isCustom == COUNTRY_BMG) ret = GetMsgByMsgIdx(CountryBMGHolder(), msgIdx);
     if(ret == nullptr) ret = GetMsgByMsgIdx(normalHolder, msgIdx);
     return ret;
     //}
@@ -367,6 +396,7 @@ const u8* GetFont(const BMGHolder& normalHolder, s32 msgIdx) {
     const u8* ret = nullptr;
     //if(isCustom == CUP_TEXT) msgIdx = 0;
     if(isCustom == CUSTOM_BMG) ret = GetFontIndex(System::sInstance->GetBMG(), msgIdx);
+    else if(isCustom == COUNTRY_BMG) ret = GetFontIndex(CountryBMGHolder(), msgIdx);
     if(ret == nullptr) ret = GetFontIndex(normalHolder, msgIdx);
     return ret;
 }

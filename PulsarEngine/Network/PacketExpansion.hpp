@@ -54,6 +54,7 @@ struct PulROOM : public     RKNet::ROOMPacket {
 
     //Generic ROOM settings
     u32 hostSystemContext; //System's context but with just gamemodes taken from the settings
+    u32 hostSystemContext2;
     u8 raceCount;
 };
 
@@ -82,6 +83,15 @@ struct PulSELECT : public RKNet::SELECTPacket {
     u8 koPerRace;
     u8 racesPerKO;
     bool alwaysFinal;
+    
+    //Custom Character, Transmission and Drift Settings
+    u16 characterTables; //Custom character skin tables for up to 2 local players (8 bits each)
+    u8 transmission[2]; //Transmission settings for up to 2 local players
+    u8 driftMode[2]; //Drift mode settings for up to 2 local players
+    
+    //Ids 12-23 of the host's id table (playerIdToAid has 0-11): sent only in a 24 players room, everywhere else the
+    //packet stops before them (PULSELECT_BASE_SIZE) and stays as it was (Race/Players24/Online24Consoles.cpp)
+    u8 playerIdToAidExt[12];
 };
 
 struct PulRACEDATA : public RKNet::RACEDATAPacket {};
@@ -91,6 +101,8 @@ struct PulEVENT : public    RKNet::EVENTPacket {}; //NOT RECOMMENDED as this has
 #pragma pack(pop)
 
 static_assert(sizeof(PulROOM) < sizeof(PulSELECT), "ROOM SELECT");
+static_assert(sizeof(PulRH1) == 51, "PulRH1 size changed");
+static const u32 PULSELECT_BASE_SIZE = sizeof(PulSELECT) - 12; //what is sent outside a 24 players room (no playerIdToAidExt)
 
 class ExpSELECTHandler {
 public:
@@ -100,16 +112,19 @@ public:
     RKNet::OnlineMode  mode; //from page 0x90 OnInit SectionId Switch
     u32 unknown_0x4;
     PulSELECT toSendPacket; //0x8
-    PulSELECT* receivedPackets; //sizeof(PulSELECT) + 0x8
+    PulSELECT* receivedPackets; //sizeof(PulSELECT) + 0x8, this struct is packed (RKNet/RACEDATA.hpp)
 
-    u8 padding[0x2e0 - (sizeof(PulSELECT) + 0x8 + 4)];
+    u8 padding[0x80 - (sizeof(PulSELECT) + 0x8 + 4)];
+    //Moved from 0x2f0 for 24 aids (Race/Players24/Online24Handlers.inc)
+    u64 lastReceivedTimes[24]; //0x80
+    u64 unknown_0x350[24]; //0x140
+    u32 unknown_0x3b0[24]; //0x200
+    u8 padding2[0x2e0 - 0x260];
 
     u8 lastSentToAid; //0x2e0
     u8 unknown_0x2e4[7];
     u64 lastSentTime; //0x2e8
-    u64 lastReceivedTimes[12]; //0x2f0
-    u64 unknown_0x350[12]; //0x350
-    u32 unknown_0x3b0[12]; //0x3b0
+    u8 vanillaTimes[0x3e0 - 0x2f0]; //0x2f0 moved to 0x80
     u32 hasNewSELECT; //0x3e0 bitflag
     u32 hasNewRACEHEADER_1; //0x3e4 bitflag
     u32 aidsWithAccurateRaceSettings; //0x3e8

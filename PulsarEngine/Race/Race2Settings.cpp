@@ -349,6 +349,9 @@ void ApplyRace2Settings() {
             case RACE2SETTING_GAMEMODE_ITEMRAIN:
                 system->context2 |= (1 << PULSAR_ITEMMODERAIN);
                 break;
+            case RACE2SETTING_GAMEMODE_RANDOMEVENTS:
+                // Random Events will be activated via U16_RANDOMEVENTS
+                break;
             case RACE2SETTING_GAMEMODE_DISABLED:
             default:
                 // No gamemode active

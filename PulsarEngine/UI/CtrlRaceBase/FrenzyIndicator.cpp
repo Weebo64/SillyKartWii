@@ -38,19 +38,7 @@ void CtrlRaceFrenzy::ApplyPlacement() {
     lyt::Pane* text = this->layout.GetPaneByName("TextBox_00");
     if (text == nullptr) return;
 
-    float animScale = FRENZY_SCALE;
-    float animAlpha = 1.0f;
-    float yOffset = 0.0f;
-    
-    if (animationFrame < 30) {
-        float t = animationFrame / 30.0f;
-        animScale = FRENZY_SCALE * (0.5f + t * 0.5f);
-        animAlpha = t;
-    }
-    
-    animScale += sin(animationFrame * 0.2f) * 0.1f;
-    yOffset = sin(animationFrame * 0.15f) * 8.0f;
-    
+    // Rainbow color only, no animation
     float hue = (animationFrame * 6.0f);
     while (hue >= 360.0f) hue -= 360.0f;
     
@@ -82,10 +70,10 @@ void CtrlRaceFrenzy::ApplyPlacement() {
     }
 
     text->trans.x = FRENZY_POS_X;
-    text->trans.y = FRENZY_POS_Y + yOffset;
-    text->scale.x = animScale;
-    text->scale.z = animScale;
-    text->alpha = (u8)(animAlpha * 255);
+    text->trans.y = FRENZY_POS_Y;
+    text->scale.x = FRENZY_SCALE;
+    text->scale.z = FRENZY_SCALE;
+    text->alpha = 255;
     
     ut::Color rainbowColor;
     rainbowColor.r = (u8)(r * 255);
